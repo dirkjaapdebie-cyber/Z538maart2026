@@ -49,7 +49,7 @@
         { id: 'goals', title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. Hebreeën 2 ontdekken <br>3. Samen creatief zijn.' },
         { id: 'reading', title: 'Lezing', type: 'bible', text: '<b>[1]</b> Daarom moeten wij ons te meer houden aan wat door ons gehoord is... (vul aan)' },
         { id: 'q1', title: 'Vragen', type: 'qa', label: 'Wat valt je op in dit gedeelte?', dbCol: 'answers', field: 'text' },
-        { id: 'concepts', title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen' 'Beloofde land'], dbCol: 'static_elements' },
+        { id: 'concepts', title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'static_elements' },
         { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ een kernzin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
         { id: 'creation', title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
         { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
@@ -81,7 +81,6 @@
         adminBar.appendChild(btn);
     });
 
-    // Reset Knop rechtsboven in Admin Bar
     const resetBtn = document.createElement('button');
     resetBtn.innerText = "DB WISSEN (RESET)";
     resetBtn.className = "reset-btn";
@@ -101,11 +100,13 @@
     };
 
     async function resetAllData() {
-        if(confirm("LET OP: Hiermee wis je alle namen, antwoorden en verzamelde zinnen voor iedereen. Doorgaan?")){
+        if(confirm("LET OP: Hiermee wis je alle namen, antwoorden en verzamelde zinnen. Doorgaan?")){
             const collectionsToClear = ['names', 'answers', 'poem_lines', 'static_elements'];
             for(const colName of collectionsToClear) {
                 const qSnap = await getDocs(collection(db, colName));
                 qSnap.forEach(d => deleteDoc(doc(db, colName, d.id)));
+                // Verwijder ook de visuele elementen van het scherm
+                document.querySelectorAll('.draggable').forEach(el => el.remove());
             }
             alert("Database is leeggemaakt!");
         }
@@ -124,14 +125,21 @@
             onSnapshot(collection(db, s.dbCol), (snap) => {
                 const feed = document.getElementById(`feed-${s.id}`);
                 const canvas = document.getElementById(`canvas-${s.id}`);
+                
+                // Feed bijwerken
                 if (feed) {
                     feed.innerHTML = snap.docs.sort((a,b) => b.data().timestamp - a.data().timestamp)
                                               .map(d => `<div class="answer-item">${d.data()[s.field] || d.data().text}</div>`).join("");
                 }
+                
+                // Canvas bijwerken
                 if (canvas) {
+                    // Als het leeg is (na reset), herlaad static items eenmalig
                     if(s.type === 'static-dragdrop' && snap.empty) {
                         s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 50 + (i*60) }));
                     }
+
+                    // Synchroniseer draggables
                     snap.docs.forEach(docSnap => {
                         let el = document.getElementById(`drag-${docSnap.id}`);
                         if(!el) {
@@ -145,6 +153,12 @@
                         el.style.left = docSnap.data().x + "px";
                         el.style.top = docSnap.data().y + "px";
                     });
+
+                    // Verwijder draggables die niet meer in DB staan (na reset)
+                    const currentIds = snap.docs.map(d => `drag-${d.id}`);
+                    canvas.querySelectorAll('.draggable').forEach(el => {
+                        if(!currentIds.includes(el.id)) el.remove();
+                    });
                 }
             });
         }
@@ -152,12 +166,16 @@
 
     function setupDragging(el, col, docId, canvas) {
         let active = false;
-        el.onmousedown = () => active = true;
+        el.onmousedown = (e) => { active = true; e.preventDefault(); };
         document.onmouseup = () => active = false;
         document.onmousemove = (e) => {
             if(!active) return;
             const r = canvas.getBoundingClientRect();
-            updateDoc(doc(db, col, docId), { x: e.clientX - r.left - 50, y: e.clientY - r.top - 20 });
+            // Update positie live naar Firebase
+            updateDoc(doc(db, col, docId), { 
+                x: e.clientX - r.left - 50, 
+                y: e.clientY - r.top - 20 
+            });
         };
     }
 </script>

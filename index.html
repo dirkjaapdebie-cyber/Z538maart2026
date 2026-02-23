@@ -2,30 +2,42 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bijbelstudie Regie - 8 Maart</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
         .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 160px; }
-        .screen { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
-        .active { display: block; animation: fadeIn 0.5s; }
+        .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
+        .active { display: block; animation: fadeIn 0.4s; }
         
-        /* Admin Bar met Regie-controls */
+        /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 8px; z-index: 1000; align-items: center; }
         .admin-unit { display: flex; flex-direction: column; gap: 4px; align-items: center; background: #222; padding: 5px; border-radius: 4px; }
-        .admin-unit button { font-size: 10px; padding: 4px 8px; }
         .move-btns { display: flex; gap: 2px; }
-        .move-btns button { background: #555; border: none; color: white; cursor: pointer; border-radius: 2px; }
-        .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; }
+        .move-btns button { background: #555; border: none; color: white; padding: 4px 8px; cursor: pointer; border-radius: 2px; font-size: 10px; }
+        .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 4px; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
-        .reset-btn { background: #c0392b !important; margin-left: auto; }
+        .reset-btn { background: #c0392b !important; margin-left: auto; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
-        /* Dragdrop Canvas */
-        .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; }
-        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 25px; cursor: move; box-shadow: 2px 5px 10px rgba(0,0,0,0.1); white-space: nowrap; font-weight: bold; }
+        /* Canvas & Touch-proof Draggables */
+        .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; }
+        .draggable { 
+            position: absolute; 
+            padding: 12px 20px; 
+            background: white; 
+            border: 2px solid var(--primary); 
+            border-radius: 30px; 
+            cursor: move; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+            white-space: nowrap; 
+            font-weight: bold; 
+            user-select: none; 
+            touch-action: none; /* Cruciaal voor touchscreens */
+            z-index: 10;
+        }
         
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -49,21 +61,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Basis definitie van de schermen
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Naam:', dbCol: 'names', field: 'name' },
-        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag...' },
-        reading: { title: 'Lezing', type: 'bible', text: 'Tekst van Hebreeën 2...' },
-        q1: { title: 'Vragen', type: 'qa', label: 'Wat valt op?', dbCol: 'answers', field: 'text' },
-        concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'static_elements' },
-        lines: { title: 'Zinnen verzamelen', type: 'input', label: 'Typ een kernzin:', dbCol: 'poem_lines', field: 'text' },
-        creation: { title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
+        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding <br>2. Verdieping <br>3. Creatie.' },
+        reading: { title: 'Lezing', type: 'bible', text: 'Hier komt de tekst van Hebreeën 2...' },
+        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je?', dbCol: 'answers', field: 'text' },
+        concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'concepts_final' },
+        lines: { title: 'Zinnen', type: 'input', label: 'Typ een kernzin:', dbCol: 'poem_lines', field: 'text' },
+        creation: { title: 'Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
         blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
     };
 
     let currentOrder = Object.keys(screenConfigs);
 
-    // --- REGIE FUNCTIES ---
+    // --- REGIE ---
     window.moveScreen = async (index, direction) => {
         let newOrder = [...currentOrder];
         let target = index + direction;
@@ -77,7 +88,6 @@
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true });
     };
 
-    // --- RENDER LOGICA ---
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
@@ -86,27 +96,20 @@
 
         currentOrder.forEach((id, index) => {
             const s = screenConfigs[id];
-            // Maak Scherm
             const div = document.createElement('div');
             div.id = `screen-${id}`;
             div.className = 'screen';
             div.innerHTML = `<h2>${s.title}</h2>` + 
                 (s.type === 'info' ? `<p>${s.content}</p>` : '') +
-                (s.type === 'bible' ? `<div style="background:#fffcf0; padding:20px; border:1px solid #ddd;">${s.text}</div>` : '') +
-                (s.type === 'input' || s.type === 'qa' ? `<p>${s.label}</p><input id="in-${id}"><button onclick="sendData('${id}','${s.dbCol}','${s.field}')">Stuur</button><div id="feed-${id}"></div>` : '') +
+                (s.type === 'bible' ? `<div style="background:#fffcf0; padding:20px; border:1px solid #ddd; line-height:1.8;">${s.text}</div>` : '') +
+                (s.type === 'input' || s.type === 'qa' ? `<p>${s.label}</p><input id="in-${id}"><button onclick="sendData('${id}','${s.dbCol}','${s.field}')">Verstuur</button><div id="feed-${id}" style="margin-top:20px;"></div>` : '') +
                 (s.type === 'dragdrop' || s.type === 'static-dragdrop' ? `<div id="canvas-${id}" class="canvas"></div>` : '');
             container.appendChild(div);
 
-            // Maak Admin Unit
             const unit = document.createElement('div');
             unit.className = 'admin-unit';
-            unit.innerHTML = `
-                <div class="move-btns">
-                    <button onclick="moveScreen(${index}, -1)">←</button>
-                    <button onclick="moveScreen(${index}, 1)">→</button>
-                </div>
-                <button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>
-            `;
+            unit.innerHTML = `<div class="move-btns"><button onclick="moveScreen(${index},-1)">←</button><button onclick="moveScreen(${index},1)">→</button></div>
+                              <button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>`;
             adminBar.appendChild(unit);
         });
 
@@ -119,14 +122,7 @@
 
     // --- DATA SYNC ---
     onSnapshot(doc(db, "appState", "order"), (snap) => {
-        if (snap.exists()) {
-            currentOrder = snap.data().sequence;
-            renderApp();
-            // Trigger herladen van feeds/canvases na herschikking
-            initListeners();
-        } else {
-            renderApp();
-        }
+        if (snap.exists()) { currentOrder = snap.data().sequence; renderApp(); initListeners(); } else { renderApp(); }
     });
 
     onSnapshot(doc(db, "appState", "current"), (snap) => {
@@ -137,7 +133,6 @@
         document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    // Feeds en Draggables (vereenvoudigd voor hergebruik)
     function initListeners() {
         currentOrder.forEach(id => {
             const s = screenConfigs[id];
@@ -145,10 +140,10 @@
             onSnapshot(collection(db, s.dbCol), (snap) => {
                 const feed = document.getElementById(`feed-${id}`);
                 const canvas = document.getElementById(`canvas-${id}`);
-                if (feed) feed.innerHTML = snap.docs.map(d => `<div style="padding:5px; border-bottom:1px solid #eee;">${d.data()[s.field] || d.data().text}</div>`).join("");
+                if (feed) feed.innerHTML = snap.docs.map(d => `<div style="padding:10px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px;">${d.data()[s.field] || d.data().text}</div>`).join("");
                 if (canvas) {
                     if (s.type === 'static-dragdrop' && snap.empty) {
-                        s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 50 + (i*60) }));
+                        s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 40 + (i*65) }));
                     }
                     snap.docs.forEach(docSnap => {
                         let el = document.getElementById(`drag-${docSnap.id}`);
@@ -158,7 +153,7 @@
                             el.className = 'draggable';
                             el.innerText = docSnap.data().text;
                             canvas.appendChild(el);
-                            setupDragging(el, s.dbCol, docSnap.id, canvas);
+                            setupTouchDragging(el, s.dbCol, docSnap.id, canvas);
                         }
                         el.style.left = docSnap.data().x + "px";
                         el.style.top = docSnap.data().y + "px";
@@ -168,7 +163,33 @@
         });
     }
 
-    // [Rest van de hulpfuncties zoals sendData, setupDragging en resetAllData blijven hetzelfde als voorheen]
+    // --- TOUCH-PROOF DRAGGING ---
+    function setupTouchDragging(el, col, docId, canvas) {
+        let isDragging = false;
+
+        el.onpointerdown = (e) => {
+            isDragging = true;
+            el.setPointerCapture(e.pointerId);
+            el.style.zIndex = "1000";
+        };
+
+        el.onpointermove = (e) => {
+            if (!isDragging) return;
+            const r = canvas.getBoundingClientRect();
+            // We sturen de positie direct naar Firebase
+            updateDoc(doc(db, col, docId), { 
+                x: e.clientX - r.left - (el.offsetWidth / 2), 
+                y: e.clientY - r.top - (el.offsetHeight / 2) 
+            });
+        };
+
+        el.onpointerup = (e) => {
+            isDragging = false;
+            el.releasePointerCapture(e.pointerId);
+            el.style.zIndex = "10";
+        };
+    }
+
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) {
@@ -178,25 +199,4 @@
     };
 
     async function resetAllData() {
-        if(confirm("Alles wissen?")){
-            const cols = ['names', 'answers', 'poem_lines', 'static_elements'];
-            for(const c of cols) {
-                const q = await getDocs(collection(db, c));
-                q.forEach(d => deleteDoc(doc(db, c, d.id)));
-            }
-        }
-    }
-
-    function setupDragging(el, col, docId, canvas) {
-        let active = false;
-        el.onmousedown = (e) => { active = true; e.preventDefault(); };
-        document.onmouseup = () => active = false;
-        document.onmousemove = (e) => {
-            if(!active) return;
-            const r = canvas.getBoundingClientRect();
-            updateDoc(doc(db, col, docId), { x: e.clientX - r.left - 50, y: e.clientY - r.top - 20 });
-        };
-    }
-</script>
-</body>
-</html>
+        if

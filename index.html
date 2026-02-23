@@ -14,7 +14,7 @@
 
         /* Scrollbaar Bijbelvenster */
         .bible-scroll-box {
-            max-height: 350px;
+            max-height: 400px;
             overflow-y: auto;
             padding: 25px;
             background: var(--bible-bg);
@@ -36,7 +36,7 @@
 
         /* Drag & Drop */
         #poem-canvas { height: 500px; background: #fff; border: 1px solid #ddd; position: relative; margin-top: 20px; overflow: hidden; }
-        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; }
+        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; z-index: 10; }
 
         /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
@@ -67,31 +67,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- CONFIGURATIE VAN DE SCHERMEN ---
     const screens = [
         { id: 'login', title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
         { id: 'retro', title: 'Terugblik', type: 'qa', label: 'Wat is je bijgebleven van de vorige keer?', dbCol: 'retro', field: 'text' },
         { id: 'goals', title: 'Instructie 8 Maart', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. De tekst doorleven <br>3. Samen een psalm vormen.' },
-        
-        // Hebreeën 2:1-18 HSV
-[1] Daarom moeten wij ons te meer houden aan wat door ons gehoord is, opdat wij niet op enig moment afdrijven. [2] Want als het woord dat door engelen gesproken werd, al bindend was en elke overtreding en ongehoorzaamheid rechtvaardige vergelding ontving, [3]  hoe zullen wij dan ontvluchten, als wij zo'n grote zaligheid veronachtzamen, die in het begin door de Heere is verkondigd, en die aan ons is bevestigd door hen die Hem gehoord hebben. [4]  God heeft er bovendien mede getuigenis aan gegeven door tekenen, wonderen en allerlei krachten, en gaven van de Heilige Geest, overeenkomstig Zijn wil. [5] Want Hij heeft de komende wereld, waarover wij spreken, niet onderworpen aan de engelen, [6] maar iemand heeft ergens getuigd: Wat is de mens, dat U aan hem denkt, of de mensenzoon, dat U naar hem omziet? [7] U hebt hem voor korte tijd minder gemaakt dan de engelen; met heerlijkheid en eer hebt U hem gekroond. U hebt hem gesteld over de werken van Uw handen; [8]  alle dingen hebt U onder zijn voeten onderworpen. Want bij het onderwerpen van alle dingen aan Hem heeft Hij niets uitgezonderd wat Hem niet onderworpen is. Nu zien wij echter nog niet dat Hem alle dingen onderworpen zijn, [9] maar wij zien Jezus met heerlijkheid en eer gekroond, Die voor korte tijd minder dan de engelen geworden was, vanwege het lijden van de dood, opdat Hij door de genade van God voor allen de dood zou proeven. [10] Want het paste Hem, om Wie alle dingen zijn en door Wie alle dingen zijn, dat Hij, om veel kinderen tot heerlijkheid te brengen, de Leidsman van hun zaligheid door lijden zou heiligen. [11] Immers, zowel Hij Die heiligt als zij die geheiligd worden, zijn allen uit één. Daarom schaamt Hij Zich er niet voor hen broeders te noemen, [12]  want Hij zegt: Ik zal Uw Naam aan Mijn broeders verkondigen; te midden van de gemeente zal Ik U lofzingen. [13] En verder: Ik zal Mijn vertrouwen op Hem stellen. En vervolgens: Zie, Ik en de kinderen die God Mij gegeven heeft. [14] Omdat nu die kinderen van vlees en bloed zijn, heeft Hij eveneens daaraan deel gehad om door de dood hem die de macht over de dood had – dat is de duivel – teniet te doen, [15] en allen te verlossen die door angst voor de dood gedurende heel hun leven aan slavernij onderworpen waren. [16] Want werkelijk, Hij neemt de engelen niet aan, maar Hij neemt het nageslacht van Abraham aan. [17]  Daarom moest Hij in alles aan Zijn broeders gelijk worden, opdat Hij een barmhartig en een getrouw Hogepriester zou zijn in de dingen die God betreffen, om de zonden van het volk te verzoenen. [18]  Want waarin Hij Zelf geleden heeft, toen Hij verzocht werd, kan Hij hen die verzocht worden, te hulp komen.
-
-https://bible.com/bible/1990/heb.2.1-18.HSV
         { 
             id: 'bible-reading', 
-            title: 'Lezing: 8 Maart', 
+            title: 'Lezing: Hebreeën 2:1-18', 
             type: 'bible', 
             text: `
-                <b>1</b> Hier plak je de tekst voor vers 1.<br>
-                <b>2</b> En hier komt vers 2 terecht.<br>
-                <b>3</b> Je kunt zoveel regels toevoegen als je wilt.<br>
-                <b>4</b> Het venster zal automatisch een scrollbalk tonen als de tekst lang wordt.<br>
-                <br>
-                <b>5</b> Tip: Gebruik &lt;br&gt; voor een nieuwe regel.
+                <b>[1]</b> Daarom moeten wij ons te meer houden aan wat door ons gehoord is, opdat wij niet op enig moment afdrijven. <br>
+                <b>[2]</b> Want als het woord dat door engelen gesproken werd, al bindend was en elke overtreding en ongehoorzaamheid rechtvaardige vergelding ontving, <br>
+                <b>[3]</b> hoe zullen wij dan ontvluchten, als wij zo'n grote zaligheid veronachtzamen, die in het begin door de Heere is verkondigd, en die aan ons is bevestigd door hen die Hem gehoord hebben. <br>
+                <b>[4]</b> God heeft er bovendien mede getuigenis aan gegeven door tekenen, wonderen en allerlei krachten, en gaven van de Heilige Geest, overeenkomstig Zijn wil. <br>
+                <b>[5]</b> Want Hij heeft de komende wereld, waarover wij spreken, niet onderworpen aan de engelen, <br>
+                <b>[6]</b> maar iemand heeft ergens getuigd: Wat is de mens, dat U aan hem denkt, of de mensenzoon, dat U naar hem omziet? <br>
+                <b>[7]</b> U hebt hem voor korte tijd minder gemaakt dan de engelen; met heerlijkheid en eer hebt U hem gekroond. U hebt hem gesteld over de werken van Uw handen; <br>
+                <b>[8]</b> alle dingen hebt U onder zijn voeten onderworpen. Want bij het onderwerpen van alle dingen aan Hem heeft Hij niets uitgezonderd wat Hem niet onderworpen is. Nu zien wij echter nog niet dat Hem alle dingen onderworpen zijn, <br>
+                <b>[9]</b> maar wij zien Jezus met heerlijkheid en eer gekroond, Die voor korte tijd minder dan de engelen geworden was, vanwege het lijden van de dood, opdat Hij door de genade van God voor allen de dood zou proeven. <br>
+                <b>[10]</b> Want het paste Hem, om Wie alle dingen zijn en door Wie alle dingen zijn, dat Hij, om veel kinderen tot heerlijkheid te brengen, de Leidsman van hun zaligheid door lijden zou heiligen. <br>
+                <b>[11]</b> Immers, zowel Hij Die heiligt als zij die geheiligd worden, zijn allen uit één. Daarom schaamt Hij Zich er niet voor hen broeders te noemen, <br>
+                <b>[12]</b> want Hij zegt: Ik zal Uw Naam aan Mijn broeders verkondigen; te midden van de gemeente zal Ik U lofzingen. <br>
+                <b>[13]</b> En verder: Ik zal Mijn vertrouwen op Hem stellen. En vervolgens: Zie, Ik en de kinderen die God Mij gegeven heeft. <br>
+                <b>[14]</b> Omdat nu die kinderen van vlees en bloed zijn, heeft Hij eveneens daaraan deel gehad om door de dood hem die de macht over de dood had – dat is de duivel – teniet te doen, <br>
+                <b>[15]</b> en allen te verlossen die door angst voor de dood gedurende heel hun leven aan slavernij onderworpen waren. <br>
+                <b>[16]</b> Want werkelijk, Hij neemt de engelen niet aan, maar Hij neemt het nageslacht van Abraham aan. <br>
+                <b>[17]</b> Daarom moest Hij in alles aan Zijn broeders gelijk worden, opdat Hij een barmhartig en een getrouw Hogepriester zou sein in de dingen die God betreffen, om de zonden van het volk te verzoenen. <br>
+                <b>[18]</b> Want waarin Hij Zelf geleden heeft, toen Hij verzocht werd, kan Hij hen die verzocht worden, te hulp komen.
             ` 
         },
-        // ----------------------------------
-
         { id: 'questions', title: 'Live Vragen', type: 'qa', label: 'Wat raakt je in de tekst?', dbCol: 'answers', field: 'text' },
         { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ één mooie zin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
         { id: 'song', title: 'Lied', type: 'video', videoId: 'dQw4w9WgXcQ' },
@@ -99,7 +103,6 @@ https://bible.com/bible/1990/heb.2.1-18.HSV
         { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede. <br><br><i>De genade van de Heer zij met jullie.</i>' }
     ];
 
-    // --- ENGINE: SCHERMEN BOUWEN ---
     const container = document.getElementById('main-container');
     const adminBar = document.getElementById('admin-bar');
 
@@ -107,7 +110,6 @@ https://bible.com/bible/1990/heb.2.1-18.HSV
         const div = document.createElement('div');
         div.id = `screen-${s.id}`;
         div.className = 'screen';
-        
         let content = `<h2>${s.title}</h2>`;
         if (s.type === 'info') content += `<p>${s.content}</p>`;
         if (s.type === 'bible') content += `<div class="bible-scroll-box">${s.text}</div>`;
@@ -117,7 +119,6 @@ https://bible.com/bible/1990/heb.2.1-18.HSV
         }
         if (s.type === 'video') content += `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe>`;
         if (s.type === 'dragdrop') content += `<p>Sleep de zinnen om een psalm te vormen:</p><div id="poem-canvas"></div>`;
-
         div.innerHTML = content;
         container.appendChild(div);
 
@@ -128,7 +129,6 @@ https://bible.com/bible/1990/heb.2.1-18.HSV
         adminBar.appendChild(btn);
     });
 
-    // --- FIREBASE FUNCTIES ---
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) {

@@ -15,17 +15,11 @@
         button { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
         .feed { margin-top: 20px; text-align: left; border-top: 2px solid var(--bg); }
         .answer-item { background: #f9f9f9; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--accent); }
-        
-        /* Canvas & Draggables */
-        #canvas-container { position: relative; height: 500px; background: #fff; border: 1px solid #ddd; margin-top: 20px; overflow: hidden; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 25px; cursor: move; box-shadow: 2px 5px 10px rgba(0,0,0,0.1); white-space: nowrap; font-family: sans-serif; font-weight: bold; z-index: 10; }
-        
-        /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
         .admin-bar button { background: #444; font-size: 10px; padding: 5px 10px; white-space: nowrap; color: white; border-radius: 2px; }
         .admin-bar .current-btn { background: var(--accent); }
-        .admin-bar .reset-btn { background: #c0392b; margin-left: auto; }
-
+        .admin-bar .reset-btn { background: #c0392b; margin-left: auto; font-weight: bold; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -50,34 +44,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- DE CONFIGURATIE: KIES JE ELEMENTEN HIER ---
     const screens = [
         { id: 'login', title: 'Inloggen', type: 'input', label: 'Naam:', dbCol: 'names', field: 'name' },
-        { id: 'goals', title: 'Doelen', type: 'info', content: 'Doelen 8 maart...' },
-        
-        // TYPE: BIBLE (Scrollbaar venster)
-        { id: 'reading', title: 'Lezing', type: 'bible', text: '<b>[1]</b> Daarom moeten wij... (vul aan)' },
-        
-        // TYPE: QA (Vraag & Live Antwoorden)
-        { id: 'q1', title: 'Vragen', type: 'qa', label: 'Wat valt je op?', dbCol: 'answers', field: 'text' },
-
-        // TYPE: STATIC-DRAGDROP (Vaste blokjes die jij kiest)
-        { 
-            id: 'concepts', 
-            title: 'Begrippen Ordenen', 
-            type: 'static-dragdrop', 
-            items: ['Genade', 'Geloof', 'Rechtvaardigheid', 'Liefde'], 
-            dbCol: 'static_elements' 
-        },
-
-        // TYPE: DRAGDROP (Dynamisch: blokjes gemaakt van zinnen uit scherm 'lines')
-        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ een zin:', dbCol: 'poem_lines', field: 'text' },
+        { id: 'goals', title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. Hebreeën 2 ontdekken <br>3. Samen creatief zijn.' },
+        { id: 'reading', title: 'Lezing', type: 'bible', text: '<b>[1]</b> Daarom moeten wij ons te meer houden aan wat door ons gehoord is... (vul aan)' },
+        { id: 'q1', title: 'Vragen', type: 'qa', label: 'Wat valt je op in dit gedeelte?', dbCol: 'answers', field: 'text' },
+        { id: 'concepts', title: 'Begrippen', type: 'static-dragdrop', items: ['Genade', 'Geloof', 'Lijden', 'Heiliging'], dbCol: 'static_elements' },
+        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ een kernzin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
         { id: 'creation', title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
-        
         { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
     ];
 
-    // --- ENGINE LOGICA ---
     const container = document.getElementById('main-container');
     const adminBar = document.getElementById('admin-bar');
 
@@ -86,7 +63,6 @@
         div.id = `screen-${s.id}`;
         div.className = 'screen';
         let html = `<h2>${s.title}</h2>`;
-        
         if (s.type === 'info') html += `<p>${s.content}</p>`;
         if (s.type === 'bible') html += `<div class="bible-scroll-box">${s.text}</div>`;
         if (s.type === 'input' || s.type === 'qa') {
@@ -105,14 +81,13 @@
         adminBar.appendChild(btn);
     });
 
-    // Reset Knop Toevoegen
+    // Reset Knop rechtsboven in Admin Bar
     const resetBtn = document.createElement('button');
-    resetBtn.innerText = "RESET DATA";
+    resetBtn.innerText = "DB WISSEN (RESET)";
     resetBtn.className = "reset-btn";
     resetBtn.onclick = () => resetAllData();
     adminBar.appendChild(resetBtn);
 
-    // --- FUNCTIES ---
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) {
@@ -126,17 +101,16 @@
     };
 
     async function resetAllData() {
-        if(confirm("Weet je zeker dat je ALLE antwoorden en zinnen wilt wissen?")){
-            const cols = ['names', 'answers', 'poem_lines', 'static_elements', 'retro'];
-            for(const c of cols) {
-                const qSnap = await getDocs(collection(db, c));
-                qSnap.forEach(d => deleteDoc(doc(db, c, d.id)));
+        if(confirm("LET OP: Hiermee wis je alle namen, antwoorden en verzamelde zinnen voor iedereen. Doorgaan?")){
+            const collectionsToClear = ['names', 'answers', 'poem_lines', 'static_elements'];
+            for(const colName of collectionsToClear) {
+                const qSnap = await getDocs(collection(db, colName));
+                qSnap.forEach(d => deleteDoc(doc(db, colName, d.id)));
             }
-            alert("Database is weer schoon!");
+            alert("Database is leeggemaakt!");
         }
     }
 
-    // --- SYNC ENGINE ---
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -145,24 +119,19 @@
         document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    // Realtime feeds & draggables koppelen
     screens.forEach(s => {
         if(s.dbCol) {
             onSnapshot(collection(db, s.dbCol), (snap) => {
                 const feed = document.getElementById(`feed-${s.id}`);
                 const canvas = document.getElementById(`canvas-${s.id}`);
-                
                 if (feed) {
                     feed.innerHTML = snap.docs.sort((a,b) => b.data().timestamp - a.data().timestamp)
                                               .map(d => `<div class="answer-item">${d.data()[s.field] || d.data().text}</div>`).join("");
                 }
-                
                 if (canvas) {
-                    // Voor static-dragdrop: als collectie leeg is, voeg items eenmalig toe
                     if(s.type === 'static-dragdrop' && snap.empty) {
                         s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 50 + (i*60) }));
                     }
-                    
                     snap.docs.forEach(docSnap => {
                         let el = document.getElementById(`drag-${docSnap.id}`);
                         if(!el) {

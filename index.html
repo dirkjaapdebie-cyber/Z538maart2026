@@ -3,45 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bijbelstudie Live - 8 Maart</title>
+    <title>Bijbelstudie OS - 8 Maart</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --bible-bg: #fffcf0; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        
-        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 120px; }
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 150px; }
         .screen { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.5s; }
-
-        /* Scrollbaar Bijbelvenster */
-        .bible-scroll-box {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 25px;
-            background: var(--bible-bg);
-            border: 1px solid #d3c4a8;
-            border-radius: 6px;
-            text-align: left;
-            line-height: 1.8;
-            font-size: 1.1em;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            margin: 20px 0;
-        }
-        .bible-scroll-box b { color: #a67c00; margin-right: 5px; }
-
-        /* UI Elements */
+        .bible-scroll-box { max-height: 400px; overflow-y: auto; padding: 25px; background: var(--bible-bg); border: 1px solid #d3c4a8; border-radius: 6px; text-align: left; line-height: 1.8; font-size: 1.1em; margin: 20px 0; }
         input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         button { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
         .feed { margin-top: 20px; text-align: left; border-top: 2px solid var(--bg); }
         .answer-item { background: #f9f9f9; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--accent); }
-
-        /* Drag & Drop */
-        #poem-canvas { height: 500px; background: #fff; border: 1px solid #ddd; position: relative; margin-top: 20px; overflow: hidden; }
-        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; z-index: 10; }
-
+        
+        /* Canvas & Draggables */
+        #canvas-container { position: relative; height: 500px; background: #fff; border: 1px solid #ddd; margin-top: 20px; overflow: hidden; }
+        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 25px; cursor: move; box-shadow: 2px 5px 10px rgba(0,0,0,0.1); white-space: nowrap; font-family: sans-serif; font-weight: bold; z-index: 10; }
+        
         /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
-        .admin-bar button { background: #444; font-size: 11px; padding: 5px 10px; white-space: nowrap; color: white; }
+        .admin-bar button { background: #444; font-size: 10px; padding: 5px 10px; white-space: nowrap; color: white; border-radius: 2px; }
         .admin-bar .current-btn { background: var(--accent); }
+        .admin-bar .reset-btn { background: #c0392b; margin-left: auto; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -53,7 +36,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, query, orderBy, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -67,126 +50,145 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // --- DE CONFIGURATIE: KIES JE ELEMENTEN HIER ---
     const screens = [
-        { id: 'login', title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
-        { id: 'retro', title: 'Terugblik', type: 'qa', label: 'Wat is je bijgebleven van de vorige keer?', dbCol: 'retro', field: 'text' },
-        { id: 'goals', title: 'Instructie 8 Maart', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. De tekst doorleven <br>3. Samen een psalm vormen.' },
+        { id: 'login', title: 'Inloggen', type: 'input', label: 'Naam:', dbCol: 'names', field: 'name' },
+        { id: 'goals', title: 'Doelen', type: 'info', content: 'Doelen 8 maart...' },
+        
+        // TYPE: BIBLE (Scrollbaar venster)
+        { id: 'reading', title: 'Lezing', type: 'bible', text: '<b>[1]</b> Daarom moeten wij... (vul aan)' },
+        
+        // TYPE: QA (Vraag & Live Antwoorden)
+        { id: 'q1', title: 'Vragen', type: 'qa', label: 'Wat valt je op?', dbCol: 'answers', field: 'text' },
+
+        // TYPE: STATIC-DRAGDROP (Vaste blokjes die jij kiest)
         { 
-            id: 'bible-reading', 
-            title: 'Lezing: Hebreeën 2:1-18', 
-            type: 'bible', 
-            text: `
-                <b>[1]</b> Daarom moeten wij ons te meer houden aan wat door ons gehoord is, opdat wij niet op enig moment afdrijven. <br>
-                <b>[2]</b> Want als het woord dat door engelen gesproken werd, al bindend was en elke overtreding en ongehoorzaamheid rechtvaardige vergelding ontving, <br>
-                <b>[3]</b> hoe zullen wij dan ontvluchten, als wij zo'n grote zaligheid veronachtzamen, die in het begin door de Heere is verkondigd, en die aan ons is bevestigd door hen die Hem gehoord hebben. <br>
-                <b>[4]</b> God heeft er bovendien mede getuigenis aan gegeven door tekenen, wonderen en allerlei krachten, en gaven van de Heilige Geest, overeenkomstig Zijn wil. <br>
-                <b>[5]</b> Want Hij heeft de komende wereld, waarover wij spreken, niet onderworpen aan de engelen, <br>
-                <b>[6]</b> maar iemand heeft ergens getuigd: Wat is de mens, dat U aan hem denkt, of de mensenzoon, dat U naar hem omziet? <br>
-                <b>[7]</b> U hebt hem voor korte tijd minder gemaakt dan de engelen; met heerlijkheid en eer hebt U hem gekroond. U hebt hem gesteld over de werken van Uw handen; <br>
-                <b>[8]</b> alle dingen hebt U onder zijn voeten onderworpen. Want bij het onderwerpen van alle dingen aan Hem heeft Hij niets uitgezonderd wat Hem niet onderworpen is. Nu zien wij echter nog niet dat Hem alle dingen onderworpen zijn, <br>
-                <b>[9]</b> maar wij zien Jezus met heerlijkheid en eer gekroond, Die voor korte tijd minder dan de engelen geworden was, vanwege het lijden van de dood, opdat Hij door de genade van God voor allen de dood zou proeven. <br>
-                <b>[10]</b> Want het paste Hem, om Wie alle dingen zijn en door Wie alle dingen zijn, dat Hij, om veel kinderen tot heerlijkheid te brengen, de Leidsman van hun zaligheid door lijden zou heiligen. <br>
-                <b>[11]</b> Immers, zowel Hij Die heiligt als zij die geheiligd worden, zijn allen uit één. Daarom schaamt Hij Zich er niet voor hen broeders te noemen, <br>
-                <b>[12]</b> want Hij zegt: Ik zal Uw Naam aan Mijn broeders verkondigen; te midden van de gemeente zal Ik U lofzingen. <br>
-                <b>[13]</b> En verder: Ik zal Mijn vertrouwen op Hem stellen. En vervolgens: Zie, Ik en de kinderen die God Mij gegeven heeft. <br>
-                <b>[14]</b> Omdat nu die kinderen van vlees en bloed zijn, heeft Hij eveneens daaraan deel gehad om door de dood hem die de macht over de dood had – dat is de duivel – teniet te doen, <br>
-                <b>[15]</b> en allen te verlossen die door angst voor de dood gedurende heel hun leven aan slavernij onderworpen waren. <br>
-                <b>[16]</b> Want werkelijk, Hij neemt de engelen niet aan, maar Hij neemt het nageslacht van Abraham aan. <br>
-                <b>[17]</b> Daarom moest Hij in alles aan Zijn broeders gelijk worden, opdat Hij een barmhartig en een getrouw Hogepriester zou sein in de dingen die God betreffen, om de zonden van het volk te verzoenen. <br>
-                <b>[18]</b> Want waarin Hij Zelf geleden heeft, toen Hij verzocht werd, kan Hij hen die verzocht worden, te hulp komen.
-            ` 
+            id: 'concepts', 
+            title: 'Begrippen Ordenen', 
+            type: 'static-dragdrop', 
+            items: ['Genade', 'Geloof', 'Rechtvaardigheid', 'Liefde'], 
+            dbCol: 'static_elements' 
         },
-        { id: 'questions', title: 'Live Vragen', type: 'qa', label: 'Wat raakt je in de tekst?', dbCol: 'answers', field: 'text' },
-        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ één mooie zin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
-        { id: 'song', title: 'Lied', type: 'video', videoId: 'dQw4w9WgXcQ' },
+
+        // TYPE: DRAGDROP (Dynamisch: blokjes gemaakt van zinnen uit scherm 'lines')
+        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ een zin:', dbCol: 'poem_lines', field: 'text' },
         { id: 'creation', title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
-        { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede. <br><br><i>De genade van de Heer zij met jullie.</i>' }
+        
+        { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
     ];
 
+    // --- ENGINE LOGICA ---
     const container = document.getElementById('main-container');
     const adminBar = document.getElementById('admin-bar');
 
-    screens.forEach((s) => {
+    screens.forEach(s => {
         const div = document.createElement('div');
         div.id = `screen-${s.id}`;
         div.className = 'screen';
-        let content = `<h2>${s.title}</h2>`;
-        if (s.type === 'info') content += `<p>${s.content}</p>`;
-        if (s.type === 'bible') content += `<div class="bible-scroll-box">${s.text}</div>`;
+        let html = `<h2>${s.title}</h2>`;
+        
+        if (s.type === 'info') html += `<p>${s.content}</p>`;
+        if (s.type === 'bible') html += `<div class="bible-scroll-box">${s.text}</div>`;
         if (s.type === 'input' || s.type === 'qa') {
-            content += `<p>${s.label}</p><input id="in-${s.id}" placeholder="Typ hier..."><button onclick="sendData('${s.id}', '${s.dbCol}', '${s.field}')">Verstuur</button>`;
-            content += `<div class="feed" id="feed-${s.id}"></div>`;
+            html += `<p>${s.label}</p><input id="in-${s.id}"><button onclick="sendData('${s.id}','${s.dbCol}','${s.field}')">Stuur</button><div class="feed" id="feed-${s.id}"></div>`;
         }
-        if (s.type === 'video') content += `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe>`;
-        if (s.type === 'dragdrop') content += `<p>Sleep de zinnen om een psalm te vormen:</p><div id="poem-canvas"></div>`;
-        div.innerHTML = content;
+        if (s.type === 'dragdrop' || s.type === 'static-dragdrop') {
+            html += `<div id="canvas-${s.id}" style="position:relative; height:500px; border:1px solid #ddd; background:#fff;"></div>`;
+        }
+        div.innerHTML = html;
         container.appendChild(div);
 
         const btn = document.createElement('button');
         btn.innerText = s.title;
-        btn.onclick = () => updateRemoteScreen(s.id);
         btn.id = `btn-${s.id}`;
+        btn.onclick = () => updateRemoteScreen(s.id);
         adminBar.appendChild(btn);
     });
 
+    // Reset Knop Toevoegen
+    const resetBtn = document.createElement('button');
+    resetBtn.innerText = "RESET DATA";
+    resetBtn.className = "reset-btn";
+    resetBtn.onclick = () => resetAllData();
+    adminBar.appendChild(resetBtn);
+
+    // --- FUNCTIES ---
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) {
-            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 20, y: 20 });
+            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 50, y: 50 });
             document.getElementById(`in-${id}`).value = "";
         }
     };
-
-    onSnapshot(doc(db, "appState", "current"), (snap) => {
-        const activeId = snap.data()?.activeScreen || 'login';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`).classList.add('active');
-        document.querySelectorAll('.admin-bar button').forEach(b => b.classList.remove('current-btn'));
-        const activeBtn = document.getElementById(`btn-${activeId}`);
-        if(activeBtn) activeBtn.classList.add('current-btn');
-    });
 
     window.updateRemoteScreen = async (id) => {
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true });
     };
 
-    screens.filter(s => s.dbCol && s.type !== 'dragdrop').forEach(s => {
-        onSnapshot(query(collection(db, s.dbCol), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById(`feed-${s.id}`);
-            if (feed) feed.innerHTML = snap.docs.map(d => `<div class="answer-item">${d.data()[s.field]}</div>`).join("");
-        });
-    });
-
-    onSnapshot(collection(db, "poem_lines"), (snap) => {
-        const canvas = document.getElementById('poem-canvas');
-        if (!canvas) return;
-        snap.docs.forEach(docSnap => {
-            const data = docSnap.data();
-            let el = document.getElementById(`drag-${docSnap.id}`);
-            if (!el) {
-                el = document.createElement('div');
-                el.id = `drag-${docSnap.id}`;
-                el.className = 'draggable-line';
-                el.innerText = data.text;
-                canvas.appendChild(el);
-                setupDragging(el, docSnap.id);
+    async function resetAllData() {
+        if(confirm("Weet je zeker dat je ALLE antwoorden en zinnen wilt wissen?")){
+            const cols = ['names', 'answers', 'poem_lines', 'static_elements', 'retro'];
+            for(const c of cols) {
+                const qSnap = await getDocs(collection(db, c));
+                qSnap.forEach(d => deleteDoc(doc(db, c, d.id)));
             }
-            el.style.left = data.x + "px";
-            el.style.top = data.y + "px";
-        });
+            alert("Database is weer schoon!");
+        }
+    }
+
+    // --- SYNC ENGINE ---
+    onSnapshot(doc(db, "appState", "current"), (snap) => {
+        const activeId = snap.data()?.activeScreen || 'login';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${activeId}`).classList.add('active');
+        document.querySelectorAll('.admin-bar button').forEach(b => b.classList.remove('current-btn'));
+        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    function setupDragging(el, docId) {
-        let dragging = false;
-        el.onmousedown = () => { dragging = true; };
-        document.onmouseup = () => { dragging = false; };
-        document.onmousemove = async (e) => {
-            if (!dragging) return;
-            const rect = document.getElementById('poem-canvas').getBoundingClientRect();
-            await updateDoc(doc(db, "poem_lines", docId), { 
-                x: e.clientX - rect.left - 40, 
-                y: e.clientY - rect.top - 10 
+    // Realtime feeds & draggables koppelen
+    screens.forEach(s => {
+        if(s.dbCol) {
+            onSnapshot(collection(db, s.dbCol), (snap) => {
+                const feed = document.getElementById(`feed-${s.id}`);
+                const canvas = document.getElementById(`canvas-${s.id}`);
+                
+                if (feed) {
+                    feed.innerHTML = snap.docs.sort((a,b) => b.data().timestamp - a.data().timestamp)
+                                              .map(d => `<div class="answer-item">${d.data()[s.field] || d.data().text}</div>`).join("");
+                }
+                
+                if (canvas) {
+                    // Voor static-dragdrop: als collectie leeg is, voeg items eenmalig toe
+                    if(s.type === 'static-dragdrop' && snap.empty) {
+                        s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 50 + (i*60) }));
+                    }
+                    
+                    snap.docs.forEach(docSnap => {
+                        let el = document.getElementById(`drag-${docSnap.id}`);
+                        if(!el) {
+                            el = document.createElement('div');
+                            el.id = `drag-${docSnap.id}`;
+                            el.className = 'draggable';
+                            el.innerText = docSnap.data().text;
+                            canvas.appendChild(el);
+                            setupDragging(el, s.dbCol, docSnap.id, canvas);
+                        }
+                        el.style.left = docSnap.data().x + "px";
+                        el.style.top = docSnap.data().y + "px";
+                    });
+                }
             });
+        }
+    });
+
+    function setupDragging(el, col, docId, canvas) {
+        let active = false;
+        el.onmousedown = () => active = true;
+        document.onmouseup = () => active = false;
+        document.onmousemove = (e) => {
+            if(!active) return;
+            const r = canvas.getBoundingClientRect();
+            updateDoc(doc(db, col, docId), { x: e.clientX - r.left - 50, y: e.clientY - r.top - 20 });
         };
     }
 </script>

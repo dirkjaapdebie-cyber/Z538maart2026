@@ -3,36 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bijbelstudie Interactief - 8 Maart</title>
+    <title>Bijbelstudie Live - 8 Maart</title>
     <style>
-        :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
+        :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --bible-bg: #fffcf0; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         
-        /* Containers */
-        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 100px; }
-        .screen { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 400px; }
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 120px; }
+        .screen { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.5s; }
 
-        /* Typography */
-        h1, h2 { color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .instruction { font-style: italic; color: #7f8c8d; margin-bottom: 20px; }
+        /* Scrollbaar Bijbelvenster */
+        .bible-scroll-box {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 25px;
+            background: var(--bible-bg);
+            border: 1px solid #d3c4a8;
+            border-radius: 6px;
+            text-align: left;
+            line-height: 1.8;
+            font-size: 1.1em;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            margin: 20px 0;
+        }
+        .bible-scroll-box b { color: #a67c00; margin-right: 5px; }
 
-        /* Inputs & Buttons */
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: sans-serif; }
-        button { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: var(--accent); }
-
-        /* Feeds & Lists */
-        .feed { margin-top: 20px; text-align: left; border-top: 2px solid var(--bg); padding-top: 20px; }
+        /* UI Elements */
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .feed { margin-top: 20px; text-align: left; border-top: 2px solid var(--bg); }
         .answer-item { background: #f9f9f9; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--accent); }
 
-        /* Psalm Creator (Drag & Drop) */
-        #poem-canvas { height: 500px; background: #fff; border: 1px solid #ddd; position: relative; margin-top: 20px; overflow: hidden; background-image: radial-gradient(#eee 1px, transparent 1px); background-size: 20px 20px; }
-        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; user-select: none; }
+        /* Drag & Drop */
+        #poem-canvas { height: 500px; background: #fff; border: 1px solid #ddd; position: relative; margin-top: 20px; overflow: hidden; }
+        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; }
 
         /* Admin Bar */
-        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; color: white; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
-        .admin-bar button { background: #444; font-size: 11px; padding: 5px 10px; white-space: nowrap; }
+        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
+        .admin-bar button { background: #444; font-size: 11px; padding: 5px 10px; white-space: nowrap; color: white; }
         .admin-bar .current-btn { background: var(--accent); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -40,11 +48,8 @@
 </head>
 <body>
 
-<div class="container" id="main-container">
-    </div>
-
-<div class="admin-bar" id="admin-bar">
-    </div>
+<div class="container" id="main-container"></div>
+<div class="admin-bar" id="admin-bar"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -63,14 +68,33 @@
     const db = getFirestore(app);
 
     // --- CONFIGURATIE VAN DE SCHERMEN ---
-    // Hier kun je schermen toevoegen of dupliceren!
     const screens = [
         { id: 'login', title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
         { id: 'retro', title: 'Terugblik', type: 'qa', label: 'Wat is je bijgebleven van de vorige keer?', dbCol: 'retro', field: 'text' },
         { id: 'goals', title: 'Instructie 8 Maart', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. De tekst doorleven <br>3. Samen een psalm vormen.' },
-        { id: 'questions', title: 'Live Vragen', type: 'qa', label: 'Wat raakt je in de tekst van vandaag?', dbCol: 'answers', field: 'text' },
-        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ één mooie zin of kernwoord:', dbCol: 'poem_lines', field: 'text' },
-        { id: 'song', title: 'Lied', type: 'video', videoId: 'dQw4w9WgXcQ' }, // Vervang met jouw YouTube ID
+        
+        // Hebreeën 2:1-18 HSV
+[1] Daarom moeten wij ons te meer houden aan wat door ons gehoord is, opdat wij niet op enig moment afdrijven. [2] Want als het woord dat door engelen gesproken werd, al bindend was en elke overtreding en ongehoorzaamheid rechtvaardige vergelding ontving, [3]  hoe zullen wij dan ontvluchten, als wij zo'n grote zaligheid veronachtzamen, die in het begin door de Heere is verkondigd, en die aan ons is bevestigd door hen die Hem gehoord hebben. [4]  God heeft er bovendien mede getuigenis aan gegeven door tekenen, wonderen en allerlei krachten, en gaven van de Heilige Geest, overeenkomstig Zijn wil. [5] Want Hij heeft de komende wereld, waarover wij spreken, niet onderworpen aan de engelen, [6] maar iemand heeft ergens getuigd: Wat is de mens, dat U aan hem denkt, of de mensenzoon, dat U naar hem omziet? [7] U hebt hem voor korte tijd minder gemaakt dan de engelen; met heerlijkheid en eer hebt U hem gekroond. U hebt hem gesteld over de werken van Uw handen; [8]  alle dingen hebt U onder zijn voeten onderworpen. Want bij het onderwerpen van alle dingen aan Hem heeft Hij niets uitgezonderd wat Hem niet onderworpen is. Nu zien wij echter nog niet dat Hem alle dingen onderworpen zijn, [9] maar wij zien Jezus met heerlijkheid en eer gekroond, Die voor korte tijd minder dan de engelen geworden was, vanwege het lijden van de dood, opdat Hij door de genade van God voor allen de dood zou proeven. [10] Want het paste Hem, om Wie alle dingen zijn en door Wie alle dingen zijn, dat Hij, om veel kinderen tot heerlijkheid te brengen, de Leidsman van hun zaligheid door lijden zou heiligen. [11] Immers, zowel Hij Die heiligt als zij die geheiligd worden, zijn allen uit één. Daarom schaamt Hij Zich er niet voor hen broeders te noemen, [12]  want Hij zegt: Ik zal Uw Naam aan Mijn broeders verkondigen; te midden van de gemeente zal Ik U lofzingen. [13] En verder: Ik zal Mijn vertrouwen op Hem stellen. En vervolgens: Zie, Ik en de kinderen die God Mij gegeven heeft. [14] Omdat nu die kinderen van vlees en bloed zijn, heeft Hij eveneens daaraan deel gehad om door de dood hem die de macht over de dood had – dat is de duivel – teniet te doen, [15] en allen te verlossen die door angst voor de dood gedurende heel hun leven aan slavernij onderworpen waren. [16] Want werkelijk, Hij neemt de engelen niet aan, maar Hij neemt het nageslacht van Abraham aan. [17]  Daarom moest Hij in alles aan Zijn broeders gelijk worden, opdat Hij een barmhartig en een getrouw Hogepriester zou zijn in de dingen die God betreffen, om de zonden van het volk te verzoenen. [18]  Want waarin Hij Zelf geleden heeft, toen Hij verzocht werd, kan Hij hen die verzocht worden, te hulp komen.
+
+https://bible.com/bible/1990/heb.2.1-18.HSV
+        { 
+            id: 'bible-reading', 
+            title: 'Lezing: 8 Maart', 
+            type: 'bible', 
+            text: `
+                <b>1</b> Hier plak je de tekst voor vers 1.<br>
+                <b>2</b> En hier komt vers 2 terecht.<br>
+                <b>3</b> Je kunt zoveel regels toevoegen als je wilt.<br>
+                <b>4</b> Het venster zal automatisch een scrollbalk tonen als de tekst lang wordt.<br>
+                <br>
+                <b>5</b> Tip: Gebruik &lt;br&gt; voor een nieuwe regel.
+            ` 
+        },
+        // ----------------------------------
+
+        { id: 'questions', title: 'Live Vragen', type: 'qa', label: 'Wat raakt je in de tekst?', dbCol: 'answers', field: 'text' },
+        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ één mooie zin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
+        { id: 'song', title: 'Lied', type: 'video', videoId: 'dQw4w9WgXcQ' },
         { id: 'creation', title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
         { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede. <br><br><i>De genade van de Heer zij met jullie.</i>' }
     ];
@@ -79,13 +103,14 @@
     const container = document.getElementById('main-container');
     const adminBar = document.getElementById('admin-bar');
 
-    screens.forEach((s, index) => {
+    screens.forEach((s) => {
         const div = document.createElement('div');
         div.id = `screen-${s.id}`;
         div.className = 'screen';
         
         let content = `<h2>${s.title}</h2>`;
         if (s.type === 'info') content += `<p>${s.content}</p>`;
+        if (s.type === 'bible') content += `<div class="bible-scroll-box">${s.text}</div>`;
         if (s.type === 'input' || s.type === 'qa') {
             content += `<p>${s.label}</p><input id="in-${s.id}" placeholder="Typ hier..."><button onclick="sendData('${s.id}', '${s.dbCol}', '${s.field}')">Verstuur</button>`;
             content += `<div class="feed" id="feed-${s.id}"></div>`;
@@ -96,7 +121,6 @@
         div.innerHTML = content;
         container.appendChild(div);
 
-        // Admin knoppen
         const btn = document.createElement('button');
         btn.innerText = s.title;
         btn.onclick = () => updateRemoteScreen(s.id);
@@ -104,29 +128,28 @@
         adminBar.appendChild(btn);
     });
 
-    // --- DATA HANDLING ---
+    // --- FIREBASE FUNCTIES ---
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) {
-            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 50, y: 50 });
+            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 20, y: 20 });
             document.getElementById(`in-${id}`).value = "";
         }
     };
 
-    // --- REALTIME SYNC ---
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(`screen-${activeId}`).classList.add('active');
         document.querySelectorAll('.admin-bar button').forEach(b => b.classList.remove('current-btn'));
-        document.getElementById(`btn-${activeId}`).classList.add('current-btn');
+        const activeBtn = document.getElementById(`btn-${activeId}`);
+        if(activeBtn) activeBtn.classList.add('current-btn');
     });
 
     window.updateRemoteScreen = async (id) => {
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true });
     };
 
-    // Feeds laden
     screens.filter(s => s.dbCol && s.type !== 'dragdrop').forEach(s => {
         onSnapshot(query(collection(db, s.dbCol), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById(`feed-${s.id}`);
@@ -134,15 +157,12 @@
         });
     });
 
-    // Drag & Drop Logica voor de Psalm
     onSnapshot(collection(db, "poem_lines"), (snap) => {
         const canvas = document.getElementById('poem-canvas');
         if (!canvas) return;
-        
         snap.docs.forEach(docSnap => {
             const data = docSnap.data();
             let el = document.getElementById(`drag-${docSnap.id}`);
-            
             if (!el) {
                 el = document.createElement('div');
                 el.id = `drag-${docSnap.id}`;
@@ -163,9 +183,10 @@
         document.onmousemove = async (e) => {
             if (!dragging) return;
             const rect = document.getElementById('poem-canvas').getBoundingClientRect();
-            const x = e.clientX - rect.left - 40;
-            const y = e.clientY - rect.top - 10;
-            await updateDoc(doc(db, "poem_lines", docId), { x, y });
+            await updateDoc(doc(db, "poem_lines", docId), { 
+                x: e.clientX - rect.left - 40, 
+                y: e.clientY - rect.top - 10 
+            });
         };
     }
 </script>

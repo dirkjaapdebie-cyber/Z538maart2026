@@ -3,161 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bijbelstudie Interactief</title>
+    <title>Bijbelstudie Interactief - 8 Maart</title>
     <style>
-        :root { --bg: #f5f5f7; --card: #ffffff; --primary: #34495e; --accent: #d35400; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--primary); margin: 0; padding: 0; }
+        :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
         
-        .container { max-width: 600px; margin: 50px auto; padding: 20px; }
-        .screen { display: none; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        .active { display: block; }
+        /* Containers */
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 100px; }
+        .screen { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 400px; }
+        .active { display: block; animation: fadeIn 0.5s; }
 
-        /* UI Elements */
-        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
-        button { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { opacity: 0.8; }
+        /* Typography */
+        h1, h2 { color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .instruction { font-style: italic; color: #7f8c8d; margin-bottom: 20px; }
 
-        /* Live Feeds */
-        .feed { margin-top: 20px; text-align: left; background: #fdfdfd; border-radius: 10px; padding: 15px; border: 1px solid #eee; min-height: 50px; }
-        .name-tag { display: inline-block; background: #eee; padding: 5px 10px; margin: 3px; border-radius: 15px; font-size: 14px; }
+        /* Inputs & Buttons */
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-family: sans-serif; }
+        button { padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: var(--accent); }
 
-        /* Drag & Drop Canvas */
-        #canvas { position: relative; height: 350px; border: 2px dashed #bdc3c7; background: #fff; margin-top: 20px; border-radius: 15px; overflow: hidden; }
-        .draggable { 
-            position: absolute; width: 100px; padding: 10px; background: var(--accent); color: white; 
-            border-radius: 8px; cursor: move; font-weight: bold; user-select: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+        /* Feeds & Lists */
+        .feed { margin-top: 20px; text-align: left; border-top: 2px solid var(--bg); padding-top: 20px; }
+        .answer-item { background: #f9f9f9; padding: 10px; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--accent); }
 
-        /* Admin Controls */
-        .admin-controls { position: fixed; bottom: 0; width: 100%; background: #222; padding: 15px; display: flex; justify-content: center; gap: 10px; z-index: 100; }
-        .admin-controls button { background: #444; font-size: 12px; }
-        .admin-controls .active-btn { background: #27ae60; }
+        /* Psalm Creator (Drag & Drop) */
+        #poem-canvas { height: 500px; background: #fff; border: 1px solid #ddd; position: relative; margin-top: 20px; overflow: hidden; background-image: radial-gradient(#eee 1px, transparent 1px); background-size: 20px 20px; }
+        .draggable-line { position: absolute; padding: 8px 15px; background: white; border: 1px solid #ccc; border-radius: 4px; cursor: move; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); white-space: nowrap; user-select: none; }
+
+        /* Admin Bar */
+        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; color: white; padding: 10px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
+        .admin-bar button { background: #444; font-size: 11px; padding: 5px 10px; white-space: nowrap; }
+        .admin-bar .current-btn { background: var(--accent); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="screen-names" class="screen">
-            <h2>Welkom!</h2>
-            <p>Vul je naam in om deel te nemen aan de livefeed.</p>
-            <input type="text" id="userName" placeholder="Je naam...">
-            <button onclick="addName()">Deelnemen</button>
-            <div class="feed" id="nameFeed"></div>
-        </div>
-
-        <div id="screen-questions" class="screen">
-            <h2 id="currentQuestion">Wat spreekt je aan in dit vers?</h2>
-            <input type="text" id="userAnswer" placeholder="Jouw antwoord...">
-            <button onclick="sendAnswer()">Verstuur</button>
-            <div class="feed" id="answerFeed"></div>
-        </div>
-
-        <div id="screen-design" class="screen">
-            <h2>Thema's Ordenen</h2>
-            <p>Sleep de blokken naar de juiste positie.</p>
-            <div id="canvas">
-                <div id="drag-1" class="draggable">Geloof</div>
-                <div id="drag-2" class="draggable">Hoop</div>
-                <div id="drag-3" class="draggable">Liefde</div>
-            </div>
-        </div>
+<div class="container" id="main-container">
     </div>
 
-    <div class="admin-controls">
-        <button onclick="changeScreen('names')">1. Namen</button>
-        <button onclick="changeScreen('questions')">2. Vragen</button>
-        <button onclick="changeScreen('design')">3. Ontwerp</button>
+<div class="admin-bar" id="admin-bar">
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Jouw configuratie
-        const firebaseConfig = {
-            apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
-            authDomain: "z53bijbelstudie.firebaseapp.com",
-            projectId: "z53bijbelstudie",
-            storageBucket: "z53bijbelstudie.firebasestorage.app",
-            messagingSenderId: "86708654444",
-            appId: "1:86708654444:web:729295ba18f564b841a349"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
+        authDomain: "z53bijbelstudie.firebaseapp.com",
+        projectId: "z53bijbelstudie",
+        storageBucket: "z53bijbelstudie.firebasestorage.app",
+        messagingSenderId: "86708654444",
+        appId: "1:86708654444:web:729295ba18f564b841a349"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        // --- SCHERM SYNC LOGICA ---
-        // Luister naar welk scherm actief moet zijn
-        onSnapshot(doc(db, "appState", "current"), (snapshot) => {
-            const data = snapshot.data();
-            if (data) {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                document.getElementById(`screen-${data.activeScreen}`).classList.add('active');
-            }
+    // --- CONFIGURATIE VAN DE SCHERMEN ---
+    // Hier kun je schermen toevoegen of dupliceren!
+    const screens = [
+        { id: 'login', title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
+        { id: 'retro', title: 'Terugblik', type: 'qa', label: 'Wat is je bijgebleven van de vorige keer?', dbCol: 'retro', field: 'text' },
+        { id: 'goals', title: 'Instructie 8 Maart', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding zoeken <br>2. De tekst doorleven <br>3. Samen een psalm vormen.' },
+        { id: 'questions', title: 'Live Vragen', type: 'qa', label: 'Wat raakt je in de tekst van vandaag?', dbCol: 'answers', field: 'text' },
+        { id: 'lines', title: 'Zinnen verzamelen', type: 'input', label: 'Typ één mooie zin of kernwoord:', dbCol: 'poem_lines', field: 'text' },
+        { id: 'song', title: 'Lied', type: 'video', videoId: 'dQw4w9WgXcQ' }, // Vervang met jouw YouTube ID
+        { id: 'creation', title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
+        { id: 'blessing', title: 'Zegen', type: 'info', content: 'Ga heen in vrede. <br><br><i>De genade van de Heer zij met jullie.</i>' }
+    ];
+
+    // --- ENGINE: SCHERMEN BOUWEN ---
+    const container = document.getElementById('main-container');
+    const adminBar = document.getElementById('admin-bar');
+
+    screens.forEach((s, index) => {
+        const div = document.createElement('div');
+        div.id = `screen-${s.id}`;
+        div.className = 'screen';
+        
+        let content = `<h2>${s.title}</h2>`;
+        if (s.type === 'info') content += `<p>${s.content}</p>`;
+        if (s.type === 'input' || s.type === 'qa') {
+            content += `<p>${s.label}</p><input id="in-${s.id}" placeholder="Typ hier..."><button onclick="sendData('${s.id}', '${s.dbCol}', '${s.field}')">Verstuur</button>`;
+            content += `<div class="feed" id="feed-${s.id}"></div>`;
+        }
+        if (s.type === 'video') content += `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe>`;
+        if (s.type === 'dragdrop') content += `<p>Sleep de zinnen om een psalm te vormen:</p><div id="poem-canvas"></div>`;
+
+        div.innerHTML = content;
+        container.appendChild(div);
+
+        // Admin knoppen
+        const btn = document.createElement('button');
+        btn.innerText = s.title;
+        btn.onclick = () => updateRemoteScreen(s.id);
+        btn.id = `btn-${s.id}`;
+        adminBar.appendChild(btn);
+    });
+
+    // --- DATA HANDLING ---
+    window.sendData = async (id, col, field) => {
+        const val = document.getElementById(`in-${id}`).value;
+        if (val) {
+            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 50, y: 50 });
+            document.getElementById(`in-${id}`).value = "";
+        }
+    };
+
+    // --- REALTIME SYNC ---
+    onSnapshot(doc(db, "appState", "current"), (snap) => {
+        const activeId = snap.data()?.activeScreen || 'login';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${activeId}`).classList.add('active');
+        document.querySelectorAll('.admin-bar button').forEach(b => b.classList.remove('current-btn'));
+        document.getElementById(`btn-${activeId}`).classList.add('current-btn');
+    });
+
+    window.updateRemoteScreen = async (id) => {
+        await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true });
+    };
+
+    // Feeds laden
+    screens.filter(s => s.dbCol && s.type !== 'dragdrop').forEach(s => {
+        onSnapshot(query(collection(db, s.dbCol), orderBy("timestamp", "desc")), (snap) => {
+            const feed = document.getElementById(`feed-${s.id}`);
+            if (feed) feed.innerHTML = snap.docs.map(d => `<div class="answer-item">${d.data()[s.field]}</div>`).join("");
         });
+    });
 
-        // Functie voor de leider om het scherm te wisselen
-        window.changeScreen = async (screenId) => {
-            await setDoc(doc(db, "appState", "current"), { activeScreen: screenId }, { merge: true });
-        };
-
-        // --- NAMEN LOGICA ---
-        window.addName = async () => {
-            const name = document.getElementById('userName').value;
-            if (name) {
-                await addDoc(collection(db, "names"), { name, timestamp: Date.now() });
-                document.getElementById('userName').disabled = true;
+    // Drag & Drop Logica voor de Psalm
+    onSnapshot(collection(db, "poem_lines"), (snap) => {
+        const canvas = document.getElementById('poem-canvas');
+        if (!canvas) return;
+        
+        snap.docs.forEach(docSnap => {
+            const data = docSnap.data();
+            let el = document.getElementById(`drag-${docSnap.id}`);
+            
+            if (!el) {
+                el = document.createElement('div');
+                el.id = `drag-${docSnap.id}`;
+                el.className = 'draggable-line';
+                el.innerText = data.text;
+                canvas.appendChild(el);
+                setupDragging(el, docSnap.id);
             }
-        };
-
-        onSnapshot(query(collection(db, "names"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('nameFeed');
-            feed.innerHTML = snap.docs.map(d => `<span class="name-tag">${d.data().name}</span>`).join("");
+            el.style.left = data.x + "px";
+            el.style.top = data.y + "px";
         });
+    });
 
-        // --- VRAGEN/ANTWOORDEN LOGICA ---
-        window.sendAnswer = async () => {
-            const text = document.getElementById('userAnswer').value;
-            if (text) {
-                await addDoc(collection(db, "answers"), { text, timestamp: Date.now() });
-                document.getElementById('userAnswer').value = "";
-            }
+    function setupDragging(el, docId) {
+        let dragging = false;
+        el.onmousedown = () => { dragging = true; };
+        document.onmouseup = () => { dragging = false; };
+        document.onmousemove = async (e) => {
+            if (!dragging) return;
+            const rect = document.getElementById('poem-canvas').getBoundingClientRect();
+            const x = e.clientX - rect.left - 40;
+            const y = e.clientY - rect.top - 10;
+            await updateDoc(doc(db, "poem_lines", docId), { x, y });
         };
-
-        onSnapshot(query(collection(db, "answers"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('answerFeed');
-            feed.innerHTML = snap.docs.map(d => `<p><b>•</b> ${d.data().text}</p>`).join("");
-        });
-
-        // --- DRAG & DROP LOGICA ---
-        const setupDrag = (id) => {
-            const el = document.getElementById(id);
-            let active = false;
-
-            el.onmousedown = () => { active = true; };
-            document.onmouseup = () => { active = false; };
-            document.onmousemove = async (e) => {
-                if (!active) return;
-                const canvas = document.getElementById('canvas').getBoundingClientRect();
-                const x = e.clientX - canvas.left - 50;
-                const y = e.clientY - canvas.top - 20;
-
-                // Update Firestore
-                await setDoc(doc(db, "elements", id), { x, y }, { merge: true });
-            };
-
-            // Luister naar positie veranderingen van anderen
-            onSnapshot(doc(db, "elements", id), (snap) => {
-                const pos = snap.data();
-                if (pos) {
-                    el.style.left = pos.x + 'px';
-                    el.style.top = pos.y + 'px';
-                }
-            });
-        };
-
-        ['drag-1', 'drag-2', 'drag-3'].forEach(setupDrag);
-
-    </script>
+    }
+</script>
 </body>
 </html>

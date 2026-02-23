@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bijbelstudie Interactief</title>
+    <style>
+        :root { --bg: #f5f5f7; --card: #ffffff; --primary: #34495e; --accent: #d35400; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--primary); margin: 0; padding: 0; }
+        
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; }
+        .screen { display: none; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .active { display: block; }
+
+        /* UI Elements */
+        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+        button { padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
+
+        /* Live Feeds */
+        .feed { margin-top: 20px; text-align: left; background: #fdfdfd; border-radius: 10px; padding: 15px; border: 1px solid #eee; min-height: 50px; }
+        .name-tag { display: inline-block; background: #eee; padding: 5px 10px; margin: 3px; border-radius: 15px; font-size: 14px; }
+
+        /* Drag & Drop Canvas */
+        #canvas { position: relative; height: 350px; border: 2px dashed #bdc3c7; background: #fff; margin-top: 20px; border-radius: 15px; overflow: hidden; }
+        .draggable { 
+            position: absolute; width: 100px; padding: 10px; background: var(--accent); color: white; 
+            border-radius: 8px; cursor: move; font-weight: bold; user-select: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Admin Controls */
+        .admin-controls { position: fixed; bottom: 0; width: 100%; background: #222; padding: 15px; display: flex; justify-content: center; gap: 10px; z-index: 100; }
+        .admin-controls button { background: #444; font-size: 12px; }
+        .admin-controls .active-btn { background: #27ae60; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="screen-names" class="screen">
+            <h2>Welkom!</h2>
+            <p>Vul je naam in om deel te nemen aan de livefeed.</p>
+            <input type="text" id="userName" placeholder="Je naam...">
+            <button onclick="addName()">Deelnemen</button>
+            <div class="feed" id="nameFeed"></div>
+        </div>
+
+        <div id="screen-questions" class="screen">
+            <h2 id="currentQuestion">Wat spreekt je aan in dit vers?</h2>
+            <input type="text" id="userAnswer" placeholder="Jouw antwoord...">
+            <button onclick="sendAnswer()">Verstuur</button>
+            <div class="feed" id="answerFeed"></div>
+        </div>
+
+        <div id="screen-design" class="screen">
+            <h2>Thema's Ordenen</h2>
+            <p>Sleep de blokken naar de juiste positie.</p>
+            <div id="canvas">
+                <div id="drag-1" class="draggable">Geloof</div>
+                <div id="drag-2" class="draggable">Hoop</div>
+                <div id="drag-3" class="draggable">Liefde</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-controls">
+        <button onclick="changeScreen('names')">1. Namen</button>
+        <button onclick="changeScreen('questions')">2. Vragen</button>
+        <button onclick="changeScreen('design')">3. Ontwerp</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Jouw configuratie
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
+            authDomain: "z53bijbelstudie.firebaseapp.com",
+            projectId: "z53bijbelstudie",
+            storageBucket: "z53bijbelstudie.firebasestorage.app",
+            messagingSenderId: "86708654444",
+            appId: "1:86708654444:web:729295ba18f564b841a349"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- SCHERM SYNC LOGICA ---
+        // Luister naar welk scherm actief moet zijn
+        onSnapshot(doc(db, "appState", "current"), (snapshot) => {
+            const data = snapshot.data();
+            if (data) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(`screen-${data.activeScreen}`).classList.add('active');
+            }
+        });
+
+        // Functie voor de leider om het scherm te wisselen
+        window.changeScreen = async (screenId) => {
+            await setDoc(doc(db, "appState", "current"), { activeScreen: screenId }, { merge: true });
+        };
+
+        // --- NAMEN LOGICA ---
+        window.addName = async () => {
+            const name = document.getElementById('userName').value;
+            if (name) {
+                await addDoc(collection(db, "names"), { name, timestamp: Date.now() });
+                document.getElementById('userName').disabled = true;
+            }
+        };
+
+        onSnapshot(query(collection(db, "names"), orderBy("timestamp", "desc")), (snap) => {
+            const feed = document.getElementById('nameFeed');
+            feed.innerHTML = snap.docs.map(d => `<span class="name-tag">${d.data().name}</span>`).join("");
+        });
+
+        // --- VRAGEN/ANTWOORDEN LOGICA ---
+        window.sendAnswer = async () => {
+            const text = document.getElementById('userAnswer').value;
+            if (text) {
+                await addDoc(collection(db, "answers"), { text, timestamp: Date.now() });
+                document.getElementById('userAnswer').value = "";
+            }
+        };
+
+        onSnapshot(query(collection(db, "answers"), orderBy("timestamp", "desc")), (snap) => {
+            const feed = document.getElementById('answerFeed');
+            feed.innerHTML = snap.docs.map(d => `<p><b>•</b> ${d.data().text}</p>`).join("");
+        });
+
+        // --- DRAG & DROP LOGICA ---
+        const setupDrag = (id) => {
+            const el = document.getElementById(id);
+            let active = false;
+
+            el.onmousedown = () => { active = true; };
+            document.onmouseup = () => { active = false; };
+            document.onmousemove = async (e) => {
+                if (!active) return;
+                const canvas = document.getElementById('canvas').getBoundingClientRect();
+                const x = e.clientX - canvas.left - 50;
+                const y = e.clientY - canvas.top - 20;
+
+                // Update Firestore
+                await setDoc(doc(db, "elements", id), { x, y }, { merge: true });
+            };
+
+            // Luister naar positie veranderingen van anderen
+            onSnapshot(doc(db, "elements", id), (snap) => {
+                const pos = snap.data();
+                if (pos) {
+                    el.style.left = pos.x + 'px';
+                    el.style.top = pos.y + 'px';
+                }
+            });
+        };
+
+        ['drag-1', 'drag-2', 'drag-3'].forEach(setupDrag);
+
+    </script>
+</body>
+</html>

@@ -20,8 +20,7 @@
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         .reset-btn { background: #c0392b !important; margin-left: auto; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; }
-        .draggable { position: absolute; padding: 12px 35px 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
-        .delete-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #eee; color: #666; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 1px solid #ccc; }
+        .draggable { position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
         input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 70%; margin-right: 5px; }
         button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -54,16 +53,14 @@
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
-        mozes_cv: { title: 'Doel 1: Mozes\' CV', type: 'bible', text: `<strong>CURRICULUM VITAE: MOZES</strong><br><br><strong>PERSOONLIJK PROFIEL</strong><br>Dienaar van de Allerhoogste, ervaren in crisismanagement en wetgeving.<br><br><strong>WERKERVARING</strong><br>• Prins van Egypte<br>• Bevrijder van Israël<br>• Wetgever (Sinaï)<br>• Intermediair van God<br><br><strong>VAARDIGHEDEN</strong><br>• Dienstbaarheid & Trouw<br>• Zachtmoedigheid<br><br><strong>REFERENTIE</strong><br>• God zelf ("Mozes is trouw in Mijn huis")` },
-        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... \n[2] Hij is getrouw aan God, zoals ook Mozes trouw was in heel Zijn huis... \n[5] Mozes was trouw als dienaar... \n[6] Christus als Zoon over Zijn huis.` },
-        woestijn_cv: { 
-            title: 'Doel 2: Woestijn CV', 
-            type: 'bible', 
-            text: `<strong>CV VAN DE WOESTIJNREIZIGER</strong>\n\n<strong>WIE BEN IK?</strong>\nIemand die eindelijk vrij is, maar nog erg moet wennen. Ik ben weg uit Egypte, maar in mijn hoofd zit ik er nog vaak.\n\n<strong>WAT DOE IK DE HELE DAG?</strong>\n• <strong>Eten wat de pot schaft:</strong> Elke dag manna. Het is er altijd genoeg, maar het gaat wel vervelen.\n• <strong>Wandelen en wachten:</strong> Ik volg de wolk en de vuurkolom. Ik ben een expert in het opzetten van mijn tent.\n• <strong>Terugverlangen:</strong> Ik denk vaak aan het lekkere eten in Egypte. De woestijn is zwaar en ik voel me nog niet sterk.\n\n<strong>WAT KAN IK GOED?</strong>\n• <strong>Volhouden:</strong> Ook al is het saai, ik loop elke dag weer verder.\n• <strong>Twijfelen:</strong> Ik vind het soms lastig om te vertrouwen als ik dorst heb.\n• <strong>Dromen:</strong> Ik hoop op een plek waar ik eindelijk rust heb.\n\n<em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om 'Egypte' uit het volk te halen.</em>`
-        },
-        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit gedeelte?', dbCol: 'answers_1', field: 'text' },
-        concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Rust'], dbCol: 'concepts_final' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
+        mozes_cv: { title: 'Doel 1: Mozes\' CV', type: 'bible', text: `<strong>CURRICULUM VITAE: MOZES</strong>\n\nDienaar van de Allerhoogste, ervaren in crisismanagement en wetgeving.\n\n• Prins van Egypte\n• Bevrijder van Israël\n• Wetgever (Sinaï)\n• Intermediair van God` },
+        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...\n[6] Christus als Zoon over Zijn huis.` },
+        woestijn_cv: { title: 'Doel 2: Woestijn CV', type: 'bible', text: `<strong>CV WOESTIJNREIZIGER</strong>\n\nIk ben weg uit Egypte, maar in mijn hoofd zit ik er nog vaak.\n\n• Elke dag manna: het verveelt.\n• Wandelen en wachten: ik volg de wolk.\n• Terugverlangen: ik mis de uien van Egypte.` },
+        beloofde_land_cv: { title: 'Doel 3: Beloofde Land CV', type: 'bible', text: `<strong>CV BINNENTREDER</strong>\n\nIk kijk niet meer achterom. God is te vertrouwen.\n\n• Vruchten plukken: het wachten was het waard.\n• Bouwen: ik heb een vast fundament.\n• Rusten: de strijd is gestreden.` },
+        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze teksten?', dbCol: 'answers_1', field: 'text' },
+        lines: { title: 'Kernzin', type: 'input', label: 'Typ één kernzin voor je eigen psalm:', dbCol: 'poem_lines', field: 'text' },
+        creation: { title: 'Jouw Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
+        blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede en rust.' }
     };
 
     let currentOrder = Object.keys(screenConfigs);
@@ -79,15 +76,28 @@
     window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
     window.resetAllData = async () => {
-        if(confirm("Alles wissen? Namen en antwoorden worden verwijderd.")){
+        if(confirm("Alles wissen?")){
             await deleteDoc(doc(db, "appState", "order"));
-            for(const c of ['names', 'answers_1', 'concepts_final']) {
+            for(const c of ['names', 'answers_1', 'poem_lines']) {
                 const q = await getDocs(collection(db, c));
                 q.forEach(d => deleteDoc(doc(db, c, d.id)));
             }
             location.reload();
         }
     };
+
+    function setupPrivateDragging(el) {
+        let isDragging = false;
+        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
+        el.onpointermove = (e) => {
+            if (!isDragging) return;
+            const canvas = el.parentElement;
+            const r = canvas.getBoundingClientRect();
+            el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
+            el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
+        };
+        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); el.style.zIndex = "10"; };
+    }
 
     function renderApp() {
         const container = document.getElementById('main-container');
@@ -103,8 +113,8 @@
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Live Feed:</strong><div id="feed-${id}"></div></div>`;
             }
-            if (s.type === 'static-dragdrop') {
-                html += `<div id="canvas-${id}" class="canvas"></div>`;
+            if (s.type === 'dragdrop') {
+                html += `<p>Sleep de regels van iedereen om jouw eigen psalm te maken:</p><div id="canvas-${id}" class="canvas"></div>`;
             }
             div.innerHTML = html; container.appendChild(div);
             const btn = document.createElement('button');
@@ -112,6 +122,7 @@
             btn.onclick = () => window.updateRemoteScreen(id);
             adminBar.appendChild(btn);
         });
+        const rBtn = document.createElement('button'); rBtn.className = 'reset-btn'; rBtn.innerText = "RESET"; rBtn.onclick = window.resetAllData; adminBar.appendChild(rBtn);
     }
 
     function initListeners() {
@@ -120,8 +131,21 @@
             if (s && s.dbCol) {
                 onSnapshot(collection(db, s.dbCol), (snap) => {
                     const feed = document.getElementById(`feed-${id}`);
-                    if (feed) {
-                        feed.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data()[s.field] || d.data().text || ""}</div>`).join("");
+                    const canvas = document.getElementById(`canvas-${id}`);
+                    if (feed) feed.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data().text || d.data().name}</div>`).join("");
+                    if (canvas) {
+                        snap.docs.forEach((docSnap, index) => {
+                            if (!document.getElementById(`drag-${docSnap.id}`)) {
+                                const el = document.createElement('div');
+                                el.id = `drag-${docSnap.id}`;
+                                el.className = 'draggable';
+                                el.innerText = docSnap.data().text;
+                                el.style.top = (20 + (index * 50)) + "px";
+                                el.style.left = "20px";
+                                canvas.appendChild(el);
+                                setupPrivateDragging(el);
+                            }
+                        });
                     }
                 });
             }
@@ -137,8 +161,7 @@
         document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    renderApp();
-    initListeners();
+    renderApp(); initListeners();
 </script>
 </body>
 </html>

@@ -13,19 +13,12 @@
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
         .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
+        .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 500px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
-        /* De scrollbare bijbeltekst en CV box */
         .bible-text-box { 
-            background: #fffcf0; 
-            padding: 25px; 
-            border: 1px solid #ddd; 
-            line-height: 1.7; 
-            height: 400px; 
-            overflow-y: auto; 
-            border-radius: 6px; 
-            white-space: pre-wrap;
+            background: #fffcf0; padding: 25px; border: 1px solid #ddd; line-height: 1.7; 
+            height: 400px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap;
         }
         
         .cv-title { font-weight: bold; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
@@ -34,8 +27,12 @@
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
-        .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
-        .draggable { position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
+        .canvas { position: relative; height: 550px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
+        .draggable { 
+            position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); 
+            border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10;
+        }
         
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-top: 5px; border-radius: 4px; font-style: italic; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
@@ -58,7 +55,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -79,37 +76,38 @@
             type: 'info', 
             content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong> (Wie staat er boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn plek in de woestijn)<br><strong>3. ... en wij dan?</strong> (Samen het huis van God)' 
         },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `
+<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.
+<span class="cv-title">Wat heb ik gedaan?</span>
+• Prins van Egypte geweest.
+• Het volk bevrijd uit de slavernij.
+• De wetgeving verzorgd.
+• 40 jaar trouwe dienst in de woestijn.
+<span class="cv-title">Vaardigheid</span> Dienstbaarheid.
+
+<em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>` },
+        hierarchy: { title: 'De Rangorde', type: 'shared-drag', dbCol: 'hierarchy_items', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
         reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>
 
-[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. [2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. [3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. [4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. [5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; [6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. [7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, [8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. [9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. [10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. [11]  Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! [12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden, [15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. [16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken. [17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? [18]  En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? [19] Zo zien wij dat zij niet konden ingaan vanwege hun ongeloof.` },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `
-            <span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.<br>
-            <span class="cv-title">Wat heb ik gedaan?</span>
-            • Prins van Egypte geweest.<br>
-            • Het volk bevrijd uit de slavernij.<br>
-            • De wetgeving verzorgd.<br>
-            • 40 jaar trouwe dienst in de woestijn.<br>
-            <span class="cv-title">Vaardigheid</span> Dienstbaarheid.<br><br>
-            <em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>
-        ` },
+[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. [2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. [3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. [4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. [5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; [6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. [7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, [8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. [9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. [10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. [11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! [12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden, [15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. [16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken. [17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? [18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? [19] Zo zien wij dat zij niet konden ingaan vanwege hun ongeloof.` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `
-            <span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.<br>
-            <span class="cv-title">Mijn leven nu</span>
-            • Elke dag manna (saai, maar het houdt me in leven).<br>
-            • Wandelen en wachten achter de wolk.<br>
-            • Terugdenken aan de 'vleespannen' van Egypte.<br>
-            <span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.<br><br>
-            <em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om de slavernij uit hun hoofd te krijgen.</em>
-        ` },
+<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.
+<span class="cv-title">Mijn leven nu</span>
+• Elke dag manna (saai, maar het houdt me in leven).
+• Wandelen en wachten achter de wolk.
+• Terugdenken aan de 'vleespannen' van Egypte.
+<span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.
+
+<em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om de slavernij uit hun hoofd te krijgen.</em>` },
         beloofde_land_cv: { title: '3. Binnentreder CV', type: 'bible', text: `
-            <span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.<br>
-            <span class="cv-title">Onze focus (Numeri 13)</span>
-            • Wij weigeren onszelf als 'sprinkhanen' te zien tegenover de reuzen.<br>
-            • Wij zien de belemmeringen wel, maar vertrouwen op de Bouwer.<br>
-            • Wij moedigen elkaar aan om niet af te haken.<br>
-            <span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.<br><br>
-            <em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen (Numeri 13:26-33).</em>
-        ` },
+<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.
+<span class="cv-title">Onze focus (Numeri 13)</span>
+• Wij weigeren onszelf als 'sprinkhanen' te zien tegenover de reuzen.
+• Wij zien de belemmeringen wel, maar vertrouwen op de Bouwer.
+• Wij moedigen elkaar aan om niet af te haken.
+<span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.
+
+<em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen (Numeri 13:26-33).</em>` },
         q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
         lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een zin voor onze psalm:', dbCol: 'poem_lines', field: 'text' },
         creation: { title: 'Onze Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
@@ -118,14 +116,25 @@
 
     let currentOrder = Object.keys(screenConfigs);
 
+    async function initHierarchyItems() {
+        const snap = await getDocs(collection(db, "hierarchy_items"));
+        if (snap.empty) {
+            for (let i = 0; i < screenConfigs.hierarchy.initial.length; i++) {
+                const name = screenConfigs.hierarchy.initial[i];
+                await setDoc(doc(db, "hierarchy_items", name), { text: name, x: 20, y: 20 + (i * 55) });
+            }
+        }
+    }
+
     window.resetAllData = async () => {
         if(confirm("Systeem resetten?")){
             await setDoc(doc(db, "appState", "order"), { sequence: Object.keys(screenConfigs) });
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_1', 'poem_lines']) {
+            for(const c of ['names', 'answers_1', 'poem_lines', 'hierarchy_items']) {
                 const q = await getDocs(collection(db, c));
                 q.forEach(async (d) => await deleteDoc(doc(db, c, d.id)));
             }
+            await initHierarchyItems();
             location.reload();
         }
     };
@@ -142,7 +151,7 @@
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
 
-    function setupPrivateDragging(el) {
+    function setupDragging(el, id, isShared) {
         let isDragging = false;
         el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
         el.onpointermove = (e) => {
@@ -151,13 +160,20 @@
             el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
             el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
         };
-        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); };
+        el.onpointerup = async (e) => { 
+            isDragging = false; 
+            if(isShared) {
+                await updateDoc(doc(db, "hierarchy_items", id), { 
+                    x: parseInt(el.style.left), 
+                    y: parseInt(el.style.top) 
+                });
+            }
+        };
     }
 
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
-        if(!container || !adminBar) return;
         container.innerHTML = ""; adminBar.innerHTML = "";
         currentOrder.forEach((id) => {
             const s = screenConfigs[id];
@@ -166,6 +182,7 @@
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
+            if (s.type === 'shared-drag') html += `<p>Bepaal samen de rangorde:</p><div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div id="feed-${id}"></div>`;
             }
@@ -180,46 +197,62 @@
     }
 
     function initListeners() {
-        currentOrder.forEach(id => {
-            const s = screenConfigs[id];
-            if (s && s.dbCol) {
-                onSnapshot(collection(db, s.dbCol), (snap) => {
-                    const feed = document.getElementById(`feed-${id}`);
-                    const canvas = document.getElementById(`canvas-${id}`);
-                    if (feed) feed.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data().text || d.data().name}</div>`).join("");
-                    if (canvas) {
-                        snap.docs.forEach((docSnap, index) => {
-                            if (!document.getElementById(`drag-${docSnap.id}`)) {
-                                const el = document.createElement('div');
-                                el.id = `drag-${docSnap.id}`; el.className = 'draggable';
-                                el.innerText = docSnap.data().text;
-                                el.style.top = (20 + (index * 60)) + "px"; el.style.left = "20px";
-                                canvas.appendChild(el); setupPrivateDragging(el);
-                            }
-                        });
-                    }
-                });
-            }
+        // Luister naar hiërarchie (gedeeld)
+        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
+            const canvas = document.getElementById('canvas-hierarchy');
+            if(!canvas) return;
+            snap.docs.forEach(d => {
+                let el = document.getElementById(`shared-${d.id}`);
+                if (!el) {
+                    el = document.createElement('div');
+                    el.id = `shared-${d.id}`; el.className = 'draggable';
+                    el.innerText = d.data().text;
+                    canvas.appendChild(el);
+                    setupDragging(el, d.id, true);
+                }
+                if(document.pointerLockElement !== el) {
+                    el.style.left = d.data().x + "px";
+                    el.style.top = d.data().y + "px";
+                }
+            });
+        });
+
+        // Luister naar psalm regels (persoonlijk drag)
+        onSnapshot(collection(db, "poem_lines"), (snap) => {
+            const canvas = document.getElementById('canvas-creation');
+            if (!canvas) return;
+            snap.docs.forEach((docSnap, index) => {
+                if (!document.getElementById(`drag-${docSnap.id}`)) {
+                    const el = document.createElement('div');
+                    el.id = `drag-${docSnap.id}`; el.className = 'draggable';
+                    el.innerText = docSnap.data().text;
+                    el.style.top = (20 + (index * 60)) + "px"; el.style.left = "20px";
+                    canvas.appendChild(el);
+                    setupDragging(el, docSnap.id, false);
+                }
+            });
+        });
+
+        // Luister naar feeds
+        ['names', 'answers_1'].forEach(col => {
+            onSnapshot(collection(db, col), (snap) => {
+                const id = col === 'names' ? 'login' : 'q1';
+                const feed = document.getElementById(`feed-${id}`);
+                if (feed) feed.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data().text || d.data().name}</div>`).join("");
+            });
         });
     }
-
-    onSnapshot(doc(db, "appState", "order"), (snap) => { 
-        if (snap.exists()) { currentOrder = snap.data().sequence; } 
-        renderApp(); initListeners(); 
-    });
 
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const activeScreen = document.getElementById(`screen-${activeId}`);
-        if(activeScreen) activeScreen.classList.add('active');
-        
+        document.getElementById(`screen-${activeId}`)?.classList.add('active');
         document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        const btn = document.getElementById(`btn-${activeId}`);
-        if(btn) btn.classList.add('current-btn');
+        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    renderApp(); initListeners();
+    renderApp();
+    initListeners();
 </script>
 </body>
 </html>

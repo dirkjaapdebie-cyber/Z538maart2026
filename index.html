@@ -11,20 +11,33 @@
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
         .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* Layout & Scrollbaarheid */
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
-        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 420px; overflow-y: auto; border-radius: 6px; }
+        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        
+        /* CV Styling */
+        .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
+        
+        /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
+        
+        /* Hiërarchie & Psalm */
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
+        
+        /* Vragen Flow */
         .feed-item { padding: 8px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-top: 4px; border-radius: 4px; font-style: italic; font-size: 0.9em; border-left: 3px solid var(--accent); }
         .vraag-blok { margin-bottom: 30px; border-left: 4px solid var(--accent); padding-left: 15px; background: white; padding-top: 5px; }
         .admin-panel { background: #eee; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ccc; }
+        
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -58,13 +71,15 @@
 
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
-        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong> (Wie staat boven wie?)<br><strong>2. ... en ik dan?</strong> (De woestijn-test)<br><strong>3. ... en wij dan?</strong> (Samen het Huis)' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie?</span> Trouwe dienaar IN het huis.\n<span class="cv-title">Status</span> Bevrijder, wetgever, profeet.\n<span class="cv-title">Verschil</span> Jezus is de Zoon OVER het huis.` },
-        hierarchy: { title: 'Rangorde', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19</strong>\n\n[1] Daarom, heilige broeders... [tekst]` },
+        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong> (Wie staat boven wie?)<br><strong>2. ... en ik dan?</strong> (De woestijn-test)<br><strong>3. ... en wij dan?</strong> (Samen het Huis)' },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n<span class="cv-title">Wat heb ik gedaan?</span>\n• Prins van Egypte geweest.\n• Het volk bevrijd uit de slavernij.\n• De wetgeving verzorgd.\n• 40 jaar trouwe dienst in de woestijn.\n\n<span class="cv-title">Vaardigheid</span> Dienstbaarheid.\n\n<em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>` },
+        hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.\n\n<span class="cv-title">Mijn leven nu</span>\n• Elke dag manna.\n• Wandelen achter de wolk.\n• Terugdenken aan de 'vleespannen' van Egypte.\n\n<span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.\n\n<em>De les: God haalt je uit de slavernij, maar de slavernij moet ook uit jou.</em>` },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n\n<span class="cv-title">Focus</span>\n• Wij weigeren onszelf als 'sprinkhanen' te zien (Numeri 13).\n• Wij vertrouwen op de Bouwer.\n• Wij moedigen elkaar aan.\n\n<em>De les: Vertrouwen dat God groter is dan je reuzen.</em>` },
         questions: { title: 'Vragen & Live', type: 'qa_live' },
         creation: { title: 'Onze Psalm', type: 'dragdrop' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Ga in vrede en verhard je hart niet.' }
+        blessing: { title: 'Zegen', type: 'info', content: 'Ga in vrede.' }
     };
 
     window.resetAllData = async () => {
@@ -128,16 +143,16 @@
             
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
-            if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
+            if (s.type === 'shared-drag') html += `<p>Rangschik live met elkaar:</p><div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'qa_live') {
                 html += `<div class="admin-panel">
-                            <input type="text" id="new-q-input" placeholder="Nieuwe vraag voor de groep...">
+                            <input type="text" id="new-q-input" placeholder="Nieuwe vraag toevoegen...">
                             <button class="action-btn" onclick="addLiveQuestion()">VOEG TOE</button>
                          </div>
                          <div id="live-questions-container" class="scroll-box"></div>`;
             }
-            if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
-            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Je naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
+            if (s.type === 'dragdrop') html += `<p>Bouw samen de psalm:</p><div id="canvas-creation" class="canvas"></div>`;
+            if (s.type === 'input') html += `<p>Vul je naam in:</p><div style="display:flex;"><input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button></div><div id="feed-login"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
             const btn = document.createElement('button');
@@ -158,7 +173,7 @@
                 const div = document.createElement('div');
                 div.className = 'vraag-blok';
                 div.innerHTML = `<p><strong>${qData.text}</strong></p>
-                    <div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">OK</button></div>
+                    <div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','qId','${qId}')">OK</button></div>
                     <div id="feed-${qId}" style="margin-top:10px;"></div>`;
                 container.appendChild(div);
             });

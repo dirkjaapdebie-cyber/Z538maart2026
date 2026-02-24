@@ -16,7 +16,18 @@
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
-        .bible-text-box { background: #fffcf0; padding: 25px; border: 1px solid #ddd; line-height: 1.7; max-height: 500px; overflow-y: auto; border-radius: 6px; }
+        /* De scrollbare bijbeltekst en CV box */
+        .bible-text-box { 
+            background: #fffcf0; 
+            padding: 25px; 
+            border: 1px solid #ddd; 
+            line-height: 1.7; 
+            height: 400px; 
+            overflow-y: auto; 
+            border-radius: 6px; 
+            white-space: pre-wrap;
+        }
+        
         .cv-title { font-weight: bold; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
 
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
@@ -68,6 +79,9 @@
             type: 'info', 
             content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong> (Wie staat er boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn plek in de woestijn)<br><strong>3. ... en wij dan?</strong> (Samen het huis van God)' 
         },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>
+
+[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. [2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. [3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. [4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. [5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; [6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. [7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, [8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. [9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. [10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. [11]  Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! [12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden, [15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. [16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken. [17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? [18]  En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? [19] Zo zien wij dat zij niet konden ingaan vanwege hun ongeloof.` },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `
             <span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.<br>
             <span class="cv-title">Wat heb ik gedaan?</span>
@@ -78,7 +92,6 @@
             <span class="cv-title">Vaardigheid</span> Dienstbaarheid.<br><br>
             <em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>
         ` },
-        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\nKijk naar Jezus. Hij is meer eer waard dan Mozes. Mozes was trouw als dienaar, maar Jezus als de Zoon die het huis Zelf gebouwd heeft. Dat huis, dat zijn WIJ.` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `
             <span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.<br>
             <span class="cv-title">Mijn leven nu</span>
@@ -91,11 +104,11 @@
         beloofde_land_cv: { title: '3. Binnentreder CV', type: 'bible', text: `
             <span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.<br>
             <span class="cv-title">Onze focus (Numeri 13)</span>
-            • Wij weigeren onszelf als 'sprinkhanen' te zien.<br>
-            • Wij zien de reuzen, maar we vertrouwen op de Bouwer van het huis.<br>
+            • Wij weigeren onszelf als 'sprinkhanen' te zien tegenover de reuzen.<br>
+            • Wij zien de belemmeringen wel, maar vertrouwen op de Bouwer.<br>
             • Wij moedigen elkaar aan om niet af te haken.<br>
             <span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.<br><br>
-            <em>De les: Het Beloofde Land is geen solo-reis, we trekken samen op als Gods huis.</em>
+            <em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen (Numeri 13:26-33).</em>
         ` },
         q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
         lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een zin voor onze psalm:', dbCol: 'poem_lines', field: 'text' },
@@ -189,6 +202,11 @@
             }
         });
     }
+
+    onSnapshot(doc(db, "appState", "order"), (snap) => { 
+        if (snap.exists()) { currentOrder = snap.data().sequence; } 
+        renderApp(); initListeners(); 
+    });
 
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';

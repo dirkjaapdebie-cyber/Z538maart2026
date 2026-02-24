@@ -84,7 +84,7 @@
     // --- CONFIGURATIE ---
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in om deel te nemen:', dbCol: 'names', field: 'name' },
-        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding <br>2. Verdieping <br>3. Samen bouwen.' },
+        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
         reading: { 
             title: 'Hebreeën 3:1-14 HSV', 
             type: 'bible', 
@@ -103,7 +103,31 @@
 [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. 
 [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden.`
         },
-        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
+        { title: 'Doel 1:', type: 'info', content: 'Hiërarchie <br> text: `2. ... en ik dan? <br>3. ... en wij dan?' },
+    title: 'Doel 1: Mozes\' CV', 
+            type: 'bible', // We gebruiken type 'bible' vanwege het scrollbare venster
+            text: `<strong>CURRICULUM VITAE: MOZES</strong>
+<br>
+<strong>PERSOONLIJK PROFIEL</strong>
+<br>Een toegewijde dienaar van de Allerhoogste, ervaren in crisismanagement, wetgeving en het leiden van grote groepen mensen. Bekend om een unieke combinatie van nederigheid en autoriteit.
+<br><br>
+<strong>WERKERVARING</strong>
+<br>• <strong>Prins van Egypte</strong>: Opgeleid in alle wijsheid en protocollen van het machtigste hof ter wereld.
+<br>• <strong>Hervormer en Bevrijder</strong>: Succesvol een volk van miljoenen uit de slavernij geleid.
+<br>• <strong>Wetgever en Rechter</strong>: Ontvanger van de Tien Geboden; implementatie van een nieuw sociaal rechtssysteem.
+<br>• <strong>Intermediair</strong>: Sprak "van aangezicht tot aangezicht" met God; 40 jaar pleitbezorger voor het volk.
+<br><br>
+<strong>BELANGRIJKSTE VAARDIGHEDEN</strong>
+<br>• <strong>Dienstbaarheid</strong>: Absolute trouw aan de "Eigenaar van het huis".
+<br>• <strong>Uithoudingsvermogen</strong>: Visie vasthouden tijdens een 40-jarige woestijnreis.
+<br>• <strong>Nederigheid</strong>: De meest zachtmoedige mens op de aardbodem.
+<br><br>
+<strong>REFERENTIES</strong>
+<br>• Directe aanstelling door <strong>God zelf</strong> ("Mozes is trouw in heel Mijn huis").
+<hr>
+<em>Lucado's kernpunt: Mozes was de dienaar ín het huis, Jezus is de Bouwer van het huis.</em>`
+        },
+    q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
         toepassing_vraag: { title: 'Persoonlijk', type: 'qa', label: 'Hoe kun je dit morgen toepassen?', dbCol: 'antwoorden_toepassing', field: 'text' },
         concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'concepts_final' },
         keuze_oefening: { title: 'Prioriteiten', type: 'static-dragdrop', items: ['Gebed', 'Dienstbaarheid', 'Stilte', 'Bijbelstudie', 'Getuigen'], dbCol: 'prioriteiten_keuze' },

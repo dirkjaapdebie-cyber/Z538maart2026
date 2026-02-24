@@ -55,8 +55,13 @@
         login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
         mozes_cv: { title: 'Doel 1: Mozes\' CV', type: 'bible', text: `<strong>CURRICULUM VITAE: MOZES</strong><br><br><strong>PERSOONLIJK PROFIEL</strong><br>Dienaar van de Allerhoogste, ervaren in crisismanagement en wetgeving.<br><br><strong>WERKERVARING</strong><br>• Prins van Egypte<br>• Bevrijder van Israël<br>• Wetgever (Sinaï)<br>• Intermediair van God<br><br><strong>VAARDIGHEDEN</strong><br>• Dienstbaarheid & Trouw<br>• Zachtmoedigheid<br><br><strong>REFERENTIE</strong><br>• God zelf ("Mozes is trouw in Mijn huis")` },
-        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... [5] Mozes was trouw als dienaar... [6] Christus als Zoon over Zijn huis.` },
-        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je?', dbCol: 'answers_1', field: 'text' },
+        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... \n[2] Hij is getrouw aan God, zoals ook Mozes trouw was in heel Zijn huis... \n[5] Mozes was trouw als dienaar... \n[6] Christus als Zoon over Zijn huis.` },
+        woestijn_cv: { 
+            title: 'Doel 2: Woestijn CV', 
+            type: 'bible', 
+            text: `<strong>CV VAN DE WOESTIJNREIZIGER</strong>\n\n<strong>WIE BEN IK?</strong>\nIemand die eindelijk vrij is, maar nog erg moet wennen. Ik ben weg uit Egypte, maar in mijn hoofd zit ik er nog vaak.\n\n<strong>WAT DOE IK DE HELE DAG?</strong>\n• <strong>Eten wat de pot schaft:</strong> Elke dag manna. Het is er altijd genoeg, maar het gaat wel vervelen.\n• <strong>Wandelen en wachten:</strong> Ik volg de wolk en de vuurkolom. Ik ben een expert in het opzetten van mijn tent.\n• <strong>Terugverlangen:</strong> Ik denk vaak aan het lekkere eten in Egypte. De woestijn is zwaar en ik voel me nog niet sterk.\n\n<strong>WAT KAN IK GOED?</strong>\n• <strong>Volhouden:</strong> Ook al is het saai, ik loop elke dag weer verder.\n• <strong>Twijfelen:</strong> Ik vind het soms lastig om te vertrouwen als ik dorst heb.\n• <strong>Dromen:</strong> Ik hoop op een plek waar ik eindelijk rust heb.\n\n<em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om 'Egypte' uit het volk te halen.</em>`
+        },
+        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit gedeelte?', dbCol: 'answers_1', field: 'text' },
         concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Rust'], dbCol: 'concepts_final' },
         blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
     };
@@ -74,7 +79,7 @@
     window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
     window.resetAllData = async () => {
-        if(confirm("Alles wissen?")){
+        if(confirm("Alles wissen? Namen en antwoorden worden verwijderd.")){
             await deleteDoc(doc(db, "appState", "order"));
             for(const c of ['names', 'answers_1', 'concepts_final']) {
                 const q = await getDocs(collection(db, c));
@@ -98,6 +103,9 @@
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Live Feed:</strong><div id="feed-${id}"></div></div>`;
             }
+            if (s.type === 'static-dragdrop') {
+                html += `<div id="canvas-${id}" class="canvas"></div>`;
+            }
             div.innerHTML = html; container.appendChild(div);
             const btn = document.createElement('button');
             btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
@@ -109,7 +117,7 @@
     function initListeners() {
         currentOrder.forEach(id => {
             const s = screenConfigs[id];
-            if (s.dbCol) {
+            if (s && s.dbCol) {
                 onSnapshot(collection(db, s.dbCol), (snap) => {
                     const feed = document.getElementById(`feed-${id}`);
                     if (feed) {
@@ -125,9 +133,10 @@
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(`screen-${activeId}`)?.classList.add('active');
+        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
+        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
 
-    // Start direct
     renderApp();
     initListeners();
 </script>

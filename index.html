@@ -8,47 +8,22 @@
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
         .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 160px; }
-        
         .main-header { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.4s; }
-        
-        .bible-text-box { 
-            background: #fffcf0; 
-            padding: 20px; 
-            border: 1px solid #ddd; 
-            line-height: 1.8; 
-            max-height: 400px; 
-            overflow-y: auto; 
-            text-align: left;
-            border-radius: 4px;
-            white-space: pre-wrap;
-        }
-
+        .bible-text-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; max-height: 400px; overflow-y: auto; text-align: left; border-radius: 4px; white-space: pre-wrap; }
         .feed-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; font-style: italic; }
-
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 8px; z-index: 1000; align-items: center; }
         .admin-unit { display: flex; flex-direction: column; gap: 4px; align-items: center; background: #222; padding: 5px; border-radius: 4px; }
-        .move-btns { display: flex; gap: 2px; }
-        .move-btns button { background: #555; border: none; color: white; padding: 4px 8px; cursor: pointer; border-radius: 2px; font-size: 10px; }
         .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 4px; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         .reset-btn { background: #c0392b !important; margin-left: auto; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
         .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; }
         .draggable { position: absolute; padding: 12px 35px 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
         .delete-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #eee; color: #666; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 1px solid #ccc; }
-        .delete-btn:hover { background: #c0392b; color: white; }
-
-        .custom-input-box { display: flex; gap: 5px; margin-bottom: 10px; }
-        .custom-input-box input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        .custom-input-box button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
-        
-        input[type="text"], input:not([type]) { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 70%; margin-right: 5px; }
+        input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 70%; margin-right: 5px; }
         button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -58,7 +33,6 @@
     <h1 class="main-header">Max Lucado's 'Hebreeën' les 2</h1>
     <div id="main-container"></div>
 </div>
-
 <div class="admin-bar" id="admin-bar"></div>
 
 <script type="module">
@@ -77,209 +51,85 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- CONFIGURATIE ---
     let screenConfigs = {
-        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in om deel te nemen:', dbCol: 'names', field: 'name' },
+        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
-        mozes_cv: { 
-            title: 'Doel 1: Mozes\' CV', 
-            type: 'bible', 
-            text: `<strong>CURRICULUM VITAE: MOZES</strong>
-<br>
-<strong>PERSOONLIJK PROFIEL</strong>
-<br>Een toegewijde dienaar van de Allerhoogste, ervaren in crisismanagement, wetgeving en het leiden van grote groepen mensen. Bekend om een unieke combinatie van nederigheid en autoriteit.
-<br><br>
-<strong>WERKERVARING</strong>
-<br>• <strong>Prins van Egypte</strong>: Opgeleid in alle wijsheid en protocollen van het machtigste hof ter wereld.
-<br>• <strong>Hervormer en Bevrijder</strong>: Succesvol een volk van miljoenen uit de slavernij geleid.
-<br>• <strong>Wetgever en Rechter</strong>: Ontvanger van de Tien Geboden; implementatie van een nieuw sociaal rechtssysteem.
-<br>• <strong>Intermediair</strong>: Sprak "van aangezicht tot aangezicht" met God; 40 jaar pleitbezorger voor het volk.
-<br><br>
-<strong>BELANGRIJKSTE VAARDIGHEDEN</strong>
-<br>• <strong>Dienstbaarheid</strong>: Absolute trouw aan de "Eigenaar van het huis".
-<br>• <strong>Uithoudingsvermogen</strong>: Visie vasthouden tijdens een 40-jarige woestijnreis.
-<br>• <strong>Nederigheid</strong>: De meest zachtmoedige mens op de aardbodem.
-<br><br>
-<strong>REFERENTIES</strong>
-<br>• Directe aanstelling door <strong>God zelf</strong> ("Mozes is trouw in heel Mijn huis").
-<hr>
-<em>Lucado's kernpunt: Mozes was de dienaar ín het huis, Jezus is de Bouwer van het huis.</em>`
-        },
-        reading: { 
-            title: 'Hebreeën 3:1-14 HSV', 
-            type: 'bible', 
-            text: `[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. 
-[2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. 
-[3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. 
-[4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. 
-[5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van what later gesproken zou worden; 
-[6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. 
-[7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, 
-[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. 
-[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. 
-[10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. 
-[11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! 
-[12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; 
-[13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. 
-[14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden.`
-        },
-        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
-        toepassing_vraag: { title: 'Persoonlijk', type: 'qa', label: 'Hoe kun je dit morgen toepassen?', dbCol: 'antwoorden_toepassing', field: 'text' },
-        concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'concepts_final' },
-        keuze_oefening: { title: 'Prioriteiten', type: 'static-dragdrop', items: ['Gebed', 'Dienstbaarheid', 'Stilte', 'Bijbelstudie', 'Getuigen'], dbCol: 'prioriteiten_keuze' },
-        lines: { title: 'Zinnen verzamelen', type: 'input', label: 'Typ een kernzin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
-        creation: { title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
+        mozes_cv: { title: 'Doel 1: Mozes\' CV', type: 'bible', text: `<strong>CURRICULUM VITAE: MOZES</strong><br><br><strong>PERSOONLIJK PROFIEL</strong><br>Dienaar van de Allerhoogste, ervaren in crisismanagement en wetgeving.<br><br><strong>WERKERVARING</strong><br>• Prins van Egypte<br>• Bevrijder van Israël<br>• Wetgever (Sinaï)<br>• Intermediair van God<br><br><strong>VAARDIGHEDEN</strong><br>• Dienstbaarheid & Trouw<br>• Zachtmoedigheid<br><br><strong>REFERENTIE</strong><br>• God zelf ("Mozes is trouw in Mijn huis")` },
+        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... [5] Mozes was trouw als dienaar... [6] Christus als Zoon over Zijn huis.` },
+        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je?', dbCol: 'answers_1', field: 'text' },
+        concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Rust'], dbCol: 'concepts_final' },
         blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
     };
 
     let currentOrder = Object.keys(screenConfigs);
 
-    // --- FUNCTIES ---
-    window.moveScreen = async (index, direction) => {
-        let newOrder = [...currentOrder];
-        let target = index + direction;
-        if (target >= 0 && target < newOrder.length) {
-            [newOrder[index], newOrder[target]] = [newOrder[target], newOrder[index]];
-            await setDoc(doc(db, "appState", "order"), { sequence: newOrder });
-        }
-    };
-
-    window.updateRemoteScreen = async (id) => {
-        await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true });
-    };
-
-    window.addCustomItem = async (id, col) => {
-        const val = document.getElementById(`custom-in-${id}`).value;
-        if (val) {
-            await addDoc(collection(db, col), { text: val, timestamp: Date.now(), x: 50, y: 50 });
-            document.getElementById(`custom-in-${id}`).value = "";
-        }
-    };
-
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
-        if (val) { await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 50, y: 50 }); document.getElementById(`in-${id}`).value = ""; }
+        if (val) { 
+            await addDoc(collection(db, col), { [field]: val, timestamp: Date.now() }); 
+            document.getElementById(`in-${id}`).value = ""; 
+        }
     };
 
-    window.deleteItem = async (col, docId) => { if(confirm("Verwijderen?")) await deleteDoc(doc(db, col, docId)); };
+    window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
-    function setupTouchDragging(el, col, docId, canvas) {
-        let isDragging = false;
-        el.onpointerdown = (e) => { if (e.target.className === 'delete-btn') return; isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
-        el.onpointermove = (e) => { if (!isDragging) return; const r = canvas.getBoundingClientRect(); updateDoc(doc(db, col, docId), { x: e.clientX - r.left - (el.offsetWidth / 2), y: e.clientY - r.top - (el.offsetHeight / 2) }); };
-        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); el.style.zIndex = "10"; };
-    }
-
-    async function resetAllData() {
-        if(confirm("LET OP: Hiermee wis je alle namen en antwoorden. Doorgaan?")){
+    window.resetAllData = async () => {
+        if(confirm("Alles wissen?")){
             await deleteDoc(doc(db, "appState", "order"));
-            const cols = ['names', 'answers_1', 'poem_lines', 'concepts_final', 'antwoorden_toepassing', 'prioriteiten_keuze'];
-            for(const c of cols) {
+            for(const c of ['names', 'answers_1', 'concepts_final']) {
                 const q = await getDocs(collection(db, c));
                 q.forEach(d => deleteDoc(doc(db, c, d.id)));
             }
             location.reload();
         }
-    }
-    window.resetAllData = resetAllData;
+    };
 
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
-        container.innerHTML = "";
-        adminBar.innerHTML = "";
-
-        currentOrder.forEach((id, index) => {
+        container.innerHTML = ""; adminBar.innerHTML = "";
+        currentOrder.forEach((id) => {
             const s = screenConfigs[id];
-            if (!s) return;
             const div = document.createElement('div');
-            div.id = `screen-${id}`;
-            div.className = 'screen';
-            
+            div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'info') html += `<p>${s.content}</p>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
-            
             if (s.type === 'input' || s.type === 'qa') {
-                html += `<p>${s.label}</p>
-                         <div style="display:flex; gap:10px;">
-                            <input type="text" id="in-${id}" placeholder="...">
-                            <button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button>
-                         </div>
-                         <div class="feed-container">
-                            <strong>Aanwezig / Live Feed:</strong>
-                            <div id="feed-${id}"></div>
-                         </div>`;
+                html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Live Feed:</strong><div id="feed-${id}"></div></div>`;
             }
-            
-            if (s.type === 'dragdrop' || s.type === 'static-dragdrop') {
-                html += `<div class="custom-input-box"><input id="custom-in-${id}" placeholder="Eigen tekst..."><button onclick="addCustomItem('${id}','${s.dbCol}')">Toevoegen</button></div><div id="canvas-${id}" class="canvas"></div>`;
-            }
-            
-            div.innerHTML = html;
-            container.appendChild(div);
-
-            const unit = document.createElement('div');
-            unit.className = 'admin-unit';
-            unit.innerHTML = `<div class="move-btns"><button onclick="moveScreen(${index},-1)">←</button><button onclick="moveScreen(${index},1)">→</button></div><button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>`;
-            adminBar.appendChild(unit);
+            div.innerHTML = html; container.appendChild(div);
+            const btn = document.createElement('button');
+            btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
+            btn.onclick = () => window.updateRemoteScreen(id);
+            adminBar.appendChild(btn);
         });
-
-        const resetBtn = document.createElement('button');
-        resetBtn.innerText = "ALLES RESETTEN";
-        resetBtn.className = "reset-btn";
-        resetBtn.onclick = window.resetAllData;
-        adminBar.appendChild(resetBtn);
     }
-
-    onSnapshot(doc(db, "appState", "order"), (snap) => {
-        if (snap.exists()) { currentOrder = snap.data().sequence; renderApp(); initListeners(); } else { renderApp(); }
-    });
-
-    onSnapshot(doc(db, "appState", "current"), (snap) => {
-        const activeId = snap.data()?.activeScreen || 'login';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`)?.classList.add('active');
-        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
-    });
 
     function initListeners() {
         currentOrder.forEach(id => {
             const s = screenConfigs[id];
-            if (!s || !s.dbCol) return;
-            onSnapshot(collection(db, s.dbCol), (snap) => {
-                const feed = document.getElementById(`feed-${id}`);
-                const canvas = document.getElementById(`canvas-${id}`);
-                
-                if (feed) {
-                    const items = snap.docs.map(d => `<div class="feed-item">${d.data()[s.field] || d.data().text}</div>`).join("");
-                    feed.innerHTML = items || "Nog geen namen/antwoorden...";
-                }
-                
-                if (canvas) {
-                    if (s.type === 'static-dragdrop' && snap.empty) {
-                        s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 40 + (i*65) }));
+            if (s.dbCol) {
+                onSnapshot(collection(db, s.dbCol), (snap) => {
+                    const feed = document.getElementById(`feed-${id}`);
+                    if (feed) {
+                        feed.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data()[s.field] || d.data().text || ""}</div>`).join("");
                     }
-                    const dbIds = snap.docs.map(d => d.id);
-                    canvas.querySelectorAll('.draggable').forEach(el => { if (!dbIds.includes(el.id.replace('drag-', ''))) el.remove(); });
-                    snap.docs.forEach(docSnap => {
-                        let el = document.getElementById(`drag-${docSnap.id}`);
-                        if (!el) {
-                            el = document.createElement('div');
-                            el.id = `drag-${docSnap.id}`;
-                            el.className = 'draggable';
-                            el.innerHTML = `<span>${docSnap.data().text}</span><div class="delete-btn" onclick="deleteItem('${s.dbCol}', '${docSnap.id}')">x</div>`;
-                            canvas.appendChild(el);
-                            setupTouchDragging(el, s.dbCol, docSnap.id, canvas);
-                        }
-                        el.style.left = docSnap.data().x + "px";
-                        el.style.top = docSnap.data().y + "px";
-                    });
-                }
-            });
+                });
+            }
         });
     }
+
+    onSnapshot(doc(db, "appState", "order"), (snap) => { if (snap.exists()) { currentOrder = snap.data().sequence; renderApp(); initListeners(); } });
+    onSnapshot(doc(db, "appState", "current"), (snap) => {
+        const activeId = snap.data()?.activeScreen || 'login';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${activeId}`)?.classList.add('active');
+    });
+
+    // Start direct
+    renderApp();
+    initListeners();
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z53 Hebreeën Les 2 - Groepsmonitor</title>
+    <title>Z53 Hebreeën Les 2 - Definitief</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
@@ -26,10 +26,9 @@
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
         
-        /* Monitor & Vragen Styling */
         .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
         .monitor-vraag h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.1rem; }
-        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; font-size: 0.95rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.02); }
+        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; font-size: 0.95rem; }
         .vraag-blok { margin-bottom: 25px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; }
 
         .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
@@ -70,21 +69,21 @@
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.\n\n<em>De les: Jezus is de Zoon OVER het huis.</em>` },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd uit slavernij.\n• 40 jaar dienst in de woestijn.\n\n<em>Jezus is de Zoon OVER het huis.</em>` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... [Volledige tekst hier]` },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus... [Volledige tekst]` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar nog niet vrij.\n\n• Elke dag manna.\n• Leren vertrouwen.\n\n<em>De slavernij moet ook uit jou.</em>` },
         binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n\n• Wij vertrouwen op de Bouwer.\n• Wij moedigen elkaar aan.` },
         questions: { title: 'Vragen Invoer', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' },
         creation: { title: 'Onze Psalm', type: 'dragdrop' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Ga in vrede.' }
+        blessing: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; font-size: 1.2rem; line-height: 1.8; text-align: center; padding: 20px;">Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar.’</div>' }
     };
 
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions']) {
+            for(const c of ['names', 'answers_split', 'hierarchy_items', 'live_questions']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -143,21 +142,12 @@
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            
             if (s.type === 'qa_input') {
-                html += `<div class="admin-panel">
-                            <strong>Admin: Voeg vraag toe</strong><br>
-                            <input type="text" id="new-q-input" placeholder="...">
-                            <button class="action-btn" onclick="addLiveQuestion()">VOEG TOE</button>
-                         </div>
-                         <div id="input-questions-container" class="scroll-box"></div>`;
+                html += `<div class="admin-panel"><strong>Admin: Voeg vraag toe</strong><br><input type="text" id="new-q-input" placeholder="..."><button class="action-btn" onclick="addLiveQuestion()">VOEG TOE</button></div><div id="input-questions-container" class="scroll-box"></div>`;
             }
-
             if (s.type === 'qa_monitor') {
-                html += `<p>Gezamenlijk overzicht van alle antwoorden:</p>
-                         <div id="monitor-questions-container" class="scroll-box"></div>`;
+                html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
             }
-            
             if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
             if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
 
@@ -175,22 +165,15 @@
             const monitorContainer = document.getElementById('monitor-questions-container');
             if(inputContainer) inputContainer.innerHTML = "";
             if(monitorContainer) monitorContainer.innerHTML = "";
-
             snap.docs.forEach(docSnap => {
-                const qData = docSnap.data();
-                const qId = docSnap.id;
-
+                const qData = docSnap.data(); const qId = docSnap.id;
                 if(inputContainer) {
-                    const div = document.createElement('div');
-                    div.className = 'vraag-blok';
-                    div.innerHTML = `<p><strong>${qData.text}</strong></p>
-                        <div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Jouw antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button></div>`;
+                    const div = document.createElement('div'); div.className = 'vraag-blok';
+                    div.innerHTML = `<p><strong>${qData.text}</strong></p><div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button></div>`;
                     inputContainer.appendChild(div);
                 }
-
                 if(monitorContainer) {
-                    const mDiv = document.createElement('div');
-                    mDiv.className = 'monitor-vraag';
+                    const mDiv = document.createElement('div'); mDiv.className = 'monitor-vraag';
                     mDiv.innerHTML = `<h3>${qData.text}</h3><div id="monitor-feed-${qId}"></div>`;
                     monitorContainer.appendChild(mDiv);
                 }
@@ -199,13 +182,10 @@
 
         onSnapshot(collection(db, "answers_split"), (snap) => {
             snap.docs.forEach(d => {
-                const data = d.data();
-                const monitorFeed = document.getElementById(`monitor-feed-${data.qId}`);
+                const data = d.data(); const monitorFeed = document.getElementById(`monitor-feed-${data.qId}`);
                 if (monitorFeed && !document.getElementById(`m-ans-${d.id}`)) {
-                    const item = document.createElement('span');
-                    item.id = `m-ans-${d.id}`; item.className = 'ans-pill';
-                    item.innerText = data.text;
-                    monitorFeed.appendChild(item);
+                    const item = document.createElement('span'); item.id = `m-ans-${d.id}`; item.className = 'ans-pill';
+                    item.innerText = data.text; monitorFeed.appendChild(item);
                 }
             });
         });
@@ -223,6 +203,11 @@
                 }
                 el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
             });
+        });
+        
+        onSnapshot(collection(db, "names"), (snap) => {
+            const f = document.getElementById('feed-login');
+            if (f) f.innerHTML = snap.docs.map(d => `<div class="feed-item">${d.data().name}</div>`).join("");
         });
     }
 

@@ -107,10 +107,11 @@
 
     window.resetAllData = async () => {
         if(confirm("Systeem resetten?")){
-            await deleteDoc(doc(db, "appState", "order"));
+            await setDoc(doc(db, "appState", "order"), { sequence: Object.keys(screenConfigs) });
+            await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
             for(const c of ['names', 'answers_1', 'poem_lines']) {
                 const q = await getDocs(collection(db, c));
-                q.forEach(d => deleteDoc(doc(db, c, d.id)));
+                q.forEach(async (d) => await deleteDoc(doc(db, c, d.id)));
             }
             location.reload();
         }
@@ -143,6 +144,7 @@
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
+        if(!container || !adminBar) return;
         container.innerHTML = ""; adminBar.innerHTML = "";
         currentOrder.forEach((id) => {
             const s = screenConfigs[id];
@@ -188,15 +190,12 @@
         });
     }
 
-    onSnapshot(doc(db, "appState", "order"), (snap) => { 
-        if (snap.exists()) { currentOrder = snap.data().sequence; } 
-        renderApp(); initListeners(); 
-    });
-
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`)?.classList.add('active');
+        const activeScreen = document.getElementById(`screen-${activeId}`);
+        if(activeScreen) activeScreen.classList.add('active');
+        
         document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
         const btn = document.getElementById(`btn-${activeId}`);
         if(btn) btn.classList.add('current-btn');

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Z53 Hebreeën Les 2</title>
     <style>
-        :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
+        :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         
@@ -13,9 +13,10 @@
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
         .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 500px; }
+        .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
+        /* De scrollbare box voor Bijbeltekst en CV's */
         .bible-text-box { 
             background: #fffcf0; padding: 25px; border: 1px solid #ddd; line-height: 1.7; 
             height: 400px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap;
@@ -27,12 +28,14 @@
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
-        .canvas { position: relative; height: 550px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
+        .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { 
             position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); 
             border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
             font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10;
         }
+        /* Specifieke styling voor Jezus blokje */
+        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
         
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-top: 5px; border-radius: 4px; font-style: italic; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
@@ -121,13 +124,16 @@
         if (snap.empty) {
             for (let i = 0; i < screenConfigs.hierarchy.initial.length; i++) {
                 const name = screenConfigs.hierarchy.initial[i];
-                await setDoc(doc(db, "hierarchy_items", name), { text: name, x: 20, y: 20 + (i * 55) });
+                // Rommelige startposities aan de linkerkant
+                const randX = 15 + Math.random() * 50;
+                const randY = 15 + (i * 55) + (Math.random() * 15);
+                await setDoc(doc(db, "hierarchy_items", name), { text: name, x: randX, y: randY });
             }
         }
     }
 
     window.resetAllData = async () => {
-        if(confirm("Systeem resetten?")){
+        if(confirm("Systeem resetten? Alle data gaat verloren.")){
             await setDoc(doc(db, "appState", "order"), { sequence: Object.keys(screenConfigs) });
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
             for(const c of ['names', 'answers_1', 'poem_lines', 'hierarchy_items']) {
@@ -174,6 +180,7 @@
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
+        if(!container || !adminBar) return;
         container.innerHTML = ""; adminBar.innerHTML = "";
         currentOrder.forEach((id) => {
             const s = screenConfigs[id];
@@ -182,7 +189,7 @@
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
-            if (s.type === 'shared-drag') html += `<p>Bepaal samen de rangorde:</p><div id="canvas-hierarchy" class="canvas"></div>`;
+            if (s.type === 'shared-drag') html += `<p>Sleep de blokjes om de rangorde te bepalen:</p><div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div id="feed-${id}"></div>`;
             }
@@ -197,7 +204,6 @@
     }
 
     function initListeners() {
-        // Luister naar hiërarchie (gedeeld)
         onSnapshot(collection(db, "hierarchy_items"), (snap) => {
             const canvas = document.getElementById('canvas-hierarchy');
             if(!canvas) return;
@@ -205,7 +211,7 @@
                 let el = document.getElementById(`shared-${d.id}`);
                 if (!el) {
                     el = document.createElement('div');
-                    el.id = `shared-${d.id}`; el.className = 'draggable';
+                    el.id = `shared-${d.id}`; el.className = `draggable item-${d.id}`;
                     el.innerText = d.data().text;
                     canvas.appendChild(el);
                     setupDragging(el, d.id, true);
@@ -217,7 +223,6 @@
             });
         });
 
-        // Luister naar psalm regels (persoonlijk drag)
         onSnapshot(collection(db, "poem_lines"), (snap) => {
             const canvas = document.getElementById('canvas-creation');
             if (!canvas) return;
@@ -233,7 +238,6 @@
             });
         });
 
-        // Luister naar feeds
         ['names', 'answers_1'].forEach(col => {
             onSnapshot(collection(db, col), (snap) => {
                 const id = col === 'names' ? 'login' : 'q1';

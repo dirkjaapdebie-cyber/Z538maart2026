@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z53 Hebreeën Les 2</title>
+    <title>Z53 Hebreeën Les 2 - Definitief</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
@@ -16,13 +16,12 @@
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
-        /* De scrollbare box voor Bijbeltekst en CV's */
         .bible-text-box { 
             background: #fffcf0; padding: 25px; border: 1px solid #ddd; line-height: 1.7; 
             height: 400px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap;
         }
         
-        .cv-title { font-weight: bold; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
+        .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
 
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
@@ -32,10 +31,9 @@
         .draggable { 
             position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); 
             border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-            font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10;
+            font-weight: bold; white-space: nowrap; touch-action: none; user-select: none;
         }
-        /* Specifieke styling voor Jezus blokje */
-        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
+        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 12px rgba(241, 196, 15, 0.5); }
         
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-top: 5px; border-radius: 4px; font-style: italic; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
@@ -74,43 +72,12 @@
 
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Je naam:', dbCol: 'names', field: 'name' },
-        goals: { 
-            title: 'Doelen', 
-            type: 'info', 
-            content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong> (Wie staat er boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn plek in de woestijn)<br><strong>3. ... en wij dan?</strong> (Samen het huis van God)' 
-        },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `
-<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.
-<span class="cv-title">Wat heb ik gedaan?</span>
-• Prins van Egypte geweest.
-• Het volk bevrijd uit de slavernij.
-• De wetgeving verzorgd.
-• 40 jaar trouwe dienst in de woestijn.
-<span class="cv-title">Vaardigheid</span> Dienstbaarheid.
-
-<em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>` },
+        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n<span class="cv-title">Wat heb ik gedaan?</span>\n• Prins van Egypte geweest.\n• Het volk bevrijd uit de slavernij.\n• De wetgeving verzorgd.\n• 40 jaar trouwe dienst in de woestijn.\n\n<span class="cv-title">Vaardigheid</span> Dienstbaarheid.\n\n<em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>` },
         hierarchy: { title: 'De Rangorde', type: 'shared-drag', dbCol: 'hierarchy_items', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>
-
-[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. [2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. [3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. [4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. [5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; [6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. [7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, [8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. [9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. [10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. [11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! [12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden, [15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. [16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken. [17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? [18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? [19] Zo zien wij dat zij niet konden ingaan vanwege hun ongeloof.` },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `
-<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.
-<span class="cv-title">Mijn leven nu</span>
-• Elke dag manna (saai, maar het houdt me in leven).
-• Wandelen en wachten achter de wolk.
-• Terugdenken aan de 'vleespannen' van Egypte.
-<span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.
-
-<em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om de slavernij uit hun hoofd te krijgen.</em>` },
-        beloofde_land_cv: { title: '3. Binnentreder CV', type: 'bible', text: `
-<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.
-<span class="cv-title">Onze focus (Numeri 13)</span>
-• Wij weigeren onszelf als 'sprinkhanen' te zien tegenover de reuzen.
-• Wij zien de belemmeringen wel, maar vertrouwen op de Bouwer.
-• Wij moedigen elkaar aan om niet af te haken.
-<span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.
-
-<em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen (Numeri 13:26-33).</em>` },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. [2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. [3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. [4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. [5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; [6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. [7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, [8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. [9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. [10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. [11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! [12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; [13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. [14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden, [15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. [16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken. [17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? [18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? [19] Zo zien wij dat zij niet konder ingaan vanwege hun ongeloof.` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.\n\n<span class="cv-title">Mijn leven nu</span>\n• Elke dag manna (saai, maar het houdt me in leven).\n• Wandelen en wachten achter de wolk.\n• Terugdenken aan de 'vleespannen' van Egypte.\n\n<span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.\n\n<em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om de slavernij uit hun hoofd te krijgen.</em>` },
+        beloofde_land_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n\n<span class="cv-title">Onze focus (Numeri 13)</span>\n• Wij weigeren onszelf als 'sprinkhanen' te zien tegenover de reuzen.\n• Wij zien de belemmeringen wel, maar vertrouwen op de Bouwer.\n• Wij moedigen elkaar aan om niet af te haken.\n\n<span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.\n\n<em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen (Numeri 13:26-33).</em>` },
         q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
         lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een zin voor onze psalm:', dbCol: 'poem_lines', field: 'text' },
         creation: { title: 'Onze Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
@@ -122,19 +89,16 @@
     async function initHierarchyItems() {
         const snap = await getDocs(collection(db, "hierarchy_items"));
         if (snap.empty) {
-            for (let i = 0; i < screenConfigs.hierarchy.initial.length; i++) {
-                const name = screenConfigs.hierarchy.initial[i];
-                // Rommelige startposities aan de linkerkant
-                const randX = 15 + Math.random() * 50;
-                const randY = 15 + (i * 55) + (Math.random() * 15);
+            for (const name of screenConfigs.hierarchy.initial) {
+                const randX = 40 + Math.random() * 100;
+                const randY = 50 + Math.random() * 200;
                 await setDoc(doc(db, "hierarchy_items", name), { text: name, x: randX, y: randY });
             }
         }
     }
 
     window.resetAllData = async () => {
-        if(confirm("Systeem resetten? Alle data gaat verloren.")){
-            await setDoc(doc(db, "appState", "order"), { sequence: Object.keys(screenConfigs) });
+        if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
             for(const c of ['names', 'answers_1', 'poem_lines', 'hierarchy_items']) {
                 const q = await getDocs(collection(db, c));
@@ -159,7 +123,11 @@
 
     function setupDragging(el, id, isShared) {
         let isDragging = false;
-        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
+        el.onpointerdown = (e) => { 
+            isDragging = true; 
+            el.setPointerCapture(e.pointerId); 
+            el.style.zIndex = "2000"; 
+        };
         el.onpointermove = (e) => {
             if (!isDragging) return;
             const r = el.parentElement.getBoundingClientRect();
@@ -168,6 +136,7 @@
         };
         el.onpointerup = async (e) => { 
             isDragging = false; 
+            el.style.zIndex = "1000";
             if(isShared) {
                 await updateDoc(doc(db, "hierarchy_items", id), { 
                     x: parseInt(el.style.left), 
@@ -189,7 +158,7 @@
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
-            if (s.type === 'shared-drag') html += `<p>Sleep de blokjes om de rangorde te bepalen:</p><div id="canvas-hierarchy" class="canvas"></div>`;
+            if (s.type === 'shared-drag') html += `<p>Breng orde in de chaos:</p><div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div id="feed-${id}"></div>`;
             }
@@ -217,8 +186,7 @@
                     setupDragging(el, d.id, true);
                 }
                 if(document.pointerLockElement !== el) {
-                    el.style.left = d.data().x + "px";
-                    el.style.top = d.data().y + "px";
+                    el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
                 }
             });
         });

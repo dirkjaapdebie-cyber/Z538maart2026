@@ -63,38 +63,43 @@
 
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Je naam:', dbCol: 'names', field: 'name' },
+        goals: { 
+            title: 'Doelen', 
+            type: 'info', 
+            content: 'Doelen voor vandaag:<br><br><strong>1. Hiërarchie</strong> (Wie staat er boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn plek in de woestijn)<br><strong>3. ... en wij dan?</strong> (Samen het huis van God)' 
+        },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `
             <span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.<br>
-            <span class="cv-title">Werkervaring</span>
-            • Prins van Egypte (hof-ervaring)<br>
-            • Bevrijder van miljoenen mensen<br>
-            • Wetgever (ontving de Tien Geboden)<br>
-            • 40 jaar pleitbezorger voor het volk<br>
-            <span class="cv-title">Vaardigheid</span> Dienstbaarheid en luisteren.<br><br>
-            <em>De les: Mozes was de beste dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>
+            <span class="cv-title">Wat heb ik gedaan?</span>
+            • Prins van Egypte geweest.<br>
+            • Het volk bevrijd uit de slavernij.<br>
+            • De wetgeving verzorgd.<br>
+            • 40 jaar trouwe dienst in de woestijn.<br>
+            <span class="cv-title">Vaardigheid</span> Dienstbaarheid.<br><br>
+            <em>De les: Mozes was een dienaar IN het huis, maar Jezus is de Zoon OVER het huis.</em>
         ` },
-        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\nKijk naar Jezus. Hij is meer eer waard dan Mozes. Mozes was trouw als dienaar, maar Jezus als de Zoon die het huis Zelf gebouwd heeft.` },
+        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\nKijk naar Jezus. Hij is meer eer waard dan Mozes. Mozes was trouw als dienaar, maar Jezus als de Zoon die het huis Zelf gebouwd heeft. Dat huis, dat zijn WIJ.` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `
-            <span class="cv-title">Wie ben ik?</span> Bevrijd uit de slavernij, maar in mijn hoofd nog vaak in Egypte.<br>
-            <span class="cv-title">Dagelijkse bezigheden</span>
-            • Manna eten (elke dag hetzelfde, het verveelt)<br>
-            • Wandelen achter de wolk<br>
-            • Klagen en twijfelen bij dorst of moeite<br>
-            <span class="cv-title">Status</span> Bevrijd, maar nog niet sterk. Ik ben onderweg.<br><br>
-            <em>De les: Het duurt langer om de slavernij uit de mens te krijgen dan de mens uit de slavernij.</em>
+            <span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar ik moet nog leren leven als een vrij mens.<br>
+            <span class="cv-title">Mijn leven nu</span>
+            • Elke dag manna (saai, maar het houdt me in leven).<br>
+            • Wandelen en wachten achter de wolk.<br>
+            • Terugdenken aan de 'vleespannen' van Egypte.<br>
+            <span class="cv-title">Status</span> Bevrijd, maar nog niet sterk.<br><br>
+            <em>De les: God haalde het volk in één dag uit Egypte, maar had 40 jaar nodig om de slavernij uit hun hoofd te krijgen.</em>
         ` },
         beloofde_land_cv: { title: '3. Binnentreder CV', type: 'bible', text: `
-            <span class="cv-title">Wie ben ik?</span> Iemand die niet meer naar de 'reuzen' kijkt, maar naar God.<br>
-            <span class="cv-title">Mijn focus (Numeri 13)</span>
-            • Ik weiger mezelf als 'sprinkhaan' te zien tegenover de reuzen.<br>
-            • Ik geniet van de overvloed (druiven en honing).<br>
-            • Ik vertrouw op God als de muren hoog lijken.<br>
-            <span class="cv-title">Vaardigheid</span> Vertrouwen groter maken dan angst.<br><br>
-            <em>De les: Het Beloofde Land vraagt om vertrouwen dat God groter is dan je belemmeringen.</em>
+            <span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.<br>
+            <span class="cv-title">Onze focus (Numeri 13)</span>
+            • Wij weigeren onszelf als 'sprinkhanen' te zien.<br>
+            • Wij zien de reuzen, maar we vertrouwen op de Bouwer van het huis.<br>
+            • Wij moedigen elkaar aan om niet af te haken.<br>
+            <span class="cv-title">Vaardigheid</span> Samen vasthouden aan het vertrouwen.<br><br>
+            <em>De les: Het Beloofde Land is geen solo-reis, we trekken samen op als Gods huis.</em>
         ` },
-        q1: { title: 'Vragen', type: 'qa', label: 'Wat spreekt je aan?', dbCol: 'answers_1', field: 'text' },
-        lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een kernzin voor de psalm:', dbCol: 'poem_lines', field: 'text' },
-        creation: { title: 'Jouw Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
+        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
+        lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een zin voor onze psalm:', dbCol: 'poem_lines', field: 'text' },
+        creation: { title: 'Onze Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
         blessing: { title: 'Zegen', type: 'info', content: 'Ga in vrede.' }
     };
 
@@ -144,7 +149,7 @@
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
-            if (s.type === 'info') html += `<p>${s.content}</p>`;
+            if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div id="feed-${id}"></div>`;

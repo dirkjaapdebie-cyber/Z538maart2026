@@ -6,28 +6,28 @@
     <title>Z53 8 maart 2026 - Hebreeën les 2</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
-        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 180px; }
-        .main-header { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
+        
+        /* Hoofdheader met Reset-knop ernaast */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
+        .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
+        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: sans-serif; }
+
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.4s; }
-        .bible-text-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; max-height: 400px; overflow-y: auto; text-align: left; border-radius: 4px; white-space: pre-wrap; }
-        .feed-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
-        .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; font-style: italic; }
+        .bible-text-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; max-height: 400px; overflow-y: auto; white-space: pre-wrap; border-radius: 4px; }
         
-        /* Verbeterde Admin Balk */
-        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; align-items: center; border-top: 3px solid var(--accent); }
-        .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; padding: 12px 18px; border-radius: 6px; font-size: 14px; }
-        .current-btn { background: var(--accent) !important; font-weight: bold; box-shadow: 0 0 10px var(--accent); }
+        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; }
+        .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
+        .current-btn { background: var(--accent) !important; font-weight: bold; }
         
-        /* Opvallende Reset Knop */
-        .reset-btn { background: #e74c3c !important; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex-shrink: 0; border: 2px solid white; }
+        .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; }
+        .draggable { position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); font-weight: bold; white-space: nowrap; touch-action: none; }
         
-        .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; margin-top: 10px; }
-        .draggable { position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
-        
-        input[type="text"] { padding: 12px; border: 1px solid #ccc; border-radius: 4px; width: 65%; font-size: 16px; }
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-top: 5px; border-radius: 4px; font-style: italic; }
+        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -35,16 +35,18 @@
 <body>
 
 <div class="container">
-    <h1 class="main-header">Z53 Bijbelstudie - Hebreeën les 2</h1>
+    <div class="header-flex">
+        <h1 class="main-header">Z53 - Hebreeën Les 2</h1>
+        <button class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
+    </div>
     <div id="main-container"></div>
 </div>
 
-<div class="admin-bar" id="admin-bar">
-    </div>
+<div class="admin-bar" id="admin-bar"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -59,19 +61,31 @@
     const db = getFirestore(app);
 
     const screenConfigs = {
-        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in voor de les:', dbCol: 'names', field: 'name' },
-        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Mozes vs Jezus <br>2. De woestijn-ervaring <br>3. Het binnentreden' },
-        mozes_cv: { title: 'Doel 1: Mozes CV', type: 'bible', text: `<strong>CV: MOZES</strong>\n\n• Prins van Egypte\n• Bevrijder van Israël\n• Wetgever op de Sinaï\n• Trouwe dienaar in Gods huis.` },
-        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\n[1] Let op de Apostel en Hogepriester: Christus Jezus...\n[6] Christus is de Zoon over Zijn huis. Zijn huis zijn wij!` },
-        woestijn_cv: { title: 'Doel 2: Woestijn CV', type: 'bible', text: `<strong>CV: WOESTIJNREIZIGER</strong>\n\n• Elke dag manna (het verveelt)\n• Wandelen achter de wolk\n• Veel twijfels en dorst\n• Nog niet sterk genoeg.` },
-        beloofde_land_cv: { title: 'Doel 3: Land CV', type: 'bible', text: `<strong>CV: BINNENTREDER</strong>\n\n• Genieten van de overvloed\n• Bouwen op een vast fundament\n• Eindelijk de beloofde rust.` },
-        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
-        lines: { title: 'Schrijf een regel', type: 'input', label: 'Typ een kernzin voor onze gezamenlijke psalm:', dbCol: 'poem_lines', field: 'text' },
+        login: { title: 'Inloggen', type: 'input', label: 'Je naam:', dbCol: 'names', field: 'name' },
+        goals: { title: 'Doelen', type: 'info', content: '1. Mozes vs Jezus <br>2. De woestijn <br>3. Het Land' },
+        mozes_cv: { title: 'Mozes CV', type: 'bible', text: `CV: MOZES\n- Prins van Egypte\n- Bevrijder\n- Wetgever\n- Dienaar in het huis.` },
+        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\nKijk naar Jezus. Hij is meer eer waard dan Mozes. Mozes was trouw als dienaar, maar Jezus als de Zoon die het huis Zelf gebouwd heeft.` },
+        woestijn_cv: { title: 'Woestijn CV', type: 'bible', text: `CV: WOESTIJNREIZIGER\n- Saai eten (Manna)\n- Veel wandelen en wachten\n- Twijfels en nog niet sterk.` },
+        beloofde_land_cv: { title: 'Land CV', type: 'bible', text: `CV: BINNENTREDER\n- Genieten van overvloed\n- Bouwen op vast fundament\n- Rust.` },
+        q1: { title: 'Vragen', type: 'qa', label: 'Wat spreekt je aan?', dbCol: 'answers_1', field: 'text' },
+        lines: { title: 'Schrijf Regel', type: 'input', label: 'Typ een kernzin voor de psalm:', dbCol: 'poem_lines', field: 'text' },
         creation: { title: 'Jouw Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in de rust van de Heer.' }
+        blessing: { title: 'Zegen', type: 'info', content: 'Ga in vrede.' }
     };
 
     let currentOrder = Object.keys(screenConfigs);
+
+    window.resetAllData = async () => {
+        if(confirm("Alles wissen en app herstarten?")){
+            await deleteDoc(doc(db, "appState", "order"));
+            const cols = ['names', 'answers_1', 'poem_lines'];
+            for(const c of cols) {
+                const q = await getDocs(collection(db, c));
+                q.forEach(d => deleteDoc(doc(db, c, d.id)));
+            }
+            location.reload();
+        }
+    };
 
     window.sendData = async (id, col, field) => {
         const val = document.getElementById(`in-${id}`).value;
@@ -83,24 +97,12 @@
 
     window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
-    window.resetAllData = async () => {
-        if(confirm("Systeem resetten? Alle namen en teksten worden gewist.")){
-            await deleteDoc(doc(db, "appState", "order"));
-            for(const c of ['names', 'answers_1', 'poem_lines']) {
-                const q = await getDocs(collection(db, c));
-                q.forEach(d => deleteDoc(doc(db, c, d.id)));
-            }
-            location.reload();
-        }
-    };
-
     function setupPrivateDragging(el) {
         let isDragging = false;
         el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
         el.onpointermove = (e) => {
             if (!isDragging) return;
-            const canvas = el.parentElement;
-            const r = canvas.getBoundingClientRect();
+            const r = el.parentElement.getBoundingClientRect();
             el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
             el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
         };
@@ -110,9 +112,7 @@
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
-        container.innerHTML = ""; 
-        adminBar.innerHTML = `<button class="reset-btn" onclick="window.resetAllData()">RESET</button>`;
-
+        container.innerHTML = ""; adminBar.innerHTML = "";
         currentOrder.forEach((id) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
@@ -121,11 +121,9 @@
             if (s.type === 'info') html += `<p>${s.content}</p>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
             if (s.type === 'input' || s.type === 'qa') {
-                html += `<p>${s.label}</p><div style="display:flex;gap:5px;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Feed:</strong><div id="feed-${id}"></div></div>`;
+                html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div id="feed-${id}"></div>`;
             }
-            if (s.type === 'dragdrop') {
-                html += `<div id="canvas-${id}" class="canvas"></div>`;
-            }
+            if (s.type === 'dragdrop') html += `<div id="canvas-${id}" class="canvas"></div>`;
             div.innerHTML = html; container.appendChild(div);
             
             const btn = document.createElement('button');
@@ -149,9 +147,8 @@
                                 const el = document.createElement('div');
                                 el.id = `drag-${docSnap.id}`; el.className = 'draggable';
                                 el.innerText = docSnap.data().text;
-                                el.style.top = (20 + (index * 60)) + "px"; el.style.left = "20px";
-                                canvas.appendChild(el);
-                                setupPrivateDragging(el);
+                                el.style.top = (10 + (index * 60)) + "px"; el.style.left = "10px";
+                                canvas.appendChild(el); setupPrivateDragging(el);
                             }
                         });
                     }

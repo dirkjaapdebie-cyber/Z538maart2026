@@ -9,7 +9,6 @@
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
         .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 160px; }
         
-        /* Hoofdtitel stijl */
         .main-header { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
@@ -25,8 +24,12 @@
             overflow-y: auto; 
             text-align: left;
             border-radius: 4px;
-            white-space: pre-wrap; /* Behoudt witregels uit de code */
+            white-space: pre-wrap;
         }
+
+        /* Feed voor namen en antwoorden */
+        .feed-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+        .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; font-style: italic; }
 
         /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 8px; z-index: 1000; align-items: center; }
@@ -47,6 +50,9 @@
         .custom-input-box input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         .custom-input-box button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
         
+        input[type="text"], input:not([type]) { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 70%; margin-right: 5px; }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -77,7 +83,7 @@
 
     // --- CONFIGURATIE ---
     let screenConfigs = {
-        login: { title: 'Inloggen', type: 'input', label: 'Naam:', dbCol: 'names', field: 'name' },
+        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in om deel te nemen:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding <br>2. Verdieping <br>3. Samen bouwen.' },
         reading: { 
             title: 'Hebreeën 3:1-14 HSV', 
@@ -145,7 +151,7 @@
     }
 
     async function resetAllData() {
-        if(confirm("Alles wissen en volgorde resetten?")){
+        if(confirm("LET OP: Hiermee wis je alle namen en antwoorden. Doorgaan?")){
             await deleteDoc(doc(db, "appState", "order"));
             const cols = ['names', 'answers_1', 'poem_lines', 'concepts_final', 'antwoorden_toepassing', 'prioriteiten_keuze'];
             for(const c of cols) {
@@ -173,9 +179,20 @@
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'info') html += `<p>${s.content}</p>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
+            
+            // Aangepast voor Live Feed ondersteuning op ELK input/qa scherm, inclusief inlog
             if (s.type === 'input' || s.type === 'qa') {
-                html += `<p>${s.label}</p><input id="in-${id}"><button onclick="sendData('${id}','${s.dbCol}','${s.field}')">Verstuur</button><div id="feed-${id}" style="margin-top:20px;"></div>`;
+                html += `<p>${s.label}</p>
+                         <div style="display:flex; gap:10px;">
+                            <input type="text" id="in-${id}" placeholder="...">
+                            <button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button>
+                         </div>
+                         <div class="feed-container">
+                            <strong>Aanwezig / Live Feed:</strong>
+                            <div id="feed-${id}"></div>
+                         </div>`;
             }
+            
             if (s.type === 'dragdrop' || s.type === 'static-dragdrop') {
                 html += `<div class="custom-input-box"><input id="custom-in-${id}" placeholder="Eigen tekst..."><button onclick="addCustomItem('${id}','${s.dbCol}')">Toevoegen</button></div><div id="canvas-${id}" class="canvas"></div>`;
             }
@@ -215,7 +232,12 @@
             onSnapshot(collection(db, s.dbCol), (snap) => {
                 const feed = document.getElementById(`feed-${id}`);
                 const canvas = document.getElementById(`canvas-${id}`);
-                if (feed) feed.innerHTML = snap.docs.map(d => `<div style="padding:10px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px;">${d.data()[s.field] || d.data().text}</div>`).join("");
+                
+                if (feed) {
+                    const items = snap.docs.map(d => `<div class="feed-item">${d.data()[s.field] || d.data().text}</div>`).join("");
+                    feed.innerHTML = items || "Nog geen namen/antwoorden...";
+                }
+                
                 if (canvas) {
                     if (s.type === 'static-dragdrop' && snap.empty) {
                         s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 40 + (i*65) }));

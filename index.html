@@ -14,7 +14,6 @@
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
-        /* Scrollbaar Bijbel venster */
         .bible-text-box { 
             background: #fffcf0; 
             padding: 20px; 
@@ -27,11 +26,9 @@
             white-space: pre-wrap;
         }
 
-        /* Feed voor namen en antwoorden */
         .feed-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; font-style: italic; }
 
-        /* Admin Bar */
         .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 8px; z-index: 1000; align-items: center; }
         .admin-unit { display: flex; flex-direction: column; gap: 4px; align-items: center; background: #222; padding: 5px; border-radius: 4px; }
         .move-btns { display: flex; gap: 2px; }
@@ -40,7 +37,6 @@
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         .reset-btn { background: #c0392b !important; margin-left: auto; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
-        /* Canvas & Draggables */
         .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; }
         .draggable { position: absolute; padding: 12px 35px 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
         .delete-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #eee; color: #666; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 1px solid #ccc; }
@@ -85,27 +81,9 @@
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in om deel te nemen:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
-        reading: { 
-            title: 'Hebreeën 3:1-14 HSV', 
+        mozes_cv: { 
+            title: 'Doel 1: Mozes\' CV', 
             type: 'bible', 
-            text: `[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. 
-[2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. 
-[3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. 
-[4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. 
-[5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden; 
-[6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. 
-[7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, 
-[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. 
-[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. 
-[10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. 
-[11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! 
-[12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; 
-[13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. 
-[14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden.`
-        },
-        { title: 'Doel 1:', type: 'info', content: 'Hiërarchie <br> text: `2. ... en ik dan? <br>3. ... en wij dan?' },
-    title: 'Doel 1: Mozes\' CV', 
-            type: 'bible', // We gebruiken type 'bible' vanwege het scrollbare venster
             text: `<strong>CURRICULUM VITAE: MOZES</strong>
 <br>
 <strong>PERSOONLIJK PROFIEL</strong>
@@ -127,7 +105,25 @@
 <hr>
 <em>Lucado's kernpunt: Mozes was de dienaar ín het huis, Jezus is de Bouwer van het huis.</em>`
         },
-    q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
+        reading: { 
+            title: 'Hebreeën 3:1-14 HSV', 
+            type: 'bible', 
+            text: `[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. 
+[2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis. 
+[3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. 
+[4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God. 
+[5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van what later gesproken zou worden; 
+[6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden. 
+[7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, 
+[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. 
+[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. 
+[10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. 
+[11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan! 
+[12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; 
+[13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde. 
+[14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden.`
+        },
+        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
         toepassing_vraag: { title: 'Persoonlijk', type: 'qa', label: 'Hoe kun je dit morgen toepassen?', dbCol: 'antwoorden_toepassing', field: 'text' },
         concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'concepts_final' },
         keuze_oefening: { title: 'Prioriteiten', type: 'static-dragdrop', items: ['Gebed', 'Dienstbaarheid', 'Stilte', 'Bijbelstudie', 'Getuigen'], dbCol: 'prioriteiten_keuze' },
@@ -204,7 +200,6 @@
             if (s.type === 'info') html += `<p>${s.content}</p>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
             
-            // Aangepast voor Live Feed ondersteuning op ELK input/qa scherm, inclusief inlog
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p>
                          <div style="display:flex; gap:10px;">

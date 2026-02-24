@@ -1,9 +1,16 @@
+
+
+
+
+ZELF PAGINA'S TOEVOEGEN door blokjes code te KOPIËREN:
+
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bijbelstudie Regie - 8 Maart</title>
+    <title>Bijbelstudie Regie - Volledige Editie</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
@@ -40,7 +47,6 @@
         .delete-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: #eee; color: #666; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 1px solid #ccc; }
         .delete-btn:hover { background: #c0392b; color: white; }
 
-        /* Custom Input styling */
         .custom-input-box { display: flex; gap: 5px; margin-bottom: 10px; }
         .custom-input-box input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
         .custom-input-box button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
@@ -69,12 +75,34 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // --- CONFIGURATIE VAN DE SCHERMEN ---
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input', label: 'Naam:', dbCol: 'names', field: 'name' },
         goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Verbinding <br>2. Verdieping <br>3. Samen bouwen.' },
-        reading: { title: 'Lezing', type: 'bible', text: 'Hier komt de tekst van Hebreeën 2...' },
-        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers', field: 'text' },
+        
+        reading: { title: 'Lezing 1', type: 'bible', text: 'Hier komt de tekst van Hebreeën 2...' },
+        
+        q1: { title: 'Vragen 1', type: 'qa', label: 'Wat raakt je in dit tekstgedeelte?', dbCol: 'answers_1', field: 'text' },
+        
+        // INTERACTIEF VOORBEELD 1: Een nieuwe vraag
+        toepassing_vraag: { 
+            title: 'Persoonlijk', 
+            type: 'qa', 
+            label: 'Hoe kun je dit morgen toepassen?', 
+            dbCol: 'antwoorden_toepassing', 
+            field: 'text' 
+        },
+
         concepts: { title: 'Begrippen', type: 'static-dragdrop', items: ['Jezus', 'Mozes', 'Wet', 'Koningen', 'Beloofde land'], dbCol: 'concepts_final' },
+        
+        // INTERACTIEF VOORBEELD 2: Een sleep-oefening met vaste woorden
+        keuze_oefening: { 
+            title: 'Prioriteiten', 
+            type: 'static-dragdrop', 
+            items: ['Gebed', 'Dienstbaarheid', 'Stilte', 'Bijbelstudie', 'Getuigen'], 
+            dbCol: 'prioriteiten_keuze' 
+        },
+
         lines: { title: 'Zinnen verzamelen', type: 'input', label: 'Typ een kernzin uit de tekst:', dbCol: 'poem_lines', field: 'text' },
         creation: { title: 'Psalm Vormen', type: 'dragdrop', dbCol: 'poem_lines' },
         blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede.' }
@@ -82,7 +110,7 @@
 
     let currentOrder = Object.keys(screenConfigs);
 
-    // --- REGIE & CUSTOM ACTIONS ---
+    // --- LOGICA ---
     window.moveScreen = async (index, direction) => {
         let newOrder = [...currentOrder];
         let target = index + direction;
@@ -112,6 +140,7 @@
 
         currentOrder.forEach((id, index) => {
             const s = screenConfigs[id];
+            if (!s) return;
             const div = document.createElement('div');
             div.id = `screen-${id}`;
             div.className = 'screen';
@@ -122,104 +151,4 @@
             if (s.type === 'input' || s.type === 'qa') {
                 html += `<p>${s.label}</p><input id="in-${id}"><button onclick="sendData('${id}','${s.dbCol}','${s.field}')">Verstuur</button><div id="feed-${id}" style="margin-top:20px;"></div>`;
             }
-            if (s.type === 'dragdrop' || s.type === 'static-dragdrop') {
-                html += `
-                    <div class="custom-input-box">
-                        <input id="custom-in-${id}" placeholder="Eigen tekst...">
-                        <button onclick="addCustomItem('${id}','${s.dbCol}')">Toevoegen</button>
-                    </div>
-                    <div id="canvas-${id}" class="canvas"></div>`;
-            }
-            
-            div.innerHTML = html;
-            container.appendChild(div);
-
-            const unit = document.createElement('div');
-            unit.className = 'admin-unit';
-            unit.innerHTML = `<div class="move-btns"><button onclick="moveScreen(${index},-1)">←</button><button onclick="moveScreen(${index},1)">→</button></div>
-                              <button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>`;
-            adminBar.appendChild(unit);
-        });
-
-        const resetBtn = document.createElement('button');
-        resetBtn.innerText = "ALLES RESETTEN";
-        resetBtn.className = "reset-btn";
-        resetBtn.onclick = resetAllData;
-        adminBar.appendChild(resetBtn);
-    }
-
-    // --- DATA SYNC ---
-    onSnapshot(doc(db, "appState", "order"), (snap) => {
-        if (snap.exists()) { currentOrder = snap.data().sequence; renderApp(); initListeners(); } else { renderApp(); }
-    });
-
-    onSnapshot(doc(db, "appState", "current"), (snap) => {
-        const activeId = snap.data()?.activeScreen || 'login';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`)?.classList.add('active');
-        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
-    });
-
-    function initListeners() {
-        currentOrder.forEach(id => {
-            const s = screenConfigs[id];
-            if (!s.dbCol) return;
-            onSnapshot(collection(db, s.dbCol), (snap) => {
-                const feed = document.getElementById(`feed-${id}`);
-                const canvas = document.getElementById(`canvas-${id}`);
-                if (feed) feed.innerHTML = snap.docs.map(d => `<div style="padding:10px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px;">${d.data()[s.field] || d.data().text}</div>`).join("");
-                if (canvas) {
-                    if (s.type === 'static-dragdrop' && snap.empty) {
-                        s.items.forEach((txt, i) => addDoc(collection(db, s.dbCol), { text: txt, x: 20, y: 40 + (i*65) }));
-                    }
-                    const dbIds = snap.docs.map(d => d.id);
-                    canvas.querySelectorAll('.draggable').forEach(el => {
-                        if (!dbIds.includes(el.id.replace('drag-', ''))) el.remove();
-                    });
-                    snap.docs.forEach(docSnap => {
-                        let el = document.getElementById(`drag-${docSnap.id}`);
-                        if (!el) {
-                            el = document.createElement('div');
-                            el.id = `drag-${docSnap.id}`;
-                            el.className = 'draggable';
-                            el.innerHTML = `<span>${docSnap.data().text}</span><div class="delete-btn" onclick="deleteItem('${s.dbCol}', '${docSnap.id}')">x</div>`;
-                            canvas.appendChild(el);
-                            setupTouchDragging(el, s.dbCol, docSnap.id, canvas);
-                        }
-                        el.style.left = docSnap.data().x + "px";
-                        el.style.top = docSnap.data().y + "px";
-                    });
-                }
-            });
-        });
-    }
-
-    window.deleteItem = async (col, docId) => {
-        if(confirm("Verwijderen voor iedereen?")) await deleteDoc(doc(db, col, docId));
-    };
-
-    function setupTouchDragging(el, col, docId, canvas) {
-        let isDragging = false;
-        el.onpointerdown = (e) => { if (e.target.className === 'delete-btn') return; isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = "1000"; };
-        el.onpointermove = (e) => { if (!isDragging) return; const r = canvas.getBoundingClientRect(); updateDoc(doc(db, col, docId), { x: e.clientX - r.left - (el.offsetWidth / 2), y: e.clientY - r.top - (el.offsetHeight / 2) }); };
-        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); el.style.zIndex = "10"; };
-    }
-
-    window.sendData = async (id, col, field) => {
-        const val = document.getElementById(`in-${id}`).value;
-        if (val) { await addDoc(collection(db, col), { [field]: val, timestamp: Date.now(), x: 50, y: 50 }); document.getElementById(`in-${id}`).value = ""; }
-    };
-
-    async function resetAllData() {
-        if(confirm("Alles wissen?")){
-            const cols = ['names', 'answers', 'poem_lines', 'concepts_final'];
-            for(const c of cols) {
-                const q = await getDocs(collection(db, c));
-                q.forEach(d => deleteDoc(doc(db, c, d.id)));
-            }
-        }
-    }
-</script>
-</body>
-</html>
+            if (s.type

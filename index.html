@@ -7,32 +7,40 @@
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; touch-action: manipulation; }
-        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 160px; }
+        .container { max-width: 800px; margin: 40px auto; padding: 20px; padding-bottom: 180px; }
         .main-header { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 450px; }
         .active { display: block; animation: fadeIn 0.4s; }
         .bible-text-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; max-height: 400px; overflow-y: auto; text-align: left; border-radius: 4px; white-space: pre-wrap; }
         .feed-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
         .feed-item { padding: 10px; border-bottom: 1px solid #eee; background: #f9f9f9; margin-bottom: 5px; border-radius: 4px; font-style: italic; }
-        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 8px; z-index: 1000; align-items: center; }
-        .admin-unit { display: flex; flex-direction: column; gap: 4px; align-items: center; background: #222; padding: 5px; border-radius: 4px; }
-        .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 4px; }
-        .current-btn { background: var(--accent) !important; font-weight: bold; }
-        .reset-btn { background: #c0392b !important; margin-left: auto; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .canvas { position: relative; height: 500px; border: 1px solid #ddd; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; }
+        
+        /* Verbeterde Admin Balk */
+        .admin-bar { position: fixed; bottom: 0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 10px; z-index: 1000; align-items: center; border-top: 3px solid var(--accent); }
+        .screen-btn { background: #444; color: white; border: none; cursor: pointer; white-space: nowrap; padding: 12px 18px; border-radius: 6px; font-size: 14px; }
+        .current-btn { background: var(--accent) !important; font-weight: bold; box-shadow: 0 0 10px var(--accent); }
+        
+        /* Opvallende Reset Knop */
+        .reset-btn { background: #e74c3c !important; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; flex-shrink: 0; border: 2px solid white; }
+        
+        .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; border-radius: 4px; margin-top: 10px; }
         .draggable { position: absolute; padding: 12px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.15); white-space: nowrap; font-weight: bold; user-select: none; touch-action: none; z-index: 10; }
-        input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 70%; margin-right: 5px; }
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        
+        input[type="text"] { padding: 12px; border: 1px solid #ccc; border-radius: 4px; width: 65%; font-size: 16px; }
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="main-header">Max Lucado's 'Hebreeën' les 2</h1>
+    <h1 class="main-header">Z53 Bijbelstudie - Hebreeën les 2</h1>
     <div id="main-container"></div>
 </div>
-<div class="admin-bar" id="admin-bar"></div>
+
+<div class="admin-bar" id="admin-bar">
+    </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -50,17 +58,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let screenConfigs = {
-        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in:', dbCol: 'names', field: 'name' },
-        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Hiërarchie <br>2. ... en ik dan? <br>3. ... en wij dan?' },
-        mozes_cv: { title: 'Doel 1: Mozes\' CV', type: 'bible', text: `<strong>CURRICULUM VITAE: MOZES</strong>\n\nDienaar van de Allerhoogste, ervaren in crisismanagement en wetgeving.\n\n• Prins van Egypte\n• Bevrijder van Israël\n• Wetgever (Sinaï)\n• Intermediair van God` },
-        reading: { title: 'Hebreeën 3:1-14', type: 'bible', text: `[1] Let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...\n[6] Christus als Zoon over Zijn huis.` },
-        woestijn_cv: { title: 'Doel 2: Woestijn CV', type: 'bible', text: `<strong>CV WOESTIJNREIZIGER</strong>\n\nIk ben weg uit Egypte, maar in mijn hoofd zit ik er nog vaak.\n\n• Elke dag manna: het verveelt.\n• Wandelen en wachten: ik volg de wolk.\n• Terugverlangen: ik mis de uien van Egypte.` },
-        beloofde_land_cv: { title: 'Doel 3: Beloofde Land CV', type: 'bible', text: `<strong>CV BINNENTREDER</strong>\n\nIk kijk niet meer achterom. God is te vertrouwen.\n\n• Vruchten plukken: het wachten was het waard.\n• Bouwen: ik heb een vast fundament.\n• Rusten: de strijd is gestreden.` },
-        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze teksten?', dbCol: 'answers_1', field: 'text' },
-        lines: { title: 'Kernzin', type: 'input', label: 'Typ één kernzin voor je eigen psalm:', dbCol: 'poem_lines', field: 'text' },
+    const screenConfigs = {
+        login: { title: 'Inloggen', type: 'input', label: 'Vul je naam in voor de les:', dbCol: 'names', field: 'name' },
+        goals: { title: 'Doelen', type: 'info', content: 'Doelen voor vandaag: <br>1. Mozes vs Jezus <br>2. De woestijn-ervaring <br>3. Het binnentreden' },
+        mozes_cv: { title: 'Doel 1: Mozes CV', type: 'bible', text: `<strong>CV: MOZES</strong>\n\n• Prins van Egypte\n• Bevrijder van Israël\n• Wetgever op de Sinaï\n• Trouwe dienaar in Gods huis.` },
+        reading: { title: 'De Tekst', type: 'bible', text: `Hebreeën 3:1-14\n\n[1] Let op de Apostel en Hogepriester: Christus Jezus...\n[6] Christus is de Zoon over Zijn huis. Zijn huis zijn wij!` },
+        woestijn_cv: { title: 'Doel 2: Woestijn CV', type: 'bible', text: `<strong>CV: WOESTIJNREIZIGER</strong>\n\n• Elke dag manna (het verveelt)\n• Wandelen achter de wolk\n• Veel twijfels en dorst\n• Nog niet sterk genoeg.` },
+        beloofde_land_cv: { title: 'Doel 3: Land CV', type: 'bible', text: `<strong>CV: BINNENTREDER</strong>\n\n• Genieten van de overvloed\n• Bouwen op een vast fundament\n• Eindelijk de beloofde rust.` },
+        q1: { title: 'Vragen', type: 'qa', label: 'Wat raakt je in deze vergelijking?', dbCol: 'answers_1', field: 'text' },
+        lines: { title: 'Schrijf een regel', type: 'input', label: 'Typ een kernzin voor onze gezamenlijke psalm:', dbCol: 'poem_lines', field: 'text' },
         creation: { title: 'Jouw Psalm', type: 'dragdrop', dbCol: 'poem_lines' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in vrede en rust.' }
+        blessing: { title: 'Zegen', type: 'info', content: 'Ga heen in de rust van de Heer.' }
     };
 
     let currentOrder = Object.keys(screenConfigs);
@@ -76,7 +84,7 @@
     window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
     window.resetAllData = async () => {
-        if(confirm("Alles wissen?")){
+        if(confirm("Systeem resetten? Alle namen en teksten worden gewist.")){
             await deleteDoc(doc(db, "appState", "order"));
             for(const c of ['names', 'answers_1', 'poem_lines']) {
                 const q = await getDocs(collection(db, c));
@@ -96,13 +104,15 @@
             el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
             el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
         };
-        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); el.style.zIndex = "10"; };
+        el.onpointerup = (e) => { isDragging = false; el.releasePointerCapture(e.pointerId); };
     }
 
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
-        container.innerHTML = ""; adminBar.innerHTML = "";
+        container.innerHTML = ""; 
+        adminBar.innerHTML = `<button class="reset-btn" onclick="window.resetAllData()">RESET</button>`;
+
         currentOrder.forEach((id) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
@@ -111,18 +121,18 @@
             if (s.type === 'info') html += `<p>${s.content}</p>`;
             if (s.type === 'bible') html += `<div class="bible-text-box">${s.text}</div>`;
             if (s.type === 'input' || s.type === 'qa') {
-                html += `<p>${s.label}</p><div style="display:flex;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Live Feed:</strong><div id="feed-${id}"></div></div>`;
+                html += `<p>${s.label}</p><div style="display:flex;gap:5px;"><input type="text" id="in-${id}"><button class="action-btn" onclick="sendData('${id}','${s.dbCol}','${s.field}')">OK</button></div><div class="feed-container"><strong>Feed:</strong><div id="feed-${id}"></div></div>`;
             }
             if (s.type === 'dragdrop') {
-                html += `<p>Sleep de regels van iedereen om jouw eigen psalm te maken:</p><div id="canvas-${id}" class="canvas"></div>`;
+                html += `<div id="canvas-${id}" class="canvas"></div>`;
             }
             div.innerHTML = html; container.appendChild(div);
+            
             const btn = document.createElement('button');
             btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
             btn.onclick = () => window.updateRemoteScreen(id);
             adminBar.appendChild(btn);
         });
-        const rBtn = document.createElement('button'); rBtn.className = 'reset-btn'; rBtn.innerText = "RESET"; rBtn.onclick = window.resetAllData; adminBar.appendChild(rBtn);
     }
 
     function initListeners() {
@@ -137,11 +147,9 @@
                         snap.docs.forEach((docSnap, index) => {
                             if (!document.getElementById(`drag-${docSnap.id}`)) {
                                 const el = document.createElement('div');
-                                el.id = `drag-${docSnap.id}`;
-                                el.className = 'draggable';
+                                el.id = `drag-${docSnap.id}`; el.className = 'draggable';
                                 el.innerText = docSnap.data().text;
-                                el.style.top = (20 + (index * 50)) + "px";
-                                el.style.left = "20px";
+                                el.style.top = (20 + (index * 60)) + "px"; el.style.left = "20px";
                                 canvas.appendChild(el);
                                 setupPrivateDragging(el);
                             }

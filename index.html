@@ -17,11 +17,8 @@
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
-        
-        /* Namen Feed Styling op Scherm 1 */
         .names-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px inset #eee; min-height: 50px; }
         .name-tag { background: var(--primary); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; animation: popIn 0.3s; }
-        
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 15px; z-index: 1000; align-items: flex-start; }
         .btn-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
@@ -31,11 +28,9 @@
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 8px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-size: 0.9rem; max-width: 250px; user-select: none; }
         .item-Jezus { border: 4px solid var(--gold) !important; border-radius: 30px; box-shadow: 0 0 20px rgba(241,196,15,0.5); z-index: 10; }
-        
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 80%; border-radius: 4px; font-size: 16px; margin-bottom: 10px; }
         textarea { padding: 12px; border: 1px solid #ccc; width: 98%; border-radius: 4px; font-size: 16px; font-family: inherit; margin-bottom: 10px; min-height: 150px; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        
         @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -70,16 +65,25 @@
 
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
-        lied: { title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', lyrics: `De woestijn zal bloeien als een roos...` },
+        lied: { 
+            title: 'Lied', 
+            type: 'video', 
+            videoId: 'enJgkjpuqi0', 
+            lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nDe woestijn zal bloeien als een roos,\nzij zal de glorie van de Libanon ontvangen.\nWie is er blind? Hij zal weer zien!\nWie is er doof? Hij zal weer horen!\n\nVersterk de slappe handen nu,\nen maak de knikkende knieën weer stevig.\nZeg tegen allen die hier angst hebben:\n"Wees sterk en vrees niet, God komt eraan!"` 
+        },
         hierarchie: { title: 'Hiërarchie', type: 'shared-drag' },
-        lezen: { title: 'De Tekst', type: 'bijbel', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders...` },
-        mozes_cv: { title: '1. Mozes CV', type: 'bijbel', text: `<strong>Dienaar IN het huis</strong>\n- Prins van Egypte\n- Bevrijder van het volk` },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bijbel', text: `<strong>Het Volk in de Woestijn</strong>\n- 40 jaar dwalen zonder rust` },
+        lezen: { 
+            title: 'De Tekst', 
+            type: 'bijbel', 
+            text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Want elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn eigen huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was dat niet op hen die gezondigd hadden, van wie de lichamen in de woestijn zijn gevallen?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` 
+        },
+        mozes_cv: { title: '1. Mozes CV', type: 'bijbel', text: `<strong>Dienaar IN het huis</strong>\n- Prins van Egypte\n- Bevrijder van het volk\n- 40 jaar in de woestijn\n- Trouw in heel Gods huis als dienaar` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bijbel', text: `<strong>Het Volk in de Woestijn</strong>\n- Bevrijd uit Egypte, maar hart bleef achter\n- 40 jaar dwalen zonder rust\n- Niet binnengegaan vanwege ongeloof` },
         mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte':\nMijn 'Woestijn':\nMijn 'Rust':", dbCol: 'user_cvs', btnText: 'VERSTUUR NAAR MONITOR' },
         mijn_cv_live: { title: 'Mijn CV Live', type: 'cv_monitor' },
         zin_insturen: { title: 'Zin Insturen', type: 'cv_input', placeholder: "Typ hier een zin voor de psalm...", dbCol: 'psalm_zinnen', btnText: 'VOEG TOE AAN PSALM BOUWER' },
         psalm_bouwen: { title: 'Psalm Bouwer', type: 'personal-drag' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bijbel', text: `<strong>Deelgenoot van Christus</strong>\n- Onwrikbaar vertrouwen` }
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bijbel', text: `<strong>Deelgenoot van Christus</strong>\n- Deelgenoot van de hemelse roeping\n- Onwrikbaar vertrouwen tot het einde\n- Vermaant de broeders elke dag` }
     };
 
     let screenIds = Object.keys(screenConfigs);
@@ -140,7 +144,7 @@
         });
         initHierarchyLogic();
         initPsalmLogic();
-        initNamesLogic(); // Start de live namen feed
+        initNamesLogic();
     }
 
     function initNamesLogic() {
@@ -151,11 +155,11 @@
         });
     }
 
-    // ... De rest van de functies (initHierarchyLogic, initPsalmLogic, renderDraggables) blijft exact hetzelfde ...
     function initHierarchyLogic() {
         const canvas = document.getElementById('canvas-hierarchy');
         if(!canvas) return;
-        const items = ['Jezus', 'Mozes', 'Koning', 'Hogepriester', 'Profeet','God', 'ik'];
+        // GOD EN JEZUS BEIDEN TOEGEVOEGD:
+        const items = ['God', 'Jezus', 'Mozes', 'Koning', 'Hogepriester', 'Profeet', 'ik'];
         renderDraggables(canvas, items, true);
     }
 

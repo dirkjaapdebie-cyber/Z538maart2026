@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z53 Hebreeën Les 2 - Volledig (Gecorrigeerd)</title>
+    <title>Z53 Hebreeën Les 2 - Volledig</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
@@ -11,7 +11,11 @@
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
-        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 400px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; }
+        /* Extra styling voor bijbeltekst */
+        .verse-num { font-weight: bold; color: var(--accent); font-size: 0.8em; vertical-align: super; margin-right: 4px; }
+        .bible-full-text { text-align: left; }
+        
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -52,7 +56,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -70,6 +74,15 @@
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
         song: { title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', lyrics: "De woestijn zal bloeien als een roos\nen de steppen zullen jubelen en juichen..." },
+        bible_h3: { 
+            title: 'Hebreeën 3 (HSV)', 
+            type: 'bible_full', 
+            text: `<p><span class="verse-num">1</span>Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. <span class="verse-num">2</span>Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis. <span class="verse-num">3</span>Want deze is zoveel grotere heerlijkheid waardig gekeurd dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. <span class="verse-num">4</span>Elk huis wordt immers door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.</p>
+                   <p><span class="verse-num">5</span>En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden, <span class="verse-num">6</span>maar Christus is getrouw als Zoon over Zijn huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.</p>
+                   <p><span class="verse-num">7</span>Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, <span class="verse-num">8</span>verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. <span class="verse-num">9</span>Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. <span class="verse-num">10</span>Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. <span class="verse-num">11</span>Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!</p>
+                   <p><span class="verse-num">12</span>Zie erop toe, broeders, dat er bij niemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; <span class="verse-num">13</span>maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde. <span class="verse-num">14</span>Want wij hebben deel gekregen aan Christus, als wij het begin van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden,</p>
+                   <p><span class="verse-num">15</span>terwijl er wordt gezegd: Heden, indien u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. <span class="verse-num">16</span>Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan. <span class="verse-num">17</span>Op wie is Hij dan veertig jaar lang toornig geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? <span class="verse-num">18</span>En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? <span class="verse-num">19</span>Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.</p>`
+        },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: "<b>Wie ben ik?</b> Dienaar IN het huis.\n• Prins van Egypte.\n• Bevrijder van het volk.\n• 40 jaar trouwe dienst." },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
@@ -127,7 +140,6 @@
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) await deleteDoc(doc(db, c, d.id));
             }
-            // Reset hierarchy items with initial positions
             for (const item of screenConfigs.hierarchy.initial) {
                 await setDoc(doc(db, "hierarchy_items", item), { text: item, x: 100 + Math.random()*50, y: 100 + Math.random()*50 });
             }
@@ -135,61 +147,38 @@
         }
     };
 
-    // Helper to safely add event listeners for dragging
     function makeDraggable(el, docRef, isHierarchy = false, isAdminUser = false) {
         if (!el || !isAdminUser) return;
-        
         let isDragging = false;
         const canvas = el.parentNode;
-        
         const onPointerMove = (e) => {
             if (!isDragging) return;
-            e.preventDefault();
             const rect = canvas.getBoundingClientRect();
             let x = e.clientX - rect.left - el.offsetWidth / 2;
             let y = e.clientY - rect.top - el.offsetHeight / 2;
             x = Math.max(0, Math.min(rect.width - el.offsetWidth, x));
             y = Math.max(0, Math.min(rect.height - el.offsetHeight, y));
-            
             if (isHierarchy && docRef) {
                 updateDoc(docRef, { x: Math.round(x), y: Math.round(y) }).catch(console.error);
             } else {
-                el.style.left = x + 'px';
-                el.style.top = y + 'px';
+                el.style.left = x + 'px'; el.style.top = y + 'px';
             }
         };
-        
         const onPointerUp = () => {
-            if (isDragging) {
-                isDragging = false;
-                el.releasePointerCapture?.();
-                window.removeEventListener('pointermove', onPointerMove);
-                window.removeEventListener('pointerup', onPointerUp);
-            }
+            if (isDragging) { isDragging = false; window.removeEventListener('pointermove', onPointerMove); }
         };
-        
-        const onPointerDown = (e) => {
-            e.preventDefault();
-            el.setPointerCapture(e.pointerId);
-            isDragging = true;
-            window.addEventListener('pointermove', onPointerMove);
-            window.addEventListener('pointerup', onPointerUp);
-        };
-        
-        el.addEventListener('pointerdown', onPointerDown);
+        el.addEventListener('pointerdown', (e) => {
+            isDragging = true; window.addEventListener('pointermove', onPointerMove); window.addEventListener('pointerup', onPointerUp);
+        });
     }
 
     function renderApp() {
         const container = document.getElementById('main-container');
         const btnContainer = document.getElementById('screen-btns-container');
-        const loading = document.getElementById('loading');
-        
         if (!container || !btnContainer) return;
         
-        // Hide loading, show container
-        if (loading) loading.style.display = 'none';
-        container.innerHTML = ""; 
-        btnContainer.innerHTML = "";
+        if (document.getElementById('loading')) document.getElementById('loading').style.display = 'none';
+        container.innerHTML = ""; btnContainer.innerHTML = "";
         
         if(isAdmin) { 
             document.getElementById('admin-bar').style.display = "flex"; 
@@ -199,9 +188,7 @@
         ids.forEach(id => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
-            div.id = `screen-${id}`; 
-            div.className = 'screen';
-            
+            div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             
             if(s.type === 'video') {
@@ -218,46 +205,33 @@
             } else if(s.type === 'qa_monitor') {
                 html += `<div id="monitor-answers-list"></div>`;
             } else if(s.type === 'bible') {
-                html += `<div class="scroll-box">${s.text}</div>`;
+                html += `<div class="scroll-box" style="white-space: pre-wrap;">${s.text}</div>`;
+            } else if(s.type === 'bible_full') {
+                html += `<div class="scroll-box bible-full-text">${s.text}</div>`;
             } else if(s.type === 'info') {
                 html += `<div>${s.content}</div>`;
             } else if(s.type === 'input') {
                 html += `<input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="addDoc(collection(db,'names'),{name:document.getElementById('in-login').value})">OK</button><div id="feed-login"></div>`;
             }
-            
-            div.innerHTML = html; 
-            container.appendChild(div);
+            div.innerHTML = html; container.appendChild(div);
             
             if(isAdmin) {
                 const b = document.createElement('button'); 
-                b.className = 'screen-btn'; 
-                b.id = `btn-${id}`; 
-                b.innerText = s.title;
+                b.className = 'screen-btn'; b.id = `btn-${id}`; b.innerText = s.title;
                 b.onclick = () => window.updateRemoteScreen(id); 
                 btnContainer.appendChild(b);
             }
         });
     }
 
-    // Initialize app
     renderApp();
 
-    // --- Firebase listeners ---
-
-    // App state listener
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const newId = snap.data()?.activeScreen || 'login';
         if (newId !== currentId) {
             currentId = newId;
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const activeEl = document.getElementById(`screen-${currentId}`);
-            if (activeEl) {
-                activeEl.classList.add('active');
-            } else {
-                // Fallback to login if screen doesn't exist
-                document.getElementById('screen-login')?.classList.add('active');
-            }
-            
+            document.getElementById(`screen-${currentId}`)?.classList.add('active');
             if(isAdmin) {
                 document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
                 document.getElementById(`btn-${currentId}`)?.classList.add('current-btn');
@@ -265,128 +239,36 @@
         }
     });
 
-    // Live questions listener (for both user and monitor)
     onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
         const uList = document.getElementById('user-questions-list');
         const mList = document.getElementById('monitor-answers-list');
-        
-        if(uList) {
-            uList.innerHTML = snap.docs.map(d => {
-                const qId = d.id;
-                return `<div class="question-group"><strong>${d.data().text}</strong>
-                        <input type="text" id="ans-${qId}" placeholder="Jouw antwoord...">
-                        <button class="action-btn" onclick="sendAnswer('${qId}')">ANTWOORD</button></div>`;
-            }).join("");
-        }
-        
-        if(mList) {
-            mList.innerHTML = snap.docs.map(d => {
-                return `<div class="question-group"><h3>${d.data().text}</h3><div id="answers-for-${d.id}"></div></div>`;
-            }).join("");
-        }
+        if(uList) uList.innerHTML = snap.docs.map(d => `<div class="question-group"><strong>${d.data().text}</strong><input type="text" id="ans-${d.id}" placeholder="Jouw antwoord..."><button class="action-btn" onclick="sendAnswer('${d.id}')">ANTWOORD</button></div>`).join("");
+        if(mList) mList.innerHTML = snap.docs.map(d => `<div class="question-group"><h3>${d.data().text}</h3><div id="answers-for-${d.id}"></div></div>`).join("");
     });
 
-    // Answers listener (for monitor)
     onSnapshot(collection(db, "answers_split"), (snap) => {
         snap.docChanges().forEach(change => {
             if (change.type === "added") {
                 const data = change.doc.data();
-                const qId = data.qId;
-                const ansBox = document.getElementById(`answers-for-${qId}`);
-                if (ansBox && !document.getElementById(`ans-pill-${change.doc.id}`)) {
-                    const p = document.createElement('span'); 
-                    p.id = `ans-pill-${change.doc.id}`; 
-                    p.className = 'ans-pill'; 
-                    p.innerText = data.text;
+                const ansBox = document.getElementById(`answers-for-${data.qId}`);
+                if (ansBox) {
+                    const p = document.createElement('span'); p.className = 'ans-pill'; p.innerText = data.text;
                     ansBox.appendChild(p);
                 }
             }
         });
     });
 
-    // Hierarchy items listener
     onSnapshot(collection(db, "hierarchy_items"), (snap) => {
         const canvas = document.getElementById('canvas-hierarchy');
         if(!canvas) return;
-        
         snap.docChanges().forEach(change => {
             const docData = change.doc.data();
             const docId = change.doc.id;
-            
             if (change.type === "added" || change.type === "modified") {
                 let el = document.getElementById(`shared-${docId}`);
-                if (!el && change.type === "added") {
-                    el = document.createElement('div'); 
-                    el.id = `shared-${docId}`; 
+                if (!el) {
+                    el = document.createElement('div'); el.id = `shared-${docId}`; 
                     el.className = 'draggable' + (docId === 'God' || docId === 'Jezus' ? ' item-special' : '');
-                    el.innerText = docData.text || docId; 
-                    canvas.appendChild(el);
-                    
-                    if (isAdmin) {
-                        makeDraggable(el, change.doc.ref, true, isAdmin);
-                    }
-                }
-                if (el) {
-                    el.style.left = (docData.x || 50) + "px"; 
-                    el.style.top = (docData.y || 50) + "px";
-                }
-            }
-            if (change.type === "removed") {
-                document.getElementById(`shared-${docId}`)?.remove();
-            }
-        });
-    });
-
-    // Psalm lines listener
-    onSnapshot(collection(db, "psalm_lines"), (snap) => {
-        const canvas = document.getElementById('psalm-canvas');
-        if(!canvas) return;
-        
-        snap.docChanges().forEach(change => {
-            if (change.type === "added") {
-                const docData = change.doc.data();
-                const docId = change.doc.id;
-                if (document.getElementById(`psalm-${docId}`)) return;
-                
-                const el = document.createElement('div'); 
-                el.id = `psalm-${docId}`;
-                el.className = 'psalm-line'; 
-                el.innerText = docData.text;
-                el.style.left = (docData.x || 50 + Math.random()*100) + "px"; 
-                el.style.top = (docData.y || 50 + Math.random()*100) + "px"; 
-                canvas.appendChild(el);
-                
-                // Allow all users to drag psalm lines locally
-                makeDraggable(el, null, false, true);
-            }
-        });
-    });
-
-    // Names listener (login feed)
-    onSnapshot(collection(db, "names"), (snap) => {
-        const f = document.getElementById('feed-login');
-        if(f) {
-            f.innerHTML = snap.docs.map(d => `<div>• ${d.data().name}</div>`).join("");
-        }
-    });
-
-    // Initialize default hierarchy items if none exist
-    setTimeout(async () => {
-        const snap = await getDocs(collection(db, "hierarchy_items"));
-        if (snap.empty) {
-            for (const item of screenConfigs.hierarchy.initial) {
-                await setDoc(doc(db, "hierarchy_items", item), { text: item, x: 100 + Math.random()*50, y: 100 + Math.random()*50 });
-            }
-        }
-    }, 1000);
-
-    // Set initial active screen
-    setTimeout(async () => {
-        const snap = await getDoc(doc(db, "appState", "current"));
-        if (!snap.exists()) {
-            await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-        }
-    }, 500);
-</script>
-</body>
-</html>
+                    el.innerText = docData.text || docId; canvas.appendChild(el);
+                    if (isAdmin) makeDraggable(el, change.doc

@@ -12,7 +12,7 @@
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         
-        /* Gecorrigeerde Scrollbox voor Bijbeltekst */
+        /* Scrollbox Styling */
         .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; height: 450px; overflow-y: auto; border-radius: 6px; }
         .verse-num { font-weight: bold; color: var(--accent); font-size: 0.8em; vertical-align: super; margin-right: 4px; }
         .bible-full-text p { margin-bottom: 1.5em; text-align: left; }
@@ -155,17 +155,22 @@
         if (!el || !isAdminUser) return;
         let isDragging = false;
         const canvas = el.parentNode;
+        
         const move = (e) => {
             if (!isDragging) return;
             const rect = canvas.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - el.offsetWidth / 2;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - el.offsetHeight / 2;
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let x = clientX - rect.left - el.offsetWidth / 2;
+            let y = clientY - rect.top - el.offsetHeight / 2;
+            
             if (isHierarchy && docRef) {
                 updateDoc(docRef, { x: Math.round(x), y: Math.round(y) });
             } else {
                 el.style.left = x + 'px'; el.style.top = y + 'px';
             }
         };
+
         const stop = () => { isDragging = false; };
         el.onmousedown = el.ontouchstart = (e) => { isDragging = true; };
         window.onmousemove = window.ontouchmove = move;
@@ -177,7 +182,7 @@
         const btnContainer = document.getElementById('screen-btns-container');
         if (!container || !btnContainer) return;
         
-        document.getElementById('loading').style.display = 'none';
+        if (document.getElementById('loading')) document.getElementById('loading').style.display = 'none';
         container.innerHTML = ""; btnContainer.innerHTML = "";
         
         if(isAdmin) { 
@@ -272,7 +277,7 @@
                 el.innerText = data.text || id; canvas.appendChild(el);
                 if (isAdmin) makeDraggable(el, change.doc.ref, true, isAdmin);
             }
-            el.style.left = data.x + "px"; el.style.top = data.y + "px";
+            el.style.left = (data.x || 0) + "px"; el.style.top = (data.y || 0) + "px";
         });
     });
 

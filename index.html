@@ -16,7 +16,6 @@
         .active { display: block; animation: fadeIn 0.4s; }
         .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
         
-        /* Lied Layout */
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
@@ -28,12 +27,11 @@
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; }
-        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
         
         .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
         .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; font-size: 0.95rem; }
         .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
-        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
+        input[type="text"], textarea { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; font-family: inherit; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -70,21 +68,23 @@
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
         song: { title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nSta op, Sion, en juich,\nwant de Here heeft u verlost,\nwant de lamme zal springen als een hert\nen de stomme zal jubelen en juichen.` },
-        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `Dienaar IN het huis.\nPrins van Egypte.\nBevrijder van het volk.\n40 jaar woestijn.` },
+        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong> (Wie staat boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn persoonlijke woestijn)<br><strong>3. ... en wij dan?</strong> (Samen de rust binnengaan)' },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `Dienaar IN het huis.\nPrins van Egypte.\nBevrijder van het volk.\n40 jaar woestijn.\nTrouw in heel Gods huis.` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag' },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders... [tekst]` },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `Ik ben bevrijd, maar nog niet vrij.\nManna en wolkkolom.\nLeren vertrouwen.` },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `Het huis van God dat samen de rust binnengaat.\nVertrouwen op de Bouwer.` },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Want elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn eigen huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was dat niet op hen die gezondigd hadden, van wie de lichamen in de woestijn zijn gevallen?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `Bevrijd uit Egypte, maar het hart bleef daar.\n40 jaar dwalen.\nHebreeën 3:8-11.\nNiet binnengegaan vanwege ongeloof.` },
+        mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte' (waar ben ik van bevrijd):\nMijn 'Woestijn' (waar leer ik nu vertrouwen):\nMijn 'Rust' (waar verlang ik naar):" },
+        mijn_cv_live: { title: 'Mijn CV Live', type: 'cv_monitor' },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `Deelgenoot van de hemelse roeping.\nDeelgenoot van Christus geworden.\nHet huis van God dat samen de rust binnengaat.\nVertrouwen op de Bouwer.` },
         questions: { title: 'Vragen', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' },
-        gebed: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; text-align: center; padding: 20px;">Vader, wij vragen U ons geloof in U te verdiepen... [tekst uit afbeelding]</div>' }
+        gebed: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; text-align: center; padding: 20px;">Vader, wij vragen U ons geloof in U te verdiepen... Help ons om elke dag naar Uw stem te luisteren en elkaars harten te versterken. Amen.</div>' }
     };
 
     window.resetAllData = async () => {
-        if(confirm("Resetten?")){
+        if(confirm("Alle data (namen, antwoorden, CV's) wissen?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'live_questions']) {
+            for(const c of ['names', 'answers_split', 'live_questions', 'user_cvs']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -98,12 +98,14 @@
     };
 
     window.sendData = async (id, col, field, qId = null) => {
-        const val = document.getElementById(`in-${id}`).value;
+        const inputEl = document.getElementById(`in-${id}`);
+        const val = inputEl.value;
         if (val) { 
             const data = { [field]: val, timestamp: Date.now() };
             if (qId) data.qId = qId;
             await addDoc(collection(db, col), data); 
-            document.getElementById(`in-${id}`).value = ""; 
+            inputEl.value = ""; 
+            if(id === 'cv') alert("CV opgeslagen op de muur!");
         }
     };
 
@@ -121,17 +123,20 @@
             let html = `<h2>${s.title}</h2>`;
             
             if (s.type === 'video') {
-                html += `<div class="video-grid">
-                            <div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div>
-                            <div class="scroll-box" style="height: auto;">${s.lyrics}</div>
-                         </div>`;
+                html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box" style="height: auto;">${s.lyrics}</div></div>`;
             }
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
-            if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'qa_input') html += `<div class="admin-panel"><input type="text" id="new-q-input" placeholder="Vraag..."><button class="action-btn" onclick="addLiveQuestion()">VOEG TOE</button></div><div id="input-questions-container" class="scroll-box"></div>`;
+            if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"><p style="text-align:center; padding-top:20px; color:#999;">Interactieve hiërarchie module</p></div>`;
+            if (s.type === 'cv_input') {
+                html += `<div class="scroll-box"><textarea id="in-cv" style="width:100%; height:350px; border:none; background:transparent; outline:none;" placeholder="${s.placeholder}"></textarea></div><button class="action-btn" style="margin-top:10px; width:100%;" onclick="sendData('cv','user_cvs','text')">OPSLAAN OP DE MUUR</button>`;
+            }
+            if (s.type === 'cv_monitor') {
+                html += `<div id="cv-feed-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px;"></div>`;
+            }
+            if (s.type === 'qa_input') html += `<div class="admin-panel"><input type="text" id="new-q-input" placeholder="Stel een vraag aan de groep..."><button class="action-btn" onclick="addLiveQuestion()">VOEG TOE</button></div><div id="input-questions-container" class="scroll-box"></div>`;
             if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
+            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Je naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login" style="margin-top:20px;"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
             const btn = document.createElement('button');
@@ -142,6 +147,7 @@
     }
 
     function initListeners() {
+        // Luister naar Live Vragen
         onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
             const inputContainer = document.getElementById('input-questions-container');
             const monitorContainer = document.getElementById('monitor-questions-container');
@@ -150,8 +156,8 @@
             snap.docs.forEach(docSnap => {
                 const qData = docSnap.data(); const qId = docSnap.id;
                 if(inputContainer) {
-                    const div = document.createElement('div'); div.className = 'vraag-blok';
-                    div.innerHTML = `<p><strong>${qData.text}</strong></p><div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button></div>`;
+                    const div = document.createElement('div'); div.className = 'vraag-blok'; div.style.marginBottom="20px";
+                    div.innerHTML = `<p><strong>${qData.text}</strong></p><div style="display:flex; gap:5px;"><input type="text" id="in-${qId}" placeholder="Jouw antwoord..."><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button></div>`;
                     inputContainer.appendChild(div);
                 }
                 if(monitorContainer) {
@@ -162,6 +168,7 @@
             });
         });
 
+        // Luister naar Antwoorden voor Monitor
         onSnapshot(collection(db, "answers_split"), (snap) => {
             snap.docs.forEach(d => {
                 const data = d.data(); const monitorFeed = document.getElementById(`monitor-feed-${data.qId}`);
@@ -172,12 +179,27 @@
             });
         });
 
+        // Luister naar Eigen CV's voor Live Muur
+        onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
+            const container = document.getElementById('cv-feed-container');
+            if (container) {
+                container.innerHTML = snap.docs.map(d => `
+                    <div class="scroll-box" style="height:auto; font-size:0.9rem; border-left:4px solid var(--gold); background:#fff;">
+                        <div style="font-weight:bold; color:var(--accent); margin-bottom:5px;">Persoonlijk CV:</div>
+                        ${d.data().text}
+                    </div>
+                `).join("");
+            }
+        });
+
+        // Luister naar Login Namen
         onSnapshot(collection(db, "names"), (snap) => {
             const f = document.getElementById('feed-login');
-            if (f) f.innerHTML = snap.docs.map(d => `<div class="feed-item" style="padding:5px; border-bottom:1px solid #eee;">${d.data().name}</div>`).join("");
+            if (f) f.innerHTML = "<strong>Wie zijn er binnen:</strong><br>" + snap.docs.map(d => `<span style="display:inline-block; padding:5px 10px; background:#eee; margin:3px; border-radius:15px; font-size:0.8rem;">${d.data().name}</span>`).join("");
         });
     }
 
+    // Luister naar Schermwisselingen
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         const activeId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));

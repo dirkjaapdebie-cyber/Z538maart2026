@@ -29,7 +29,7 @@
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 12px 24px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; user-select: none; }
-        .item-Jezus { border: 3px solid var(--gold) !important; box-shadow: 0 0 15px rgba(241,196,15,0.6); background: #fffdf0; z-index: 10; }
+        .item-Jezus { border: 4px solid var(--gold) !important; box-shadow: 0 0 20px rgba(241,196,15,0.5); background: #fffdf0; z-index: 10; }
         
         textarea { padding: 12px; border: 1px solid #ccc; width: 95%; border-radius: 4px; font-size: 16px; font-family: inherit; margin-bottom: 10px; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -69,43 +69,21 @@
         login: { title: 'Inloggen', type: 'input' },
         song: { 
             title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', 
-            lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nSta op, Sion, en juich,\nwant de Here heeft u verlost,\nwant de lamme zal springen als een hert\nen de stomme zal jubelen en juichen.` 
+            lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nSta op, Sion, en juich,\nwant de Here heeft u verlost...` 
         },
-        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong> (Wie staat boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn persoonlijke woestijn)<br><strong>3. ... en wij dan?</strong> (Samen de rust binnengaan)' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<strong>Dienaar IN het huis</strong>\n\n- Prins van Egypte\n- Bevrijder van het volk\n- 40 jaar in de woestijn\n- Trouw in heel Gods huis als dienaar\n- Getuige van wat later gesproken zou worden` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag' },
         reading: { 
             title: 'De Tekst', type: 'bible', 
-            text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Want elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn eigen huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was dat niet op hen die gezondigd hadden, van wie de lichamen in de woestijn zijn gevallen?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` 
+            text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...` 
         },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<strong>Het Volk in de Woestijn</strong>\n\n- Bevrijd uit Egypte, maar hart bleef achter\n- 40 jaar dwalen zonder rust\n- Verharding op de dag van verzoeking\n- Niet binnengegaan vanwege ongeloof (Hebr 3:19)` },
-        mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte' (bevrijd van):\nMijn 'Woestijn' (vertrouwen leren):\nMijn 'Rust' (verlangen naar):" },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<strong>Dienaar IN het huis</strong>\n\n- Prins van Egypte\n- Bevrijder van het volk\n- 40 jaar in de woestijn\n- Trouw in heel Gods huis als dienaar` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<strong>Het Volk in de Woestijn</strong>\n\n- Bevrijd uit Egypte, maar hart bleef achter\n- 40 jaar dwalen zonder rust\n- Niet binnengegaan vanwege ongeloof` },
+        mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte':\nMijn 'Woestijn':\nMijn 'Rust':" },
         mijn_cv_live: { title: 'Mijn CV Live', type: 'cv_monitor' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<strong>Deelgenoot van Christus</strong>\n\n- Deelgenoot van de hemelse roeping\n- Onwrikbaar vertrouwen tot het einde\n- Vermaant de broeders elke dag\n- Gaat samen de rust van God binnen\n- Houdt vast aan de Bouwer van het huis` },
-        questions: { title: 'Vragen', type: 'qa_input' },
-        monitor: { title: 'Monitor', type: 'qa_monitor' }
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<strong>Deelgenoot van Christus</strong>\n\n- Deelgenoot van de hemelse roeping\n- Onwrikbaar vertrouwen tot het einde\n- Vermaant de broeders elke dag` }
     };
 
     let screenIds = Object.keys(screenConfigs);
-
-    window.moveScreen = (id, dir) => {
-        const i = screenIds.indexOf(id);
-        const newI = i + dir;
-        if(newI >= 0 && newI < screenIds.length) {
-            [screenIds[i], screenIds[newI]] = [screenIds[newI], screenIds[i]];
-            renderApp();
-        }
-    };
-
-    window.sendData = async (id, col, field, qId = null) => {
-        const el = document.getElementById(`in-${id}`);
-        if (el && el.value) {
-            const data = { [field]: el.value, timestamp: Date.now() };
-            if (qId) data.qId = qId;
-            await addDoc(collection(db, col), data);
-            el.value = "";
-        }
-    };
 
     window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
@@ -119,23 +97,18 @@
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
-            
-            if (s.type === 'video') html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box" style="height: auto;">${s.lyrics}</div></div>`;
-            if (s.type === 'info') html += `<div>${s.content}</div>`;
+            if (s.type === 'video') html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box">${s.lyrics}</div></div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'cv_input') html += `<div class="scroll-box" style="background:white;"><textarea id="in-cv" placeholder="${s.placeholder}" style="height:350px; border:none; background:transparent; outline:none; font-style:italic;"></textarea></div><button class="action-btn" style="width:100%; margin-top:10px;" onclick="sendData('cv','user_cvs','text')">POST OP DE LIVE MUUR</button>`;
-            if (s.type === 'cv_monitor') html += `<div id="cv-feed-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:15px;"></div>`;
-            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Je naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login" style="margin-top:20px;"></div>`;
-            if (s.type === 'qa_input') html += `<div id="input-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
+            if (s.type === 'cv_input') html += `<textarea id="in-cv" placeholder="${s.placeholder}" style="height:300px;"></textarea><button class="action-btn" onclick="sendData('cv','user_cvs','text')">OPSLAAN</button>`;
+            if (s.type === 'cv_monitor') html += `<div id="cv-feed-container"></div>`;
+            if (s.type === 'input') html += `<input type="text" id="in-login" placeholder="Naam..."><button class="action-btn" onclick="sendData('login','names','name')">OK</button>`;
 
             div.innerHTML = html; container.appendChild(div);
-
-            const group = document.createElement('div'); group.className = 'btn-group';
-            group.innerHTML = `<button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>
-                <div class="nav-arrows"><button onclick="moveScreen('${id}', -1)">◀</button><button onclick="moveScreen('${id}', 1)">▶</button></div>`;
-            adminBar.appendChild(group);
+            const btn = document.createElement('button');
+            btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
+            btn.onclick = () => updateRemoteScreen(id);
+            adminBar.appendChild(btn);
         });
         initDragLogic();
     }
@@ -143,46 +116,49 @@
     function initDragLogic() {
         const canvas = document.getElementById('canvas-hierarchy');
         if(!canvas) return;
-        const items = ['God', 'Jezus', 'Engelen','Profeet','Hogepriester', 'Koning','Mozes', 'ik'];
+        // NIEUWE LIJST MET NAMEN
+        const items = ['Jezus', 'Mozes', 'Koning', 'Hogepriester', 'Profeet', 'ik'];
         canvas.innerHTML = "";
         
-        items.forEach((txt, i) => {
+        items.forEach((txt) => {
             const el = document.createElement('div');
             el.className = `draggable ${txt === 'Jezus' ? 'item-Jezus' : ''}`;
             el.innerText = txt;
             
-            // BEPERKTE CHAOS (Blijven binnen zichtbaar middenveld)
-            el.style.top = (50 + Math.floor(Math.random() * 300)) + 'px';
-            el.style.left = (50 + Math.floor(Math.random() * 500)) + 'px';
+            // Start centraal en rommelig
+            el.style.top = (60 + Math.floor(Math.random() * 280)) + 'px';
+            el.style.left = (60 + Math.floor(Math.random() * 480)) + 'px';
             
             let isDragging = false;
-            let offset = { x: 0, y: 0 };
+            let startX, startY, origX, origY;
 
             const start = (e) => {
                 isDragging = true;
                 el.style.zIndex = 1000;
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                offset.x = clientX - el.offsetLeft;
-                offset.y = clientY - el.offsetTop;
+                const evt = e.touches ? e.touches[0] : e;
+                startX = evt.clientX; startY = evt.clientY;
+                origX = el.offsetLeft; origY = el.offsetTop;
+                if(e.cancelable) e.preventDefault();
             };
 
             const move = (e) => {
                 if (!isDragging) return;
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                el.style.left = (clientX - offset.x) + 'px';
-                el.style.top = (clientY - offset.y) + 'px';
+                const evt = e.touches ? e.touches[0] : e;
+                el.style.left = (origX + (evt.clientX - startX)) + 'px';
+                el.style.top = (origY + (evt.clientY - startY)) + 'px';
             };
 
-            const end = () => {
+            const stop = () => {
                 isDragging = false;
                 el.style.zIndex = (txt === 'Jezus' ? 10 : 1);
             };
 
-            el.onmousedown = start; el.ontouchstart = start;
-            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false});
-            window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
+            el.addEventListener('mousedown', start);
+            el.addEventListener('touchstart', start, {passive: false});
+            window.addEventListener('mousemove', move);
+            window.addEventListener('touchmove', move, {passive: false});
+            window.addEventListener('mouseup', stop);
+            window.addEventListener('touchend', stop);
             
             canvas.appendChild(el);
         });
@@ -195,27 +171,6 @@
         document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
         document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
     });
-
-    onSnapshot(collection(db, "user_cvs"), (snap) => {
-        const container = document.getElementById('cv-feed-container');
-        if(container) container.innerHTML = snap.docs.map(d => `<div class="scroll-box" style="height:auto; font-size:0.9rem; border-left:4px solid var(--gold); background:white; margin-bottom:10px;">${d.data().text}</div>`).join("");
-    });
-
-    onSnapshot(collection(db, "names"), (snap) => {
-        const f = document.getElementById('feed-login');
-        if(f) f.innerHTML = "<strong>Binnen:</strong> " + snap.docs.map(d => d.data().name).join(", ");
-    });
-
-    window.resetAllData = async () => {
-        if(confirm("Alles resetten?")){
-            await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'user_cvs']) {
-                const q = await getDocs(collection(db, c));
-                for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
-            }
-            location.reload();
-        }
-    };
 
     renderApp();
 </script>

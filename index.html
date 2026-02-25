@@ -120,9 +120,7 @@
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             
-            if (s.type === 'video') {
-                html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box" style="height: auto;">${s.lyrics}</div></div>`;
-            }
+            if (s.type === 'video') html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box" style="height: auto;">${s.lyrics}</div></div>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
@@ -139,56 +137,54 @@
                 <div class="nav-arrows"><button onclick="moveScreen('${id}', -1)">◀</button><button onclick="moveScreen('${id}', 1)">▶</button></div>`;
             adminBar.appendChild(group);
         });
-        initSharedDrag();
+        initDragLogic();
     }
 
-    async function initSharedDrag() {
+    function initDragLogic() {
         const canvas = document.getElementById('canvas-hierarchy');
         if(!canvas) return;
         const items = ['God', 'Jezus', 'Engelen', 'Mozes', 'Het Volk'];
+        canvas.innerHTML = "";
         
-        items.forEach(async (txt) => {
-            let el = document.getElementById(`drag-${txt}`);
-            if(!el) {
-                el = document.createElement('div');
-                el.className = `draggable ${txt === 'Jezus' ? 'item-Jezus' : ''}`;
-                el.id = `drag-${txt}`;
-                el.innerText = txt;
-                el.style.left = Math.floor(Math.random() * (canvas.offsetWidth - 120)) + 'px';
-                el.style.top = Math.floor(Math.random() * (canvas.offsetHeight - 60)) + 'px';
-                canvas.appendChild(el);
-            }
-
+        items.forEach((txt, i) => {
+            const el = document.createElement('div');
+            el.className = `draggable ${txt === 'Jezus' ? 'item-Jezus' : ''}`;
+            el.innerText = txt;
+            
+            // WILLEKEURIGE STARTPOSITIE (Chaos)
+            el.style.top = Math.floor(Math.random() * (canvas.offsetHeight - 60)) + 'px';
+            el.style.left = Math.floor(Math.random() * (canvas.offsetWidth - 150)) + 'px';
+            
             let isDragging = false;
-            const startDrag = (e) => { isDragging = true; el.style.zIndex = 1001; };
-            const doDrag = async (e) => {
-                if(!isDragging) return;
-                if(e.cancelable) e.preventDefault();
+            let offset = { x: 0, y: 0 };
+
+            const start = (e) => {
+                isDragging = true;
+                el.style.zIndex = 1000;
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                const rect = canvas.getBoundingClientRect();
-                const x = clientX - rect.left - 40;
-                const y = clientY - rect.top - 20;
-                el.style.left = x + 'px';
-                el.style.top = y + 'px';
-                await setDoc(doc(db, "hierarchy_pos", txt), { x, y });
+                offset.x = clientX - el.offsetLeft;
+                offset.y = clientY - el.offsetTop;
             };
-            const stopDrag = () => { isDragging = false; el.style.zIndex = (txt === 'Jezus' ? 10 : 1); };
 
-            el.onmousedown = startDrag; el.ontouchstart = startDrag;
-            window.addEventListener('mousemove', doDrag, { passive: false });
-            window.addEventListener('touchmove', doDrag, { passive: false });
-            window.onmouseup = stopDrag; window.ontouchend = stopDrag;
-        });
+            const move = (e) => {
+                if (!isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                el.style.left = (clientX - offset.x) + 'px';
+                el.style.top = (clientY - offset.y) + 'px';
+            };
 
-        onSnapshot(collection(db, "hierarchy_pos"), (snap) => {
-            snap.docs.forEach(d => {
-                const item = document.getElementById(`drag-${d.id}`);
-                if(item && !item.matches(':active')) {
-                    item.style.left = d.data().x + 'px';
-                    item.style.top = d.data().y + 'px';
-                }
-            });
+            const end = () => {
+                isDragging = false;
+                el.style.zIndex = (txt === 'Jezus' ? 10 : 1);
+            };
+
+            el.onmousedown = start; el.ontouchstart = start;
+            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive:false});
+            window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
+            
+            canvas.appendChild(el);
         });
     }
 
@@ -213,7 +209,7 @@
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'user_cvs', 'hierarchy_pos']) {
+            for(const c of ['names', 'user_cvs']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }

@@ -19,7 +19,6 @@
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
-        @media (max-width: 768px) { .video-grid { grid-template-columns: 1fr; } }
 
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 15px; z-index: 1000; align-items: flex-start; }
         .btn-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -69,22 +68,20 @@
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
         song: { 
-            title: 'Lied', 
-            type: 'video', 
-            videoId: 'enJgkjpuqi0', 
+            title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', 
             lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nSta op, Sion, en juich,\nwant de Here heeft u verlost,\nwant de lamme zal springen als een hert\nen de stomme zal jubelen en juichen.` 
         },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong> (Wie staat boven wie?)<br><strong>2. ... en ik dan?</strong> (Mijn persoonlijke woestijn)<br><strong>3. ... en wij dan?</strong> (Samen de rust binnengaan)' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `Dienaar IN het huis.\nPrins van Egypte.\nBevrijder van het volk.\n40 jaar woestijn.\nTrouw in heel Gods huis als dienaar.` },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<strong>Dienaar IN het huis</strong>\n\n- Prins van Egypte\n- Bevrijder van het volk\n- 40 jaar in de woestijn\n- Trouw in heel Gods huis als dienaar\n- Getuige van wat later gesproken zou worden` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag' },
         reading: { 
-            title: 'De Tekst', 
-            type: 'bible', 
+            title: 'De Tekst', type: 'bible', 
             text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Want elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn eigen huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was dat niet op hen die gezondigd hadden, van wie de lichamen in de woestijn zijn gevallen?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` 
         },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `Bevrijd uit Egypte, maar het hart bleef daar.\n40 jaar dwalen.\nHebreeën 3:8-11.\nNiet binnengegaan vanwege ongeloof.` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<strong>Het Volk in de Woestijn</strong>\n\n- Bevrijd uit Egypte, maar hart bleef achter\n- 40 jaar dwalen zonder rust\n- Verharding op de dag van verzoeking\n- Niet binnengegaan vanwege ongeloof (Hebr 3:19)` },
         mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte' (bevrijd van):\nMijn 'Woestijn' (vertrouwen leren):\nMijn 'Rust' (verlangen naar):" },
         mijn_cv_live: { title: 'Mijn CV Live', type: 'cv_monitor' },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<strong>Deelgenoot van Christus</strong>\n\n- Deelgenoot van de hemelse roeping\n- Onwrikbaar vertrouwen tot het einde\n- Vermaant de broeders elke dag\n- Gaat samen de rust van God binnen\n- Houdt vast aan de Bouwer van het huis` },
         questions: { title: 'Vragen', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' }
     };
@@ -129,11 +126,11 @@
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'cv_input') html += `<div class="scroll-box"><textarea id="in-cv" placeholder="${s.placeholder}" style="height:350px; border:none; background:transparent; outline:none;"></textarea></div><button class="action-btn" style="width:100%;" onclick="sendData('cv','user_cvs','text')">OPSLAAN OP MUUR</button>`;
-            if (s.type === 'cv_monitor') html += `<div id="cv-feed-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:15px;"></div>`;
-            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
-            if (s.type === 'qa_input') html += `<div id="input-questions-container"></div>`;
-            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container"></div>`;
+            if (s.type === 'cv_input') html += `<div class="scroll-box" style="background:white;"><textarea id="in-cv" placeholder="${s.placeholder}" style="height:350px; border:none; background:transparent; outline:none; font-style:italic;"></textarea></div><button class="action-btn" style="width:100%; margin-top:10px;" onclick="sendData('cv','user_cvs','text')">POST OP DE LIVE MUUR</button>`;
+            if (s.type === 'cv_monitor') html += `<div id="cv-feed-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:15px;"></div>`;
+            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Je naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login" style="margin-top:20px;"></div>`;
+            if (s.type === 'qa_input') html += `<div id="input-questions-container" class="scroll-box"></div>`;
+            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
 
@@ -205,7 +202,12 @@
 
     onSnapshot(collection(db, "user_cvs"), (snap) => {
         const container = document.getElementById('cv-feed-container');
-        if(container) container.innerHTML = snap.docs.map(d => `<div class="scroll-box" style="height:auto; font-size:0.9rem; border-left:4px solid var(--gold); background:white;">${d.data().text}</div>`).join("");
+        if(container) container.innerHTML = snap.docs.map(d => `<div class="scroll-box" style="height:auto; font-size:0.9rem; border-left:4px solid var(--gold); background:white; margin-bottom:10px;">${d.data().text}</div>`).join("");
+    });
+
+    onSnapshot(collection(db, "names"), (snap) => {
+        const f = document.getElementById('feed-login');
+        if(f) f.innerHTML = "<strong>Binnen:</strong> " + snap.docs.map(d => d.data().name).join(", ");
     });
 
     window.resetAllData = async () => {

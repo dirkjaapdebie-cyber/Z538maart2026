@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Z53 Hebreeën Les 2 - 8 maart 2026</title>
+    <title>Z53 Hebreeën Les 2 - Definitief</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
         .container { max-width: 900px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
-        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
+        
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
+        
+        /* Lied Layout */
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
-        .names-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px inset #eee; min-height: 50px; }
-        .name-tag { background: var(--primary); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; animation: popIn 0.3s; }
-        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 15px; z-index: 1000; align-items: flex-start; }
-        .btn-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        @media (max-width: 768px) { .video-grid { grid-template-columns: 1fr; } }
+
+        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; overflow-x: auto; gap: 10px; z-index: 1000; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
-        .nav-arrows { display: flex; gap: 10px; }
-        .nav-arrows button { background: #333; color: white; border: 1px solid #555; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 10px; }
+        
+        .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
-        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 8px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-size: 0.9rem; max-width: 250px; user-select: none; }
-        .item-Jezus { border: 4px solid var(--gold) !important; border-radius: 30px; box-shadow: 0 0 20px rgba(241,196,15,0.5); z-index: 10; }
-        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 80%; border-radius: 4px; font-size: 16px; margin-bottom: 10px; }
-        textarea { padding: 12px; border: 1px solid #ccc; width: 98%; border-radius: 4px; font-size: 16px; font-family: inherit; margin-bottom: 10px; min-height: 150px; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; }
+        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
+        
+        .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
+        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; font-size: 0.95rem; }
+        .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
+        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -40,7 +45,7 @@
 <div class="container">
     <div class="header-flex">
         <h1 class="main-header">Hebreeën Les 2</h1>
-        <button class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
+        <button id="reset-btn" class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
     </div>
     <div id="main-container"></div>
 </div>
@@ -49,7 +54,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -62,162 +67,26 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const isAdmin = new URLSearchParams(window.location.search).has('admin');
 
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
-        lied: { 
-            title: 'Lied', 
-            type: 'video', 
-            videoId: 'enJgkjpuqi0', 
-            lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nDe woestijn zal bloeien als een roos,\nzij zal de glorie van de Libanon ontvangen.\nWie is er blind? Hij zal weer zien!\nWie is er doof? Hij zal weer horen!\n\nVersterk de slappe handen nu,\nen maak de knikkende knieën weer stevig.\nZeg tegen allen die hier angst hebben:\n"Wees sterk en vrees niet, God komt eraan!"` 
-        },
-        hierarchie: { title: 'Hiërarchie', type: 'shared-drag' },
-        lezen: { 
-            title: 'De Tekst', 
-            type: 'bijbel', 
-            text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Want elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn eigen huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was dat niet op hen die gezondigd hadden, van wie de lichamen in de woestijn zijn gevallen?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` 
-        },
-        mozes_cv: { title: '1. Mozes CV', type: 'bijbel', text: `<strong>Dienaar IN het huis</strong>\n- Prins van Egypte\n- Bevrijder van het volk\n- 40 jaar in de woestijn\n- Trouw in heel Gods huis als dienaar` },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bijbel', text: `<strong>Het Volk in de Woestijn</strong>\n- Bevrijd uit Egypte, maar hart bleef achter\n- 40 jaar dwalen zonder rust\n- Niet binnengegaan vanwege ongeloof` },
-        mijn_cv: { title: 'Mijn CV', type: 'cv_input', placeholder: "Mijn 'Egypte':\nMijn 'Woestijn':\nMijn 'Rust':", dbCol: 'user_cvs', btnText: 'VERSTUUR NAAR MONITOR' },
-        mijn_cv_live: { title: 'Mijn CV Live', type: 'cv_monitor' },
-        zin_insturen: { title: 'Zin Insturen', type: 'cv_input', placeholder: "Typ hier een zin voor de psalm...", dbCol: 'psalm_zinnen', btnText: 'VOEG TOE AAN PSALM BOUWER' },
-        psalm_bouwen: { title: 'Psalm Bouwer', type: 'personal-drag' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bijbel', text: `<strong>Deelgenoot van Christus</strong>\n- Deelgenoot van de hemelse roeping\n- Onwrikbaar vertrouwen tot het einde\n- Vermaant de broeders elke dag` }
+        song: { title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', lyrics: `De woestijn zal bloeien als een roos,\nen de steppen zullen jubelen en juichen,\nwant het levend water van Gods Geest\nmaakt dorstig land tot waterbronnen.\n\nSta op, Sion, en juich,\nwant de Here heeft u verlost,\nwant de lamme zal springen als een hert\nen de stomme zal jubelen en juichen.` },
+        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Dienaar IN het huis.\n• Prins van Egypte.\n• Bevrijder.\n• 40 jaar trouwe dienst.` },
+        hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders... [19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Bevrijd, maar nog niet vrij.\n• Dagelijks manna.\n• Leren vertrouwen.\n• De slavernij moet uit het hart.` },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n• Vertrouwen op de Bouwer.\n• Elkaar dagelijks bemoedigen.` },
+        questions: { title: 'Vragen', type: 'qa_input' },
+        monitor: { title: 'Monitor', type: 'qa_monitor' },
+        gebed: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; font-size: 1.25rem; text-align: center; padding: 20px; line-height: 1.8;">Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar.’</div>' }
     };
-
-    let screenIds = Object.keys(screenConfigs);
-
-    window.moveScreen = (id, dir) => {
-        const i = screenIds.indexOf(id);
-        const newI = i + dir;
-        if(newI >= 0 && newI < screenIds.length) {
-            [screenIds[i], screenIds[newI]] = [screenIds[newI], screenIds[i]];
-            renderApp();
-        }
-    };
-
-    window.sendData = async (fieldId, col, fieldName) => {
-        const el = document.getElementById(fieldId);
-        if (el && el.value) {
-            await addDoc(collection(db, col), { [fieldName]: el.value, timestamp: Date.now() });
-            el.value = "";
-            if(col !== 'names') alert("Verstuurd!");
-        }
-    };
-
-    window.updateRemoteScreen = async (id) => { 
-        await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
-    };
-
-    function renderApp() {
-        const container = document.getElementById('main-container');
-        const adminBar = document.getElementById('admin-bar');
-        container.innerHTML = ""; adminBar.innerHTML = "";
-        
-        screenIds.forEach(id => {
-            const s = screenConfigs[id];
-            const div = document.createElement('div');
-            div.id = `screen-${id}`; div.className = 'screen';
-            let html = `<h2>${s.title}</h2>`;
-            
-            if (s.type === 'bijbel' || s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
-            if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'personal-drag') html += `<p><small>Sleep de zinnen om je eigen psalm te maken.</small></p><div id="canvas-psalm" class="canvas"></div>`;
-            if (s.type === 'cv_input') html += `<textarea id="in-${id}" placeholder="${s.placeholder}"></textarea><button class="action-btn" onclick="sendData('in-${id}','${s.dbCol}','text')">${s.btnText}</button>`;
-            if (s.type === 'cv_monitor') html += `<div id="cv-feed-container"></div>`;
-            if (s.type === 'video') html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0"></iframe></div><div class="scroll-box">${s.lyrics}</div></div>`;
-            
-            if (s.type === 'input') {
-                html += `<p>Welkom! Voer je naam in om deel te nemen:</p>
-                         <input type="text" id="in-login" placeholder="Je naam...">
-                         <button class="action-btn" onclick="sendData('in-login','names','name')">AANMELDEN</button>
-                         <h3>Aanwezig:</h3>
-                         <div id="names-feed" class="names-grid"></div>`;
-            }
-
-            div.innerHTML = html; container.appendChild(div);
-            const group = document.createElement('div'); group.className = 'btn-group';
-            group.innerHTML = `<button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>
-                <div class="nav-arrows"><button onclick="moveScreen('${id}', -1)">◀</button><button onclick="moveScreen('${id}', 1)">▶</button></div>`;
-            adminBar.appendChild(group);
-        });
-        initHierarchyLogic();
-        initPsalmLogic();
-        initNamesLogic();
-    }
-
-    function initNamesLogic() {
-        const feed = document.getElementById('names-feed');
-        if(!feed) return;
-        onSnapshot(query(collection(db, "names"), orderBy("timestamp", "asc")), (snap) => {
-            feed.innerHTML = snap.docs.map(d => `<span class="name-tag">${d.data().name}</span>`).join("");
-        });
-    }
-
-    function initHierarchyLogic() {
-        const canvas = document.getElementById('canvas-hierarchy');
-        if(!canvas) return;
-        // GOD EN JEZUS BEIDEN TOEGEVOEGD:
-        const items = ['God', 'Jezus', 'Mozes', 'Koning', 'Hogepriester', 'Profeet', 'ik'];
-        renderDraggables(canvas, items, true);
-    }
-
-    function initPsalmLogic() {
-        const canvas = document.getElementById('canvas-psalm');
-        if(!canvas) return;
-        onSnapshot(query(collection(db, "psalm_zinnen"), orderBy("timestamp", "desc")), (snap) => {
-            canvas.innerHTML = "";
-            renderDraggables(canvas, snap.docs.map(d => d.data().text), false);
-        });
-    }
-
-    function renderDraggables(canvas, items, isHierarchy) {
-        items.forEach((txt) => {
-            const el = document.createElement('div');
-            el.className = `draggable ${isHierarchy && txt === 'Jezus' ? 'item-Jezus' : ''}`;
-            el.innerText = txt;
-            el.style.top = (50 + Math.floor(Math.random() * 300)) + 'px';
-            el.style.left = (50 + Math.floor(Math.random() * 400)) + 'px';
-            let isDragging = false;
-            let startX, startY, origX, origY;
-            const start = (e) => {
-                isDragging = true; el.style.zIndex = 1000;
-                const evt = e.touches ? e.touches[0] : e;
-                startX = evt.clientX; startY = evt.clientY;
-                origX = el.offsetLeft; origY = el.offsetTop;
-            };
-            const move = (e) => {
-                if (!isDragging) return;
-                const evt = e.touches ? e.touches[0] : e;
-                el.style.left = (origX + (evt.clientX - startX)) + 'px';
-                el.style.top = (origY + (evt.clientY - startY)) + 'px';
-            };
-            const stop = () => { isDragging = false; el.style.zIndex = (isHierarchy && txt === 'Jezus' ? 10 : 1); };
-            el.addEventListener('mousedown', start); el.addEventListener('touchstart', start, {passive: false});
-            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
-            window.addEventListener('mouseup', stop); window.addEventListener('touchend', stop);
-            canvas.appendChild(el);
-        });
-    }
-
-    onSnapshot(doc(db, "appState", "current"), (snap) => {
-        const activeId = snap.data()?.activeScreen || 'login';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`)?.classList.add('active');
-        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
-    });
-
-    onSnapshot(collection(db, "user_cvs"), (snap) => {
-        const container = document.getElementById('cv-feed-container');
-        if(container) container.innerHTML = snap.docs.map(d => `<div class="scroll-box" style="height:auto; font-size:0.85rem; border-left:4px solid var(--gold); background:white; margin-bottom:10px;">${d.data().text}</div>`).join("");
-    });
 
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'user_cvs', 'psalm_zinnen']) {
+            for(const c of ['names', 'answers_split', 'live_questions', 'hierarchy_items']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -225,7 +94,141 @@
         }
     };
 
+    window.addLiveQuestion = async () => {
+        const val = document.getElementById('new-q-input').value;
+        if(val) { await addDoc(collection(db, "live_questions"), { text: val, timestamp: Date.now() }); document.getElementById('new-q-input').value = ""; }
+    };
+
+    window.sendData = async (id, col, field, qId = null) => {
+        const val = document.getElementById(`in-${id}`).value;
+        if (val) { 
+            const data = { [field]: val, timestamp: Date.now() };
+            if (qId) data.qId = qId;
+            await addDoc(collection(db, col), data); 
+            document.getElementById(`in-${id}`).value = ""; 
+        }
+    };
+
+    window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
+
+    function setupDragging(el, id, isShared) {
+        let isDragging = false;
+        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); };
+        el.onpointermove = (e) => {
+            if (!isDragging) return;
+            const r = el.parentElement.getBoundingClientRect();
+            el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
+            el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
+        };
+        el.onpointerup = async () => { 
+            isDragging = false; 
+            if(isShared) await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left), y: parseInt(el.style.top) });
+        };
+    }
+
+    function renderApp() {
+        const container = document.getElementById('main-container');
+        const adminBar = document.getElementById('admin-bar');
+        container.innerHTML = ""; adminBar.innerHTML = "";
+        
+        if(isAdmin) {
+            adminBar.style.display = "flex";
+            document.getElementById('reset-btn').style.display = "block";
+        }
+
+        Object.keys(screenConfigs).forEach((id) => {
+            const s = screenConfigs[id];
+            const div = document.createElement('div');
+            div.id = `screen-${id}`; div.className = 'screen';
+            let html = `<h2>${s.title}</h2>`;
+            
+            if (s.type === 'video') {
+                html += `<div class="video-grid">
+                            <div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div>
+                            <div class="scroll-box" style="height: auto;">${s.lyrics}</div>
+                         </div>`;
+            }
+            if (s.type === 'info') html += `<div>${s.content}</div>`;
+            if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
+            if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
+            if (s.type === 'qa_input') html += `<div class="admin-panel"><strong>Admin: Voeg vraag toe</strong><br><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">OK</button></div><div id="input-questions-container" class="scroll-box"></div>`;
+            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
+            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
+
+            div.innerHTML = html; container.appendChild(div);
+            if(isAdmin) {
+                const btn = document.createElement('button');
+                btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
+                btn.onclick = () => window.updateRemoteScreen(id);
+                adminBar.appendChild(btn);
+            }
+        });
+    }
+
+    function initListeners() {
+        onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
+            const inputContainer = document.getElementById('input-questions-container');
+            const monitorContainer = document.getElementById('monitor-questions-container');
+            if(inputContainer) inputContainer.innerHTML = "";
+            if(monitorContainer) monitorContainer.innerHTML = "";
+            snap.docs.forEach(docSnap => {
+                const qData = docSnap.data(); const qId = docSnap.id;
+                if(inputContainer) {
+                    const div = document.createElement('div'); div.className = 'vraag-blok';
+                    div.innerHTML = `<p><strong>${qData.text}</strong></p><div style="display:flex; gap:5px;"><input type="text" id="in-${qId}"><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button></div>`;
+                    inputContainer.appendChild(div);
+                }
+                if(monitorContainer) {
+                    const mDiv = document.createElement('div'); mDiv.className = 'monitor-vraag';
+                    mDiv.innerHTML = `<h3>${qData.text}</h3><div id="monitor-feed-${qId}"></div>`;
+                    monitorContainer.appendChild(mDiv);
+                }
+            });
+        });
+
+        onSnapshot(collection(db, "answers_split"), (snap) => {
+            snap.docs.forEach(d => {
+                const data = d.data(); const monitorFeed = document.getElementById(`monitor-feed-${data.qId}`);
+                if (monitorFeed && !document.getElementById(`m-ans-${d.id}`)) {
+                    const item = document.createElement('span'); item.id = `m-ans-${d.id}`; item.className = 'ans-pill';
+                    item.innerText = data.text; monitorFeed.appendChild(item);
+                }
+            });
+        });
+
+        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
+            const canvas = document.getElementById('canvas-hierarchy');
+            if(!canvas) return;
+            snap.docs.forEach(d => {
+                let el = document.getElementById(`shared-${d.id}`);
+                if (!el) {
+                    el = document.createElement('div'); el.id = `shared-${d.id}`; 
+                    el.className = `draggable ${d.id === 'Jezus' ? 'item-Jezus' : ''}`;
+                    el.innerText = d.data().text; canvas.appendChild(el);
+                    setupDragging(el, d.id, true);
+                }
+                el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
+            });
+        });
+
+        onSnapshot(collection(db, "names"), (snap) => {
+            const f = document.getElementById('feed-login');
+            if (f) f.innerHTML = snap.docs.map(d => `<div style="padding:5px; border-bottom:1px solid #eee;">${d.data().name}</div>`).join("");
+        });
+    }
+
+    onSnapshot(doc(db, "appState", "current"), (snap) => {
+        const activeId = snap.data()?.activeScreen || 'login';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${activeId}`)?.classList.add('active');
+        if(isAdmin) {
+            document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
+            document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
+        }
+    });
+
     renderApp();
+    initListeners();
 </script>
 </body>
 </html>

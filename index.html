@@ -151,9 +151,9 @@
             el.className = `draggable ${txt === 'Jezus' ? 'item-Jezus' : ''}`;
             el.innerText = txt;
             
-            // WILLEKEURIGE STARTPOSITIE (Chaos)
-            el.style.top = Math.floor(Math.random() * (canvas.offsetHeight - 60)) + 'px';
-            el.style.left = Math.floor(Math.random() * (canvas.offsetWidth - 150)) + 'px';
+            // BEPERKTE CHAOS (Blijven binnen zichtbaar middenveld)
+            el.style.top = (50 + Math.floor(Math.random() * 300)) + 'px';
+            el.style.left = (50 + Math.floor(Math.random() * 500)) + 'px';
             
             let isDragging = false;
             let offset = { x: 0, y: 0 };

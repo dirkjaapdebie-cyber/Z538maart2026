@@ -11,24 +11,27 @@
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
-        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; }
-        /* Extra styling voor bijbeltekst */
-        .verse-num { font-weight: bold; color: var(--accent); font-size: 0.8em; vertical-align: super; margin-right: 4px; }
-        .bible-full-text { text-align: left; }
         
+        /* Gecorrigeerde Scrollbox voor Bijbeltekst */
+        .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.8; height: 450px; overflow-y: auto; border-radius: 6px; }
+        .verse-num { font-weight: bold; color: var(--accent); font-size: 0.8em; vertical-align: super; margin-right: 4px; }
+        .bible-full-text p { margin-bottom: 1.5em; text-align: left; }
+
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        @media (max-width: 768px) { .video-grid { grid-template-columns: 1fr; } }
+        
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; align-items: center; gap: 10px; z-index: 1000; box-sizing: border-box; }
         .nav-arrow { background: var(--gold); color: #000; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1.4rem; }
         .screen-btns-container { display: flex; overflow-x: auto; gap: 10px; flex-grow: 1; -webkit-overflow-scrolling: touch; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
+        
         .canvas, .psalm-canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; border-radius: 8px; }
         .draggable, .psalm-line { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; font-weight: bold; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.1); white-space: nowrap; }
         .item-special { border-color: var(--gold); border-width: 3px; background: #fffef0; }
         .psalm-line { border-radius: 4px; font-weight: normal; border: 1px solid #ccc; }
+        
         .question-group { background: #f9f9f9; border-left: 5px solid var(--accent); padding: 15px; margin-bottom: 20px; border-radius: 4px; }
         .ans-pill { background: white; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; display: block; margin-top: 5px; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -42,7 +45,7 @@
 <div class="container">
     <div class="header-flex">
         <h1 class="main-header">Hebreeën Les 2</h1>
-        <button id="reset-btn" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:4px; display:none;" onclick="window.resetAllData()">RESET VOLLEDIGE LES</button>
+        <button id="reset-btn" style="background:#e74c3c; color:white; border:none; padding:8px; border-radius:4px; display:none;" onclick="window.resetAllData()">RESET LES DATA</button>
     </div>
     <div id="loading" class="loading">Bezig met laden...</div>
     <div id="main-container"></div>
@@ -74,22 +77,24 @@
     const screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
         song: { title: 'Lied', type: 'video', videoId: 'enJgkjpuqi0', lyrics: "De woestijn zal bloeien als een roos\nen de steppen zullen jubelen en juichen..." },
-        bible_h3: { 
+        bible_tekst: { 
             title: 'Hebreeën 3 (HSV)', 
             type: 'bible_full', 
-            text: `<p><span class="verse-num">1</span>Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. <span class="verse-num">2</span>Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis. <span class="verse-num">3</span>Want deze is zoveel grotere heerlijkheid waardig gekeurd dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. <span class="verse-num">4</span>Elk huis wordt immers door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.</p>
-                   <p><span class="verse-num">5</span>En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden, <span class="verse-num">6</span>maar Christus is getrouw als Zoon over Zijn huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.</p>
-                   <p><span class="verse-num">7</span>Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, <span class="verse-num">8</span>verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. <span class="verse-num">9</span>Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. <span class="verse-num">10</span>Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. <span class="verse-num">11</span>Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!</p>
-                   <p><span class="verse-num">12</span>Zie erop toe, broeders, dat er bij niemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; <span class="verse-num">13</span>maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde. <span class="verse-num">14</span>Want wij hebben deel gekregen aan Christus, als wij het begin van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden,</p>
-                   <p><span class="verse-num">15</span>terwijl er wordt gezegd: Heden, indien u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. <span class="verse-num">16</span>Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan. <span class="verse-num">17</span>Op wie is Hij dan veertig jaar lang toornig geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? <span class="verse-num">18</span>En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? <span class="verse-num">19</span>Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.</p>`
+            text: `<div class="bible-full-text">
+                <p><span class="verse-num">1</span>Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus. <span class="verse-num">2</span>Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes getrouw was in heel Zijn huis. <span class="verse-num">3</span>Want deze is zoveel grotere heerlijkheid waardig gekeurd dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf. <span class="verse-num">4</span>Elk huis wordt immers door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.</p>
+                <p><span class="verse-num">5</span>En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden, <span class="verse-num">6</span>maar Christus is getrouw als Zoon over Zijn huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.</p>
+                <p><span class="verse-num">7</span>Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort, <span class="verse-num">8</span>verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn. <span class="verse-num">9</span>Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang. <span class="verse-num">10</span>Daarom ben Ik toornig geworden op dat geslacht en heb Ik gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend. <span class="verse-num">11</span>Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!</p>
+                <p><span class="verse-num">12</span>Zie erop toe, broeders, dat er bij niemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God; <span class="verse-num">13</span>maar vermaan elkaar elke dag, zolang men van een 'heden' kan spreken, opdat niemand van u verhard zal worden door de misleiding van de zonde. <span class="verse-num">14</span>Want wij hebben deel gekregen aan Christus, als wij het begin van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden,</p>
+                <p><span class="verse-num">15</span>terwijl er wordt gezegd: Heden, indien u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering. <span class="verse-num">16</span>Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren gegaan. <span class="verse-num">17</span>Op wie is Hij dan veertig jaar lang toornig geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn? <span class="verse-num">18</span>En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren? <span class="verse-num">19</span>Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.</p>
+            </div>`
         },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: "<b>Wie ben ik?</b> Dienaar IN het huis.\n• Prins van Egypte.\n• Bevrijder van het volk.\n• 40 jaar trouwe dienst." },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible_short', text: "<b>Wie ben ik?</b> Dienaar IN het huis.\n• Prins van Egypte.\n• Bevrijder van het volk.\n• 40 jaar trouwe dienst." },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: "<b>Wie ben ik?</b> Bevrijd, maar nog niet vrij.\n• Dagelijks manna.\n• Leren vertrouwen.\n• De slavernij moet uit het hart." },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible_short', text: "<b>Wie ben ik?</b> Bevrijd, maar nog niet vrij.\n• Dagelijks manna.\n• Leren vertrouwen.\n• De slavernij moet uit het hart." },
         psalm_input: { title: 'Zin Inleveren', type: 'psalm_input' },
         psalm_build: { title: 'Psalm Bouwen', type: 'psalm_drag' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: "<b>Wie zijn wij?</b> Het huis van God.\n• Deelgenoten hemelse roeping.\n• Vertrouwen op de Bouwer.\n• Elkaar dagelijks bemoedigen." },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible_short', text: "<b>Wie zijn wij?</b> Het huis van God.\n• Deelgenoten hemelse roeping.\n• Vertrouwen op de Bouwer.\n• Elkaar dagelijks bemoedigen." },
         questions: { title: 'Vragen', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' },
         gebed: { title: 'Gebed', type: 'info', content: '<i>Vader, dank U voor Uw rust...</i>' }
@@ -98,7 +103,6 @@
     let currentId = 'login';
     const ids = Object.keys(screenConfigs);
 
-    // Global functions
     window.navScreen = (dir) => {
         let idx = ids.indexOf(currentId) + dir;
         if (idx >= 0 && idx < ids.length) window.updateRemoteScreen(ids[idx]);
@@ -134,7 +138,7 @@
     };
 
     window.resetAllData = async () => {
-        if(confirm("DIT VERWIJDERT ALLES. 'God' en 'Jezus' worden hersteld. Doorgaan?")){
+        if(confirm("DIT VERWIJDERT ALLES. Doorgaan?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
             for(const c of ['names', 'hierarchy_items', 'psalm_lines', 'live_questions', 'answers_split']) {
                 const q = await getDocs(collection(db, c));
@@ -143,7 +147,7 @@
             for (const item of screenConfigs.hierarchy.initial) {
                 await setDoc(doc(db, "hierarchy_items", item), { text: item, x: 100 + Math.random()*50, y: 100 + Math.random()*50 });
             }
-            setTimeout(() => location.reload(), 500);
+            location.reload();
         }
     };
 
@@ -151,25 +155,21 @@
         if (!el || !isAdminUser) return;
         let isDragging = false;
         const canvas = el.parentNode;
-        const onPointerMove = (e) => {
+        const move = (e) => {
             if (!isDragging) return;
             const rect = canvas.getBoundingClientRect();
-            let x = e.clientX - rect.left - el.offsetWidth / 2;
-            let y = e.clientY - rect.top - el.offsetHeight / 2;
-            x = Math.max(0, Math.min(rect.width - el.offsetWidth, x));
-            y = Math.max(0, Math.min(rect.height - el.offsetHeight, y));
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - el.offsetWidth / 2;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - el.offsetHeight / 2;
             if (isHierarchy && docRef) {
-                updateDoc(docRef, { x: Math.round(x), y: Math.round(y) }).catch(console.error);
+                updateDoc(docRef, { x: Math.round(x), y: Math.round(y) });
             } else {
                 el.style.left = x + 'px'; el.style.top = y + 'px';
             }
         };
-        const onPointerUp = () => {
-            if (isDragging) { isDragging = false; window.removeEventListener('pointermove', onPointerMove); }
-        };
-        el.addEventListener('pointerdown', (e) => {
-            isDragging = true; window.addEventListener('pointermove', onPointerMove); window.addEventListener('pointerup', onPointerUp);
-        });
+        const stop = () => { isDragging = false; };
+        el.onmousedown = el.ontouchstart = (e) => { isDragging = true; };
+        window.onmousemove = window.ontouchmove = move;
+        window.onmouseup = window.ontouchend = stop;
     }
 
     function renderApp() {
@@ -177,7 +177,7 @@
         const btnContainer = document.getElementById('screen-btns-container');
         if (!container || !btnContainer) return;
         
-        if (document.getElementById('loading')) document.getElementById('loading').style.display = 'none';
+        document.getElementById('loading').style.display = 'none';
         container.innerHTML = ""; btnContainer.innerHTML = "";
         
         if(isAdmin) { 
@@ -196,18 +196,18 @@
             } else if(s.type === 'shared-drag') {
                 html += `<div id="canvas-hierarchy" class="canvas"></div>`;
             } else if(s.type === 'psalm_input') {
-                html += `<input type="text" id="psalm-line-in" placeholder="Jouw regel voor de psalm..."><button class="action-btn" onclick="submitPsalmLine()">STUUR</button>`;
+                html += `<input type="text" id="psalm-line-in" placeholder="Jouw regel..."><button class="action-btn" onclick="submitPsalmLine()">STUUR</button>`;
             } else if(s.type === 'psalm_drag') {
                 html += `<div id="psalm-canvas" class="psalm-canvas"></div>`;
+            } else if(s.type === 'bible_full') {
+                html += `<div class="scroll-box">${s.text}</div>`;
+            } else if(s.type === 'bible_short') {
+                html += `<div class="scroll-box" style="white-space: pre-wrap;">${s.text}</div>`;
             } else if(s.type === 'qa_input') {
-                if(isAdmin) html += `<div style="background:#eef;padding:10px;margin-bottom:20px;"><input type="text" id="admin-q-input" placeholder="Stel een vraag..."><button class="action-btn" onclick="addLiveQuestion()">STEL</button></div>`;
+                if(isAdmin) html += `<input type="text" id="admin-q-input"><button class="action-btn" onclick="addLiveQuestion()">STEL</button>`;
                 html += `<div id="user-questions-list"></div>`;
             } else if(s.type === 'qa_monitor') {
                 html += `<div id="monitor-answers-list"></div>`;
-            } else if(s.type === 'bible') {
-                html += `<div class="scroll-box" style="white-space: pre-wrap;">${s.text}</div>`;
-            } else if(s.type === 'bible_full') {
-                html += `<div class="scroll-box bible-full-text">${s.text}</div>`;
             } else if(s.type === 'info') {
                 html += `<div>${s.content}</div>`;
             } else if(s.type === 'input') {
@@ -242,7 +242,7 @@
     onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
         const uList = document.getElementById('user-questions-list');
         const mList = document.getElementById('monitor-answers-list');
-        if(uList) uList.innerHTML = snap.docs.map(d => `<div class="question-group"><strong>${d.data().text}</strong><input type="text" id="ans-${d.id}" placeholder="Jouw antwoord..."><button class="action-btn" onclick="sendAnswer('${d.id}')">ANTWOORD</button></div>`).join("");
+        if(uList) uList.innerHTML = snap.docs.map(d => `<div class="question-group"><strong>${d.data().text}</strong><input type="text" id="ans-${d.id}"><button class="action-btn" onclick="sendAnswer('${d.id}')">ANTWOORD</button></div>`).join("");
         if(mList) mList.innerHTML = snap.docs.map(d => `<div class="question-group"><h3>${d.data().text}</h3><div id="answers-for-${d.id}"></div></div>`).join("");
     });
 
@@ -263,12 +263,36 @@
         const canvas = document.getElementById('canvas-hierarchy');
         if(!canvas) return;
         snap.docChanges().forEach(change => {
-            const docData = change.doc.data();
-            const docId = change.doc.id;
-            if (change.type === "added" || change.type === "modified") {
-                let el = document.getElementById(`shared-${docId}`);
-                if (!el) {
-                    el = document.createElement('div'); el.id = `shared-${docId}`; 
-                    el.className = 'draggable' + (docId === 'God' || docId === 'Jezus' ? ' item-special' : '');
-                    el.innerText = docData.text || docId; canvas.appendChild(el);
-                    if (isAdmin) makeDraggable(el, change.doc
+            const data = change.doc.data();
+            const id = change.doc.id;
+            let el = document.getElementById(`shared-${id}`);
+            if (!el) {
+                el = document.createElement('div'); el.id = `shared-${id}`; 
+                el.className = 'draggable' + (id === 'God' || id === 'Jezus' ? ' item-special' : '');
+                el.innerText = data.text || id; canvas.appendChild(el);
+                if (isAdmin) makeDraggable(el, change.doc.ref, true, isAdmin);
+            }
+            el.style.left = data.x + "px"; el.style.top = data.y + "px";
+        });
+    });
+
+    onSnapshot(collection(db, "psalm_lines"), (snap) => {
+        const canvas = document.getElementById('psalm-canvas');
+        if(!canvas) return;
+        snap.docChanges().forEach(change => {
+            if (change.type === "added") {
+                const data = change.doc.data();
+                const el = document.createElement('div'); el.className = 'psalm-line'; el.innerText = data.text;
+                el.style.left = (50 + Math.random()*100) + "px"; el.style.top = (50 + Math.random()*100) + "px";
+                canvas.appendChild(el); makeDraggable(el, null, false, true);
+            }
+        });
+    });
+
+    onSnapshot(collection(db, "names"), (snap) => {
+        const f = document.getElementById('feed-login');
+        if(f) f.innerHTML = snap.docs.map(d => `<div>• ${d.data().name}</div>`).join("");
+    });
+</script>
+</body>
+</html>

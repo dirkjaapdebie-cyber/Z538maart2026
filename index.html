@@ -19,9 +19,10 @@
         .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
-        @media (max-width: 768px) { .video-grid { grid-template-columns: 1fr; } }
 
-        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; overflow-x: auto; gap: 10px; z-index: 1000; }
+        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; align-items: center; gap: 10px; z-index: 1000; box-sizing: border-box; }
+        .nav-arrow { background: var(--gold); color: #000; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1.2rem; }
+        .screen-btns-container { display: flex; overflow-x: auto; gap: 10px; flex-grow: 1; scrollbar-width: none; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
@@ -35,11 +36,8 @@
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; z-index: 10; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
         
-        .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
-        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; font-size: 0.95rem; }
-        .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
-        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -54,7 +52,11 @@
     <div id="main-container"></div>
 </div>
 
-<div id="admin-bar" class="admin-bar"></div>
+<div id="admin-bar" class="admin-bar">
+    <button class="nav-arrow" onclick="window.navScreen(-1)">❮</button>
+    <div id="screen-btns-container" class="screen-btns-container"></div>
+    <button class="nav-arrow" onclick="window.navScreen(1)">❯</button>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -79,43 +81,31 @@
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Dienaar IN het huis.\n• Prins van Egypte.\n• Bevrijder.\n• 40 jaar trouwe dienst.` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, richt uw aandacht op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes in heel Zijn huis.\n[3] Want Hij is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Elk huis wordt immers door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onveranderlijk vasthouden.\n...\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong>\n\n[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, richt uw aandacht op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Bevrijd, maar nog niet vrij.\n• Dagelijks manna.\n• Leren vertrouwen.\n• De slavernij moet uit het hart.` },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n• Vertrouwen op de Bouwer.\n• Elkaar dagelijks bemoedigen.` },
         my_cv: { title: 'Mijn eigen CV', type: 'cv_form' },
         cv_wall: { title: 'CV Monitor', type: 'cv_monitor' },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Het huis van God dat samen de rust binnengaat.\n• Vertrouwen op de Bouwer.\n• Elkaar dagelijks bemoedigen.` },
         questions: { title: 'Vragen', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' },
-        gebed: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; font-size: 1.25rem; text-align: center; padding: 20px; line-height: 1.8;">Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar.’</div>' }
+        gebed: { title: 'Gebed', type: 'info', content: '<div style="font-style: italic; font-size: 1.25rem; text-align: center; padding: 20px; line-height: 1.8;">Vader, wij vragen U ons geloof in U te verdiepen...</div>' }
     };
 
-    window.resetAllData = async () => {
-        if(confirm("Alles resetten?")){
-            await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'live_questions', 'hierarchy_items', 'user_cvs']) {
-                const q = await getDocs(collection(db, c));
-                for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
-            }
-            for(const item of screenConfigs.hierarchy.initial) {
-                await setDoc(doc(db, "hierarchy_items", item), { text: item, x: 50, y: 50 });
-            }
-            location.reload();
-        }
+    let currentId = 'login';
+    const ids = Object.keys(screenConfigs);
+
+    window.navScreen = (dir) => {
+        let idx = ids.indexOf(currentId) + dir;
+        if (idx >= 0 && idx < ids.length) window.updateRemoteScreen(ids[idx]);
     };
+
+    window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
 
     window.saveMyCV = async () => {
         const name = document.getElementById('cv-name').value;
         const status = document.getElementById('cv-status').value;
         const goal = document.getElementById('cv-goal').value;
-        if(name) {
-            await addDoc(collection(db, "user_cvs"), { name, status, goal, timestamp: Date.now() });
-            alert("Je CV is verstuurd!");
-        }
-    };
-
-    window.addLiveQuestion = async () => {
-        const val = document.getElementById('new-q-input').value;
-        if(val) { await addDoc(collection(db, "live_questions"), { text: val, timestamp: Date.now() }); document.getElementById('new-q-input').value = ""; }
+        if(name) { await addDoc(collection(db, "user_cvs"), { name, status, goal, timestamp: Date.now() }); alert("Verzonden!"); }
     };
 
     window.sendData = async (id, col, field, qId = null) => {
@@ -128,35 +118,30 @@
         }
     };
 
-    window.updateRemoteScreen = async (id) => { await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); };
-
-    function setupDragging(el, id, isShared) {
+    function setupDragging(el, id) {
         let isDragging = false;
         let lastUpdate = 0;
         el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = 1000; };
         el.onpointermove = async (e) => {
             if (!isDragging) return;
             const r = el.parentElement.getBoundingClientRect();
-            const newX = parseInt(e.clientX - r.left - (el.offsetWidth / 2));
-            const newY = parseInt(e.clientY - r.top - (el.offsetHeight / 2));
-            el.style.left = newX + "px"; el.style.top = newY + "px";
+            const x = parseInt(e.clientX - r.left - (el.offsetWidth / 2));
+            const y = parseInt(e.clientY - r.top - (el.offsetHeight / 2));
+            el.style.left = x + "px"; el.style.top = y + "px";
             const now = Date.now();
-            if (isShared && now - lastUpdate > 50) {
-                lastUpdate = now;
-                await updateDoc(doc(db, "hierarchy_items", id), { x: newX, y: newY });
-            }
+            if (now - lastUpdate > 50) { lastUpdate = now; await updateDoc(doc(db, "hierarchy_items", id), { x, y }); }
         };
-        el.onpointerup = async () => { isDragging = false; el.style.zIndex = 10; };
+        el.onpointerup = () => { isDragging = false; el.style.zIndex = 10; };
     }
 
     function renderApp() {
         const container = document.getElementById('main-container');
-        const adminBar = document.getElementById('admin-bar');
-        container.innerHTML = ""; adminBar.innerHTML = "";
+        const btnContainer = document.getElementById('screen-btns-container');
+        container.innerHTML = ""; btnContainer.innerHTML = "";
         
-        if(isAdmin) { adminBar.style.display = "flex"; document.getElementById('reset-btn').style.display = "block"; }
+        if(isAdmin) document.getElementById('admin-bar').style.display = "flex";
 
-        Object.keys(screenConfigs).forEach((id) => {
+        ids.forEach((id) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
@@ -164,19 +149,19 @@
             
             if (s.type === 'cv_form') {
                 html += `<div class="cv-card">
-                    <div class="cv-input-group"><label>Wie ben ik? (Naam)</label><input type="text" id="cv-name" placeholder="Je naam..."></div>
-                    <div class="cv-input-group"><label>Mijn huidige status?</label><input type="text" id="cv-status" placeholder="Bijv: In de woestijn, dankbaar..."></div>
-                    <div class="cv-input-group"><label>Mijn doel?</label><input type="text" id="cv-goal" placeholder="Bijv: Gods rust binnengaan..."></div>
-                    <button class="action-btn" onclick="saveMyCV()">VERSTUUR NAAR MONITOR</button>
+                    <div class="cv-input-group"><label>Wie ben ik?</label><input type="text" id="cv-name" placeholder="Naam..."></div>
+                    <div class="cv-input-group"><label>Mijn huidige status?</label><input type="text" id="cv-status" placeholder="..."></div>
+                    <div class="cv-input-group"><label>Mijn doel?</label><input type="text" id="cv-goal" placeholder="..."></div>
+                    <button class="action-btn" onclick="saveMyCV()">STUUR NAAR MONITOR</button>
                 </div>`;
             } else if (s.type === 'cv_monitor') {
-                html += `<div id="cv-monitor-list" class="scroll-box">Wachten op CV's...</div>`;
+                html += `<div id="cv-monitor-list" class="scroll-box"></div>`;
             } else if (s.type === 'video') {
-                html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box">${s.lyrics}</div></div>`;
+                html += `<div class="video-grid"><div class="video-container"><iframe src="https://www.youtube.com/embed/${s.videoId}"></iframe></div><div class="scroll-box">${s.lyrics}</div></div>`;
             } else if (s.type === 'shared-drag') {
                 html += `<div id="canvas-hierarchy" class="canvas"></div>`;
             } else if (s.type === 'qa_input') {
-                html += `<div class="admin-panel"><strong>Nieuwe vraag</strong><br><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">OK</button></div><div id="input-questions-container" class="scroll-box"></div>`;
+                html += `<div id="input-questions-container" class="scroll-box"></div>`;
             } else if (s.type === 'qa_monitor') {
                 html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
             } else if (s.type === 'input') {
@@ -190,74 +175,43 @@
             div.innerHTML = html; container.appendChild(div);
             if(isAdmin) {
                 const btn = document.createElement('button'); btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
-                btn.onclick = () => window.updateRemoteScreen(id); adminBar.appendChild(btn);
+                btn.onclick = () => window.updateRemoteScreen(id); btnContainer.appendChild(btn);
             }
         });
     }
 
-    function initListeners() {
-        onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
-            const list = document.getElementById('cv-monitor-list');
-            if(list) list.innerHTML = snap.docs.map(d => `<div class="cv-card"><strong>${d.data().name}</strong><br>Status: ${d.data().status}<br>Doel: ${d.data().goal}</div>`).join("");
-        });
-
-        onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
-            const inputContainer = document.getElementById('input-questions-container');
-            const monitorContainer = document.getElementById('monitor-questions-container');
-            if(inputContainer) inputContainer.innerHTML = "";
-            if(monitorContainer) monitorContainer.innerHTML = "";
-            snap.docs.forEach(docSnap => {
-                const qData = docSnap.data(); const qId = docSnap.id;
-                if(inputContainer) {
-                    const div = document.createElement('div'); div.innerHTML = `<p><strong>${qData.text}</strong></p><input type="text" id="in-${qId}"><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button>`;
-                    inputContainer.appendChild(div);
-                }
-                if(monitorContainer) {
-                    const mDiv = document.createElement('div'); mDiv.className = 'monitor-vraag';
-                    mDiv.innerHTML = `<h3>${qData.text}</h3><div id="monitor-feed-${qId}"></div>`;
-                    monitorContainer.appendChild(mDiv);
-                }
-            });
-        });
-
-        onSnapshot(collection(db, "answers_split"), (snap) => {
-            snap.docs.forEach(d => {
-                const data = d.data(); const monitorFeed = document.getElementById(`monitor-feed-${data.qId}`);
-                if (monitorFeed && !document.getElementById(`m-ans-${d.id}`)) {
-                    const item = document.createElement('span'); item.id = `m-ans-${d.id}`; item.className = 'ans-pill';
-                    item.innerText = data.text; monitorFeed.appendChild(item);
-                }
-            });
-        });
-
-        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
-            const canvas = document.getElementById('canvas-hierarchy');
-            if(!canvas) return;
-            snap.docs.forEach(d => {
-                let el = document.getElementById(`shared-${d.id}`);
-                if (!el) {
-                    el = document.createElement('div'); el.id = `shared-${d.id}`; 
-                    el.className = `draggable ${d.id === 'Jezus' ? 'item-Jezus' : ''}`;
-                    el.innerText = d.data().text; canvas.appendChild(el);
-                    setupDragging(el, d.id, true);
-                }
-                el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
-            });
-        });
-    }
-
     onSnapshot(doc(db, "appState", "current"), (snap) => {
-        const activeId = snap.data()?.activeScreen || 'login';
+        currentId = snap.data()?.activeScreen || 'login';
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${activeId}`)?.classList.add('active');
+        document.getElementById(`screen-${currentId}`)?.classList.add('active');
         if(isAdmin) {
             document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-            document.getElementById(`btn-${activeId}`)?.classList.add('current-btn');
+            document.getElementById(`btn-${currentId}`)?.classList.add('current-btn');
+            document.getElementById(`btn-${currentId}`)?.scrollIntoView({ behavior: 'smooth', inline: 'center' });
         }
     });
 
+    onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
+        const list = document.getElementById('cv-monitor-list');
+        if(list) list.innerHTML = snap.docs.map(d => `<div class="cv-card"><strong>${d.data().name}</strong><br>Status: ${d.data().status}<br>Doel: ${d.data().goal}</div>`).join("");
+    });
+
+    onSnapshot(collection(db, "hierarchy_items"), (snap) => {
+        const canvas = document.getElementById('canvas-hierarchy');
+        if(!canvas) return;
+        snap.docs.forEach(d => {
+            let el = document.getElementById(`shared-${d.id}`);
+            if (!el) {
+                el = document.createElement('div'); el.id = `shared-${d.id}`; 
+                el.className = `draggable ${d.id === 'Jezus' ? 'item-Jezus' : ''}`;
+                el.innerText = d.data().text; canvas.appendChild(el);
+                if(isAdmin) setupDragging(el, d.id);
+            }
+            el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
+        });
+    });
+
     renderApp();
-    initListeners();
 </script>
 </body>
 </html>

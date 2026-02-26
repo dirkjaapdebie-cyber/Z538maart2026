@@ -152,13 +152,15 @@
         };
     }
 
-    function renderApp() {
+ function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
         container.innerHTML = ""; adminBar.innerHTML = "";
         
-        Object.keys(screenConfigs).forEach((id) => {
+        Object.keys(screenConfigs).forEach((id, index, array) => {
             const s = screenConfigs[id];
+            
+            // 1. Scherm content aanmaken
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
@@ -184,12 +186,49 @@
             if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
             if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button><div id="feed-login"></div>`;
 
-            div.innerHTML = html; container.appendChild(div);
+            div.innerHTML = html; 
+            container.appendChild(div);
+
+            // 2. Admin knop met pijltjes aanmaken
+            const btnWrapper = document.createElement('div');
+            btnWrapper.style.display = "flex";
+            btnWrapper.style.flexDirection = "column";
+            btnWrapper.style.alignItems = "center";
+
             const btn = document.createElement('button');
-            btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
+            btn.className = 'screen-btn'; 
+            btn.id = `btn-${id}`; 
+            btn.innerText = s.title;
             btn.onclick = () => window.updateRemoteScreen(id);
-            adminBar.appendChild(btn);
-        });
+
+            const arrowWrapper = document.createElement('div');
+            arrowWrapper.style.display = "flex";
+            arrowWrapper.style.gap = "15px";
+            arrowWrapper.style.marginTop = "5px";
+
+            // Pijltje Links (omhoog in de lijst)
+            if (index > 0) {
+                const up = document.createElement('button');
+                up.innerHTML = "◀";
+                up.style.cssText = "background:#555; color:white; border:none; cursor:pointer; padding:2px 8px; border-radius:4px;";
+                up.onclick = (e) => { e.stopPropagation(); moveScreen(index, index - 1); };
+                arrowWrapper.appendChild(up);
+            }
+
+            // Pijltje Rechts (omlaag in de lijst)
+            if (index < array.length - 1) {
+                const down = document.createElement('button');
+                down.innerHTML = "▶";
+                down.style.cssText = "background:#555; color:white; border:none; cursor:pointer; padding:2px 8px; border-radius:4px;";
+                down.onclick = (e) => { e.stopPropagation(); moveScreen(index, index + 1); };
+                arrowWrapper.appendChild(down);
+            }
+
+            btnWrapper.appendChild(btn);
+            btnWrapper.appendChild(arrowWrapper);
+            adminBar.appendChild(btnWrapper);
+        }); // <-- Hier was hij weggevallen!
+    }
     }
 
     function initListeners() {

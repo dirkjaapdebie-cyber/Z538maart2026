@@ -24,7 +24,10 @@
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
+        /* Klein lettertype voor Onze Psalm items */
+        .canvas-creation .draggable { font-size: 0.85rem; padding: 6px 15px; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
+        .item-God { border-color: #c0392b; border-width: 3px; background: #fee; box-shadow: 0 0 10px rgba(192,57,43,0.3); }
         
         .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
         .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
@@ -70,7 +73,7 @@
         login: { title: 'Inloggen', type: 'input' },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.` },
-        hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
+        hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
         reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong><br><br>[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.<br>[2] Hij is getrouw aan God, Die Hem aangesteld heeft, zoals ook Mozes trouw was in heel Zijn huis.<br>[3] Want Christus is zoveel meer heerlijkheid waard geacht dan Mozes, evenals hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.<br>[4] Immers, elk huis wordt door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.<br>[5] En Mozes is wel trouw geweest in heel Zijn huis, maar als dienaar, om te getuigen van wat later gesproken zou worden;<br>[6] Christus echter is getrouw over Zijn huis als Zoon. Zijn huis zijn wij, als wij tenminste de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.<br><br>[7] Daarom, zoals de Heilige Geest zegt: Heden, indien u Zijn stem hoort,<br>[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.<br>[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.<br>[10] Daarom ben Ik toornig geworden op dat geslacht en heb gesproken: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.<br>[11] Daarom heb Ik in Mijn toorn gezworen: Mijn rust zullen zij niet binnengaan!<br><br>[12] Zie erop toe, broeders, dat er nooit in iemand van u een verdorven hart zal zijn, vol ongeloof, om daardoor afvallig te worden van de levende God;<br>[13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard zal worden door de verleiding van de zonde.<br>[14] Want wij hebben deel aan Christus gekregen, als wij tenminste het beginsel van de vaste grond van het geloof tot het einde toe onwrikbaar vasthouden,<br>[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.<br><br>[16] Want hoewel sommigen die stem gehoord hadden, hebben zij Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken.<br>[17] Op wie is Hij dan veertig jaar lang vertoornd geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen zijn gevallen in de woestijn?<br>[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?<br>[19] Zo zien wij dat zij niet konden ingaan vanwege hun ongeloof.` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar nog niet vrij.\n\n• Elke dag manna.\n• Leren vertrouwen.\n\n<em>De slavernij moet ook uit jou.</em>` },
         zinnen_input: { title: 'Zinnen Verzamelen', type: 'poem_input' },
@@ -132,17 +135,47 @@
 
     function setupDragging(el, id, isShared) {
         let isDragging = false;
-        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); };
+        
+        // Pointer events voor live slepen
+        el.onpointerdown = (e) => { 
+            isDragging = true; 
+            el.setPointerCapture(e.pointerId);
+            el.classList.add('dragging');
+        };
+        
         el.onpointermove = (e) => {
             if (!isDragging) return;
+            e.preventDefault();
+            
             const r = el.parentElement.getBoundingClientRect();
-            el.style.left = (e.clientX - r.left - (el.offsetWidth / 2)) + "px";
-            el.style.top = (e.clientY - r.top - (el.offsetHeight / 2)) + "px";
+            let newLeft = e.clientX - r.left - (el.offsetWidth / 2);
+            let newTop = e.clientY - r.top - (el.offsetHeight / 2);
+            
+            newLeft = Math.max(0, Math.min(r.width - el.offsetWidth, newLeft));
+            newTop = Math.max(0, Math.min(r.height - el.offsetHeight, newTop));
+            
+            el.style.left = newLeft + "px";
+            el.style.top = newTop + "px";
         };
+        
         el.onpointerup = async () => { 
             isDragging = false; 
-            if(isShared) await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left), y: parseInt(el.style.top) });
+            if(isShared) {
+                // Alleen voor hiërarchie: positie opslaan in Firebase
+                await updateDoc(doc(db, "hierarchy_items", id), { 
+                    x: parseInt(el.style.left) || 0, 
+                    y: parseInt(el.style.top) || 0 
+                });
+            }
+            // Voor 'Onze Psalm' (isShared = false) gebeurt er niets met Firebase
+            el.classList.remove('dragging');
         };
+        
+        // Zorg dat element standaard zichtbaar is
+        if (!el.style.left || !el.style.top) {
+            el.style.left = "20px";
+            el.style.top = "20px";
+        }
     }
 
     // --- Render App ---
@@ -166,7 +199,7 @@
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
             if (s.type === 'qa_input') html += `<div class="admin-panel"><strong>Admin</strong><br><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">VRAAG TOEVOEGEN</button></div><div id="input-questions-container" class="scroll-box"></div>`;
             if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'dragdrop') html += `<p>Sleep de binnengekomen zinnen tot een eigen psalm:</p><div id="canvas-creation" class="canvas"></div>`;
+            if (s.type === 'dragdrop') html += `<p>Sleep de binnengekomen zinnen tot een eigen psalm:</p><div id="canvas-creation" class="canvas canvas-creation"></div>`;
             if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button>`;
 
             div.innerHTML = html; container.appendChild(div);
@@ -186,7 +219,28 @@
             btnWrap.appendChild(btn); btnWrap.appendChild(arrows);
             adminBar.appendChild(btnWrap);
         });
+        
+        initializeHierarchyItems();
         initDynamicListeners();
+    }
+
+    async function initializeHierarchyItems() {
+        const hierarchyScreen = screenConfigs.hierarchy;
+        if (!hierarchyScreen || !hierarchyScreen.initial) return;
+        
+        const snapshot = await getDocs(collection(db, "hierarchy_items"));
+        const existingItems = new Set(snapshot.docs.map(doc => doc.data().text));
+        
+        for (const item of hierarchyScreen.initial) {
+            if (!existingItems.has(item)) {
+                const itemId = item.toLowerCase().replace(/\s+/g, '_');
+                await setDoc(doc(db, "hierarchy_items", itemId), {
+                    text: item,
+                    x: Math.random() * 300 + 50,
+                    y: Math.random() * 300 + 50
+                });
+            }
+        }
     }
 
     function updateVisuals() {
@@ -237,32 +291,61 @@
             });
         });
 
+        // LIVE HIERARCHIE: Elke beweging wordt gedeeld
         onSnapshot(collection(db, "hierarchy_items"), (snap) => {
             const canvas = document.getElementById('canvas-hierarchy');
             if(!canvas) return;
-            snap.docs.forEach(d => {
+            
+            snap.docChanges().forEach(change => {
+                const d = change.doc;
+                const data = d.data();
                 let el = document.getElementById(`shared-${d.id}`);
-                if (!el) {
-                    el = document.createElement('div'); el.id = `shared-${d.id}`; 
-                    el.className = `draggable ${d.id === 'Jezus' ? 'item-Jezus' : ''}`;
-                    el.innerText = d.data().text; canvas.appendChild(el);
-                    setupDragging(el, d.id, true);
+                
+                if (change.type === 'added' || !el) {
+                    if (!el) {
+                        el = document.createElement('div'); 
+                        el.id = `shared-${d.id}`; 
+                        
+                        let extraClass = '';
+                        if (data.text === 'Jezus') extraClass = 'item-Jezus';
+                        if (data.text === 'God') extraClass = 'item-God';
+                        
+                        el.className = `draggable ${extraClass}`;
+                        el.innerText = data.text;
+                        canvas.appendChild(el);
+                        setupDragging(el, d.id, true);
+                    }
                 }
-                el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
+                
+                if (el && data.x !== undefined && data.y !== undefined) {
+                    el.style.left = data.x + "px";
+                    el.style.top = data.y + "px";
+                }
             });
         });
 
+        // ONZE PSALM: Items worden alleen getoond, bewegingen worden NIET opgeslagen
         onSnapshot(collection(db, "poem_lines"), (snap) => {
             const canvas = document.getElementById('canvas-creation');
             if(!canvas) return;
-            snap.docs.forEach(d => {
-                if (!document.getElementById(`poem-${d.id}`)) {
+            
+            snap.docChanges().forEach(change => {
+                const d = change.doc;
+                if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
                     const el = document.createElement('div');
-                    el.id = `poem-${d.id}`; el.className = 'draggable';
+                    el.id = `poem-${d.id}`; 
+                    el.className = 'draggable';
                     el.innerText = d.data().text;
-                    el.style.left = "10px"; el.style.top = (Math.random() * 350 + 20) + "px";
+                    // Startpositie: willekeurig maar zichtbaar
+                    el.style.left = (Math.random() * 350 + 50) + "px";
+                    el.style.top = (Math.random() * 350 + 50) + "px";
                     canvas.appendChild(el);
+                    // isShared = false: bewegingen worden niet opgeslagen in Firebase
                     setupDragging(el, d.id, false);
+                }
+                if (change.type === 'removed') {
+                    const el = document.getElementById(`poem-${d.id}`);
+                    if (el) el.remove();
                 }
             });
         });

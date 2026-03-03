@@ -71,6 +71,7 @@
 
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
+        vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },  // NIEUW SCHERM
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
@@ -125,7 +126,7 @@
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions', 'user_cvs']) {
+            for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions', 'user_cvs', 'vorige_keer']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -201,6 +202,8 @@
             if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
             if (s.type === 'dragdrop') html += `<p>Sleep de binnengekomen zinnen tot een eigen psalm:</p><div id="canvas-creation" class="canvas canvas-creation"></div>`;
             if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button>`;
+            // NIEUW: type voor 'vorige_keer' scherm
+            if (s.type === 'vorige_keer') html += `<div class="admin-panel">Wat nam je mee van de vorige bijeenkomst?</div><input type="text" id="in-vorige" placeholder="Jouw inzicht..."><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box" style="margin-top:20px;"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
 
@@ -253,6 +256,18 @@
     function initDynamicListeners() {
         onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('cv-live-feed');
+            if(!feed) return;
+            feed.innerHTML = "";
+            snap.docs.forEach(doc => {
+                const d = document.createElement('div'); d.className = 'ans-pill';
+                d.style.marginBottom = "10px"; d.style.padding = "15px";
+                d.innerText = doc.data().text; feed.appendChild(d);
+            });
+        });
+
+        // NIEUW: Live feed voor 'vorige_keer' scherm
+        onSnapshot(query(collection(db, "vorige_keer"), orderBy("timestamp", "desc")), (snap) => {
+            const feed = document.getElementById('vorige-live-feed');
             if(!feed) return;
             feed.innerHTML = "";
             snap.docs.forEach(doc => {

@@ -23,19 +23,14 @@
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
-        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
-        .canvas-creation .draggable { font-size: 0.85rem; padding: 6px 15px; }
-        
+        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10; }
+        .item-Jezus { border-color: var(--gold); border-width: 3px; }
+        .item-God { border-color: #c0392b; border-width: 3px; }
+
         .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
-        .vraag-blok { margin-bottom: 25px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; }
-
-        input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
+        input[type="text"], textarea { padding: 12px; border: 1px solid #ccc; width: 80%; border-radius: 4px; font-size: 16px; font-family: inherit; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; }
         .arrow-btn { background: #555; color: white; border: none; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
-
-        .music-layout { display: flex; flex-wrap: wrap; gap: 20px; }
-        .video-container { flex: 1; min-width: 300px; }
-        .lyrics-container { flex: 1; min-width: 300px; background: #fffcf0; padding: 15px; border-radius: 6px; border: 1px solid #ddd; height: 450px; overflow-y: auto; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -68,83 +63,45 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    const initialHierarchy = ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'];
+
     let screenConfigs = {
-        login: { 
-            title: 'Inloggen', 
-            type: 'custom',
-            content: `
-                <div style="text-align: center;">
-                    <img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?q=80&w=1000&auto=format&fit=crop" 
-                         style="width: 100%; max-width: 500px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                    
-                    <div id="login-form">
-                        <p>Welkom bij de Bijbelstudie. Voer je naam in om te beginnen:</p>
-                        <div style="margin: 20px 0;">
-                            <input type="text" id="in-login-name" placeholder="Je naam...">
-                            <button class="action-btn" onclick="window.handleLogin()">DOE MEE</button>
-                        </div>
-                    </div>
-
-                    <div id="welcome-message" style="display:none; padding: 20px; background: #e8f4fd; border-radius: 8px; margin-bottom: 20px;">
-                        <h3 style="color: var(--primary); margin:0;">Fijn dat je er bent, <span id="user-display-name"></span>!</h3>
-                        <p style="margin: 5px 0 0 0;">Wacht even rustig tot we gaan beginnen.</p>
-                    </div>
-
-                    <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <h4 style="color: var(--accent);">Nu aanwezig:</h4>
-                        <div id="login-live-feed" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
-                    </div>
-                </div>
-            `
-        },
+        login: { title: 'Inloggen', type: 'custom', content: `<div style="text-align: center;"><img src="https://images.unsplash.com/photo-1507434965515-61970f2bd7c6?q=80&w=1000" style="width: 100%; max-width: 500px; border-radius: 12px; margin-bottom: 20px;"><div id="login-form"><p>Voer je naam in:</p><input type="text" id="in-login-name"><br><button class="action-btn" onclick="window.handleLogin()">DOE MEE</button></div><div id="welcome-message" style="display:none;"><h3>Welkom, <span id="user-display-name"></span>!</h3></div><div style="margin-top: 30px;"><h4>Aanwezig:</h4><div id="login-live-feed"></div></div></div>` },
         vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },
-        goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
-        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.` },
-        hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
-        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong><br><br>[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus...` },
-        lied: { 
-            title: 'Lied: Woestijn', 
-            type: 'custom', 
-            content: `
-            <div class="music-layout">
-                <div class="video-container">
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/ooUzRgI6e_s" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="lyrics-container">
-                    <div style="font-family: sans-serif;">
-                        <p><b>De woestijn zal bloeien als een roos</b></p>
-                        <p>De woestijn zal bloeien als een roos<br>En de steppe zal jubelen en juichen<br>Want het levend water van Gods Geest<br>Maakt dorstig land tot waterbronnen</p>
-                        <p>Sta op Sion en juich<br>Want de Here heeft u verlost<br>Want de lamme zal springen als een hert<br>En de stomme zal jubelen en juichen</p>
-                    </div>
-                </div>
-            </div>`
-        },
-        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar nog niet vrij.\n\n• Elke dag manna.\n• Leren vertrouwen.\n\n<em>De slavernij moet ook uit jou.</em>` },
+        mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.\n• Ontving de Wet op de Sinai.\n• Sprak met God als met een vriend.` },
+        hierarchy: { title: 'Hiërarchie', type: 'shared-drag' },
+        reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong><br><br>[1] Daarom, heilige broeders... [Hier staat de volledige tekst]` },
+        woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar nog niet vrij.\n\n• Elke dag manna.\n• Leren vertrouwen.\n• De slavernij moet uit mijn systeem.` },
         zinnen_input: { title: 'Zinnen Verzamelen', type: 'poem_input' },
-        persoonlijk_cv_input: { title: 'Jouw CV Invullen', type: 'cv_input' },
+        cv_invullen: { title: 'Jouw CV Invullen', type: 'custom', content: `<p>Schrijf kort jouw 'geestelijk CV' op dit moment:</p><textarea id="in-usercv" rows="4" placeholder="Ik ben..."></textarea><br><button class="action-btn" onclick="window.sendData('usercv','user_cvs','text')">VERSTUUR MIJN CV</button>` },
         cv_monitor: { title: 'Live CV Feed', type: 'cv_feed' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Binnentreders van het beloofde land.\n\n• <strong>Onze tactiek:</strong> Wij horen de stem en verharden ons hart niet.\n• <strong>Onze mindset:</strong> Niet terug naar Egypte, maar doorstoten naar de Rust.` },
-        questions: { title: 'Vragen Invoer', type: 'qa_input' },
-        monitor: { title: 'Monitor', type: 'qa_monitor' },
         creation: { title: 'Onze Psalm', type: 'dragdrop' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Vader, wij vragen U ons geloof in U te verdiepen...' }
+        blessing: { title: 'Zegen', type: 'info', content: 'Vader, wij vragen U... Amen.' }
     };
 
     let currentActiveId = 'login';
+    let myName = "";
 
-    // Speciale login handler voor begroeting
     window.handleLogin = async () => {
         const nameInput = document.getElementById('in-login-name');
-        const name = nameInput.value.trim();
-        if (name) {
-            await addDoc(collection(db, 'names'), { name: name, timestamp: Date.now() });
+        myName = nameInput.value.trim();
+        if (myName) {
+            await addDoc(collection(db, 'names'), { name: myName, timestamp: Date.now() });
             document.getElementById('login-form').style.display = 'none';
-            document.getElementById('user-display-name').innerText = name;
+            document.getElementById('user-display-name').innerText = myName;
             document.getElementById('welcome-message').style.display = 'block';
         }
     };
 
     window.updateRemoteScreen = async (id) => { 
+        if (id === 'hierarchy') {
+            const snap = await getDocs(collection(db, "hierarchy_items"));
+            if (snap.empty) {
+                for (let i = 0; i < initialHierarchy.length; i++) {
+                    await addDoc(collection(db, "hierarchy_items"), { text: initialHierarchy[i], x: 150 + (Math.random() * 50), y: 150 + (Math.random() * 50) });
+                }
+            }
+        }
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
 
@@ -152,29 +109,24 @@
         const keys = Object.keys(screenConfigs);
         const item = keys.splice(fromIndex, 1)[0];
         keys.splice(toIndex, 0, item);
-        const newOrder = {};
-        keys.forEach(k => { newOrder[k] = screenConfigs[k]; });
-        screenConfigs = newOrder;
-        renderApp();
-        updateVisuals();
+        const newOrder = {}; keys.forEach(k => { newOrder[k] = screenConfigs[k]; });
+        screenConfigs = newOrder; renderApp(); updateVisuals();
     };
 
-    window.sendData = async (id, col, field, qId = null) => {
-        const inputEl = document.getElementById(`in-${id}`);
-        if(!inputEl) return;
-        const val = inputEl.value;
-        if (val) { 
-            const data = { [field]: val, timestamp: Date.now() };
-            if (qId) data.qId = qId;
+    window.sendData = async (id, col, field) => {
+        const el = document.getElementById(`in-${id}`);
+        if (el && el.value) { 
+            const data = { [field]: el.value, timestamp: Date.now(), user: myName || "Anoniem" };
             await addDoc(collection(db, col), data); 
-            inputEl.value = ""; 
+            el.value = ""; 
+            alert("Verzonden!");
         }
     };
 
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions', 'user_cvs', 'vorige_keer']) {
+            for(const c of ['names', 'poem_lines', 'hierarchy_items', 'vorige_keer', 'user_cvs']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -182,22 +134,19 @@
         }
     };
 
-    function setupDragging(el, id, isShared) {
+    function setupDragging(el, id, type) {
         let isDragging = false;
-        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); el.classList.add('dragging'); };
+        el.onpointerdown = (e) => { isDragging = true; el.setPointerCapture(e.pointerId); };
         el.onpointermove = (e) => {
             if (!isDragging) return;
             const r = el.parentElement.getBoundingClientRect();
-            let newLeft = e.clientX - r.left - (el.offsetWidth / 2);
-            let newTop = e.clientY - r.top - (el.offsetHeight / 2);
-            newLeft = Math.max(0, Math.min(r.width - el.offsetWidth, newLeft));
-            newTop = Math.max(0, Math.min(r.height - el.offsetHeight, newTop));
-            el.style.left = newLeft + "px"; el.style.top = newTop + "px";
+            el.style.left = Math.max(0, Math.min(r.width - el.offsetWidth, e.clientX - r.left - el.offsetWidth / 2)) + "px";
+            el.style.top = Math.max(0, Math.min(r.height - el.offsetHeight, e.clientY - r.top - el.offsetHeight / 2)) + "px";
         };
         el.onpointerup = async () => { 
             isDragging = false; 
-            if(isShared) {
-                await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left) || 0, y: parseInt(el.style.top) || 0 });
+            if(type === 'shared') {
+                await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left), y: parseInt(el.style.top) });
             }
         };
     }
@@ -207,36 +156,26 @@
         const adminBar = document.getElementById('admin-bar');
         container.innerHTML = ""; adminBar.innerHTML = "";
         
-        const keys = Object.keys(screenConfigs);
-        keys.forEach((id, index, array) => {
+        Object.keys(screenConfigs).forEach((id, index, array) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
-            
-            if (s.type === 'info' || s.type === 'custom') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'poem_input') html += `<input type="text" id="in-poem"><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
-            if (s.type === 'cv_input') html += `<input type="text" id="in-usercv"><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
-            if (s.type === 'qa_input') html += `<div id="input-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas canvas-creation"></div>`;
-            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box" style="margin-top:20px;"></div>`;
-
+            if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
+            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box"></div>`;
+            if (s.type === 'custom' || s.type === 'info') html += `<div>${s.content}</div>`;
             div.innerHTML = html; container.appendChild(div);
 
             const btnWrap = document.createElement('div');
             const btn = document.createElement('button');
             btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
             btn.onclick = () => window.updateRemoteScreen(id);
-            
             const arrows = document.createElement('div');
-            arrows.innerHTML = `
-                ${index > 0 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>` : ''}
-                ${index < array.length - 1 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>` : ''}
-            `;
+            arrows.innerHTML = `${index > 0 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>` : ''}${index < array.length - 1 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>` : ''}`;
             btnWrap.appendChild(btn); btnWrap.appendChild(arrows);
             adminBar.appendChild(btnWrap);
         });
@@ -253,17 +192,12 @@
     function initDynamicListeners() {
         onSnapshot(query(collection(db, "names"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('login-live-feed');
-            if(feed) feed.innerHTML = snap.docs.map(d => `<span class="ans-pill" style="background:#e8f4fd; font-style: normal; border-color: #3498db; color: #2c3e50; font-weight: bold;">${d.data().name}</span>`).join('');
+            if(feed) feed.innerHTML = snap.docs.map(d => `<span class="ans-pill">${d.data().name}</span>`).join('');
         });
 
         onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('cv-live-feed');
-            if(feed) feed.innerHTML = snap.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join('');
-        });
-
-        onSnapshot(query(collection(db, "vorige_keer"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('vorige-live-feed');
-            if(feed) feed.innerHTML = snap.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join('');
+            if(feed) feed.innerHTML = snap.docs.map(d => `<div class="ans-pill"><strong>${d.data().user}:</strong><br>${d.data().text}</div>`).join('');
         });
 
         onSnapshot(collection(db, "hierarchy_items"), (snap) => {
@@ -272,21 +206,25 @@
             snap.docs.forEach(d => {
                 let el = document.getElementById(`shared-${d.id}`);
                 if (!el) {
-                    el = document.createElement('div'); el.id = `shared-${d.id}`; el.className = 'draggable';
-                    el.innerText = d.data().text; canvas.appendChild(el); setupDragging(el, d.id, true);
+                    el = document.createElement('div'); el.id = `shared-${d.id}`; 
+                    el.className = 'draggable' + (['God','Jezus'].includes(d.data().text) ? ' item-' + d.data().text : '');
+                    el.innerText = d.data().text; canvas.appendChild(el); setupDragging(el, d.id, 'shared');
                 }
-                el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
+                if(!el.classList.contains('dragging')) {
+                    el.style.left = d.data().x + "px"; el.style.top = d.data().y + "px";
+                }
             });
         });
 
         onSnapshot(collection(db, "poem_lines"), (snap) => {
             const canvas = document.getElementById('canvas-creation');
             if(!canvas) return;
-            snap.docChanges().forEach(change => {
-                if (change.type === 'added' && !document.getElementById(`poem-${change.doc.id}`)) {
-                    const el = document.createElement('div'); el.id = `poem-${change.doc.id}`; el.className = 'draggable';
-                    el.innerText = change.doc.data().text; el.style.left = "50px"; el.style.top = "50px";
-                    canvas.appendChild(el); setupDragging(el, change.doc.id, false);
+            snap.docs.forEach(d => {
+                if (!document.getElementById(`poem-${d.id}`)) {
+                    const el = document.createElement('div'); el.id = `poem-${d.id}`; 
+                    el.className = 'draggable'; el.innerText = d.data().text; 
+                    el.style.left = "20px"; el.style.top = (20 + (canvas.children.length * 45)) + "px";
+                    canvas.appendChild(el); setupDragging(el, d.id, 'local'); 
                 }
             });
         });

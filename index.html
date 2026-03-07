@@ -196,7 +196,7 @@
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'poem_input') html += `<div class="admin-panel">Typ een zin die je raakt.</div><input type="text" id="in-poem" placeholder="Jouw zin..."><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
-            if (s.type === 'cv_input') html += `<div class="admin-panel">Wie ben jij in Gods huis? Typ een korte CV-omschrijving.</div><input type="text" id="in-usercv" placeholder="Ik ben..."><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
+            if (s.type === 'cv_input') html += `<div class="admin-panel">Wie ben jij? Typ een korte CV-omschrijving.</div><input type="text" id="in-usercv" placeholder="Ik ben woestijnreiziger, binnentreder, leider, verspieder...."><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
             if (s.type === 'qa_input') html += `<div class="admin-panel"><strong>Admin</strong><br><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">VRAAG TOEVOEGEN</button></div><div id="input-questions-container" class="scroll-box"></div>`;
             if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;

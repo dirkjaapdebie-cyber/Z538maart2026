@@ -7,13 +7,18 @@
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overscroll-behavior-y: contain; overflow-x: hidden; }
+        
+        #admin-trigger { position: absolute; top: 0; left: 0; width: 60px; height: 60px; z-index: 9999; cursor: pointer; }
+
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
-        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
         
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; overflow-x: auto; gap: 20px; z-index: 1000; align-items: flex-start; }
-        .is-admin .admin-bar, .is-admin .top-reset-btn { display: flex !important; }
+        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
+        
+        body.is-admin .admin-bar { display: flex !important; }
+        body.is-admin .top-reset-btn { display: block !important; }
 
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
@@ -42,7 +47,11 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body class="is-admin-false"> <div class="container">
+<body>
+
+<div id="admin-trigger" onclick="handleSecretClick()"></div>
+
+<div class="container">
     <div class="header-flex">
         <h1 class="main-header">Hebreeën Les 2</h1>
         <button id="reset-btn" class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
@@ -69,6 +78,19 @@
     const db = getFirestore(app);
 
     let isAdmin = false;
+    let clickCount = 0;
+
+    window.handleSecretClick = () => {
+        clickCount++;
+        if (clickCount >= 3) {
+            isAdmin = true;
+            document.body.classList.add('is-admin');
+            alert("Beheerder modus aan.");
+            clickCount = 0;
+        }
+        setTimeout(() => clickCount = 0, 2000);
+    };
+
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'login' },
         vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },
@@ -91,7 +113,7 @@
 
     window.checkLogin = async () => {
         const val = document.getElementById('in-login').value;
-        if (val === 'bie') {
+        if (val === 'admin123') {
             isAdmin = true;
             document.body.classList.add('is-admin');
         } else if (val) {
@@ -105,31 +127,11 @@
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
 
-    window.moveScreen = (fromIndex, toIndex) => {
-        if(!isAdmin) return;
-        const keys = Object.keys(screenConfigs);
-        const item = keys.splice(fromIndex, 1)[0];
-        keys.splice(toIndex, 0, item);
-        const newOrder = {};
-        keys.forEach(k => { newOrder[k] = screenConfigs[k]; });
-        screenConfigs = newOrder;
-        renderApp();
-        updateVisuals();
-    };
-
     window.sendData = async (id, col, field, qId = null) => {
         const val = document.getElementById(`in-${id}`).value;
         if (val) { 
             await addDoc(collection(db, col), { [field]: val, qId: qId, timestamp: Date.now() }); 
             document.getElementById(`in-${id}`).value = ""; 
-        }
-    };
-
-    window.addLiveQuestion = async () => {
-        const val = document.getElementById('new-q-input').value;
-        if(val) {
-            await addDoc(collection(db, "live_questions"), { text: val, timestamp: Date.now() });
-            document.getElementById('new-q-input').value = "";
         }
     };
 
@@ -163,40 +165,35 @@
         const adminBar = document.getElementById('admin-bar');
         container.innerHTML = ""; adminBar.innerHTML = "";
         
-        Object.keys(screenConfigs).forEach((id, index, array) => {
+        Object.keys(screenConfigs).forEach((id) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             
-            if (s.type === 'login') {
-                html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img"><input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="checkLogin()">OK</button><div id="login-names-feed" class="names-feed"></div>`;
-            }
-            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat nam je mee?"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box" style="margin-top:20px;"></div>`;
+            if (s.type === 'login') html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img"><input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="checkLogin()">OK</button><div id="login-names-feed" class="names-feed"></div>`;
+            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box" style="margin-top:20px;"></div>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
             if (s.type === 'poem_input') html += `<input type="text" id="in-poem" placeholder="Jouw zin..."><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
             if (s.type === 'cv_input') html += `<input type="text" id="in-usercv" placeholder="Ik ben..."><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
-            if (s.type === 'qa_input') html += `<div class="admin-panel"><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">+</button></div><div id="input-q-cont"></div>`;
+            if (s.type === 'qa_input') html += `<div id="input-q-cont"></div>`;
             if (s.type === 'qa_monitor') html += `<div id="monitor-q-cont"></div>`;
             if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
             
-            const btnWrap = document.createElement('div');
-            btnWrap.innerHTML = `<button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>
-                <div style="display:flex;gap:5px;margin-top:5px">
-                    <button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>
-                    <button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>
-                </div>`;
-            adminBar.appendChild(btnWrap);
+            const b = document.createElement('button');
+            b.className = 'screen-btn'; b.id = `btn-${id}`;
+            b.innerText = s.title; b.onclick = () => updateRemoteScreen(id);
+            adminBar.appendChild(b);
         });
-        initDynamicListeners();
+        initListeners();
     }
 
-    async function initHierarchyItems() {
+    async function initHierarchy() {
         const snap = await getDocs(collection(db, "hierarchy_items"));
         if (snap.empty) {
             for (const item of screenConfigs.hierarchy.initial) {
@@ -205,7 +202,7 @@
         }
     }
 
-    function initDynamicListeners() {
+    function initListeners() {
         onSnapshot(collection(db, "names"), s => {
             const f = document.getElementById('login-names-feed');
             if(f) f.innerHTML = s.docs.map(d => `<span class="name-badge">${d.data().name}</span>`).join('');
@@ -236,39 +233,27 @@
                 if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
                     const el = document.createElement('div'); el.id = `poem-${d.id}`;
                     el.className = 'draggable'; el.innerText = d.data().text;
-                    el.style.left = "400px"; el.style.top = "250px"; // Start in centrum
+                    el.style.left = "400px"; el.style.top = "250px"; 
                     canvas.appendChild(el); setupDragging(el, d.id, false);
                 }
             });
         });
-        onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
-            const inCont = document.getElementById('input-q-cont');
-            const monCont = document.getElementById('monitor-q-cont');
-            if(inCont) inCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><p>${d.data().text}</p><input type="text" id="in-${d.id}"><button class="action-btn" onclick="sendData('${d.id}','answers_split','text','${d.id}')">OK</button></div>`).join('');
-            if(monCont) monCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><h3>${d.data().text}</h3><div id="feed-${d.id}"></div></div>`).join('');
+        onSnapshot(collection(db, "user_cvs"), s => {
+            const f = document.getElementById('cv-live-feed');
+            if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join('');
         });
-        onSnapshot(collection(db, "answers_split"), snap => {
-            snap.docs.forEach(d => {
-                const f = document.getElementById(`feed-${d.data().qId}`);
-                if(f && !document.getElementById(`ans-${d.id}`)) { f.innerHTML += `<div id="ans-${d.id}" class="ans-pill">${d.data().text}</div>`; }
-            });
-        });
-    }
-
-    function updateVisuals() {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${currentActiveId}`)?.classList.add('active');
-        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        document.getElementById(`btn-${currentActiveId}`)?.classList.add('current-btn');
     }
 
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         currentActiveId = snap.data()?.activeScreen || 'login';
-        updateVisuals();
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${currentActiveId}`)?.classList.add('active');
+        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
+        document.getElementById(`btn-${currentActiveId}`)?.classList.add('current-btn');
     });
 
     renderApp();
-    initHierarchyItems();
+    initHierarchy();
 </script>
 </body>
 </html>

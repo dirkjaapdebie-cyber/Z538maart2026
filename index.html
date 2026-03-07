@@ -10,15 +10,16 @@
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
-        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
         
+        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: none; overflow-x: auto; gap: 20px; z-index: 1000; align-items: flex-start; }
+        .is-admin .admin-bar, .is-admin .top-reset-btn { display: flex !important; }
+
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
         
         .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
-        
-        .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 20px; z-index: 1000; align-items: flex-start; }
         .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; font-size: 16px; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
@@ -41,12 +42,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body>
-
-<div class="container">
+<body class="is-admin-false"> <div class="container">
     <div class="header-flex">
         <h1 class="main-header">Hebreeën Les 2</h1>
-        <button class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
+        <button id="reset-btn" class="top-reset-btn" onclick="window.resetAllData()">RESET APP</button>
     </div>
     <div id="main-container"></div>
 </div>
@@ -69,6 +68,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    let isAdmin = false;
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'login' },
         vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },
@@ -88,14 +88,25 @@
     };
 
     let currentActiveId = 'login';
-    let touchstartX = 0;
-    let touchendX = 0;
+
+    window.checkLogin = async () => {
+        const val = document.getElementById('in-login').value;
+        if (val === 'admin123') {
+            isAdmin = true;
+            document.body.classList.add('is-admin');
+        } else if (val) {
+            await addDoc(collection(db, "names"), { name: val, timestamp: Date.now() });
+        }
+        document.getElementById('in-login').value = "";
+    };
 
     window.updateRemoteScreen = async (id) => { 
+        if(!isAdmin) return;
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
 
     window.moveScreen = (fromIndex, toIndex) => {
+        if(!isAdmin) return;
         const keys = Object.keys(screenConfigs);
         const item = keys.splice(fromIndex, 1)[0];
         keys.splice(toIndex, 0, item);
@@ -106,27 +117,11 @@
         updateVisuals();
     };
 
-    function handleSwipe() {
-        const keys = Object.keys(screenConfigs);
-        const currentIndex = keys.indexOf(currentActiveId);
-        if (touchstartX - touchendX > 100 && currentIndex < keys.length - 1) window.updateRemoteScreen(keys[currentIndex + 1]);
-        if (touchendX - touchstartX > 100 && currentIndex > 0) window.updateRemoteScreen(keys[currentIndex - 1]);
-    }
-
-    document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, false);
-    document.addEventListener('touchend', e => { 
-        touchendX = e.changedTouches[0].screenX; 
-        if (!e.target.closest('.canvas')) handleSwipe();
-    }, false);
-
     window.sendData = async (id, col, field, qId = null) => {
-        const inputEl = document.getElementById(`in-${id}`);
-        const val = inputEl.value;
+        const val = document.getElementById(`in-${id}`).value;
         if (val) { 
-            const data = { [field]: val, timestamp: Date.now() };
-            if (qId) data.qId = qId;
-            await addDoc(collection(db, col), data); 
-            inputEl.value = ""; 
+            await addDoc(collection(db, col), { [field]: val, qId: qId, timestamp: Date.now() }); 
+            document.getElementById(`in-${id}`).value = ""; 
         }
     };
 
@@ -139,14 +134,13 @@
     };
 
     window.resetAllData = async () => {
-        if(confirm("Alles resetten?")){
-            await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions', 'user_cvs', 'vorige_keer']) {
-                const q = await getDocs(collection(db, c));
-                for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
-            }
-            location.reload();
+        if(!isAdmin || !confirm("Alles resetten?")) return;
+        await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
+        for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'live_questions', 'user_cvs', 'vorige_keer']) {
+            const q = await getDocs(collection(db, c));
+            for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
         }
+        location.reload();
     };
 
     function setupDragging(el, id, isShared) {
@@ -155,9 +149,8 @@
         el.onpointermove = (e) => {
             if (!isDragging) return;
             const r = el.parentElement.getBoundingClientRect();
-            let x = e.clientX - r.left; let y = e.clientY - r.top;
-            el.style.left = Math.max(0, Math.min(r.width, x)) + "px";
-            el.style.top = Math.max(0, Math.min(r.height, y)) + "px";
+            el.style.left = (e.clientX - r.left) + "px";
+            el.style.top = (e.clientY - r.top) + "px";
         };
         el.onpointerup = async () => { 
             if (!isDragging) return; isDragging = false; el.style.zIndex = 10;
@@ -177,9 +170,7 @@
             let html = `<h2>${s.title}</h2>`;
             
             if (s.type === 'login') {
-                html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img">`;
-                html += `<input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="sendData('login','names','name')">OK</button>`;
-                html += `<div id="login-names-feed" class="names-feed"></div>`;
+                html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img"><input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="checkLogin()">OK</button><div id="login-names-feed" class="names-feed"></div>`;
             }
             if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat nam je mee?"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box" style="margin-top:20px;"></div>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
@@ -202,7 +193,6 @@
                 </div>`;
             adminBar.appendChild(btnWrap);
         });
-        
         initDynamicListeners();
     }
 
@@ -220,12 +210,10 @@
             const f = document.getElementById('login-names-feed');
             if(f) f.innerHTML = s.docs.map(d => `<span class="name-badge">${d.data().name}</span>`).join('');
         });
-
         onSnapshot(collection(db, "vorige_keer"), s => {
             const f = document.getElementById('vorige-feed');
             if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join('');
         });
-
         onSnapshot(collection(db, "hierarchy_items"), (snap) => {
             const canvas = document.getElementById('canvas-hierarchy');
             if(!canvas) return;
@@ -235,13 +223,11 @@
                 if (!el) {
                     el = document.createElement('div'); el.id = `shared-${d.id}`;
                     el.className = `draggable ${data.text==='Jezus'?'item-Jezus':''} ${data.text==='God'?'item-God':''}`;
-                    el.innerText = data.text; canvas.appendChild(el);
-                    setupDragging(el, d.id, true);
+                    el.innerText = data.text; canvas.appendChild(el); setupDragging(el, d.id, true);
                 }
                 el.style.left = data.x + "px"; el.style.top = data.y + "px";
             });
         });
-
         onSnapshot(collection(db, "poem_lines"), (snap) => {
             const canvas = document.getElementById('canvas-creation');
             if(!canvas) return;
@@ -250,25 +236,21 @@
                 if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
                     const el = document.createElement('div'); el.id = `poem-${d.id}`;
                     el.className = 'draggable'; el.innerText = d.data().text;
-                    el.style.left = "400px"; el.style.top = "250px";
+                    el.style.left = "400px"; el.style.top = "250px"; // Start in centrum
                     canvas.appendChild(el); setupDragging(el, d.id, false);
                 }
             });
         });
-
         onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
             const inCont = document.getElementById('input-q-cont');
             const monCont = document.getElementById('monitor-q-cont');
             if(inCont) inCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><p>${d.data().text}</p><input type="text" id="in-${d.id}"><button class="action-btn" onclick="sendData('${d.id}','answers_split','text','${d.id}')">OK</button></div>`).join('');
             if(monCont) monCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><h3>${d.data().text}</h3><div id="feed-${d.id}"></div></div>`).join('');
         });
-
         onSnapshot(collection(db, "answers_split"), snap => {
             snap.docs.forEach(d => {
                 const f = document.getElementById(`feed-${d.data().qId}`);
-                if(f && !document.getElementById(`ans-${d.id}`)) {
-                    f.innerHTML += `<div id="ans-${d.id}" class="ans-pill">${d.data().text}</div>`;
-                }
+                if(f && !document.getElementById(`ans-${d.id}`)) { f.innerHTML += `<div id="ans-${d.id}" class="ans-pill">${d.data().text}</div>`; }
             });
         });
     }

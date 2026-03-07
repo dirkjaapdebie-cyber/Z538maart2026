@@ -6,7 +6,15 @@
     <title>Z53 Hebreeën Les 2 - Groepsmonitor</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
-        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+        body { 
+            font-family: 'Georgia', serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 0; 
+            overscroll-behavior-y: contain; /* Voorkom pull-to-refresh tijdens swipen */
+            overflow-x: hidden;
+        }
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
@@ -19,12 +27,24 @@
         .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
         
         .admin-bar { position: fixed; bottom: 0; left:0; width: 100%; background: #1a1a1a; padding: 15px; display: flex; overflow-x: auto; gap: 20px; z-index: 1000; align-items: flex-start; }
-        .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; }
+        .screen-btn { background: #444; color: white; border: none; padding: 12px 18px; border-radius: 6px; white-space: nowrap; cursor: pointer; font-size: 16px; }
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
-        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; }
-        /* Klein lettertype voor Onze Psalm items */
+        .draggable { 
+            position: absolute; 
+            padding: 10px 20px; 
+            background: white; 
+            border: 2px solid var(--primary); 
+            border-radius: 30px; 
+            cursor: move; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            font-weight: bold; 
+            white-space: nowrap; 
+            touch-action: none; 
+            user-select: none; 
+            z-index: 10;
+        }
         .canvas-creation .draggable { font-size: 0.85rem; padding: 6px 15px; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
         .item-God { border-color: #c0392b; border-width: 3px; background: #fee; box-shadow: 0 0 10px rgba(192,57,43,0.3); }
@@ -35,8 +55,8 @@
 
         .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; }
-        .arrow-btn { background: #555; color: white; border: none; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; font-size: 16px; }
+        .arrow-btn { background: #555; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 14px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -71,7 +91,7 @@
 
     let screenConfigs = {
         login: { title: 'Inloggen', type: 'input' },
-        vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },  // NIEUW SCHERM
+        vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.` },
         hierarchy: { title: 'Hiërarchie', type: 'shared-drag', initial: ['God', 'Jezus', 'Mozes', 'Koning', 'Engel', 'Priester', 'Leiders', 'Profeten', 'Ik'] },
@@ -84,10 +104,12 @@
         questions: { title: 'Vragen Invoer', type: 'qa_input' },
         monitor: { title: 'Monitor', type: 'qa_monitor' },
         creation: { title: 'Onze Psalm', type: 'dragdrop' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij tot aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar.Ga in vrede.' }
+        blessing: { title: 'Zegen', type: 'info', content: 'Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij tot aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar. Ga in vrede.' }
     };
 
     let currentActiveId = 'login';
+    let touchstartX = 0;
+    let touchendX = 0;
 
     // --- Core Functies ---
     window.updateRemoteScreen = async (id) => { 
@@ -104,6 +126,24 @@
         renderApp();
         updateVisuals();
     };
+
+    // Swipe Navigatie
+    function handleSwipe() {
+        const keys = Object.keys(screenConfigs);
+        const currentIndex = keys.indexOf(currentActiveId);
+        if (touchstartX - touchendX > 80) { // Swipe Links -> Volgende
+            if (currentIndex < keys.length - 1) window.updateRemoteScreen(keys[currentIndex + 1]);
+        }
+        if (touchendX - touchstartX > 80) { // Swipe Rechts -> Vorige
+            if (currentIndex > 0) window.updateRemoteScreen(keys[currentIndex - 1]);
+        }
+    }
+
+    document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, false);
+    document.addEventListener('touchend', e => { 
+        touchendX = e.changedTouches[0].screenX; 
+        if (!e.target.closest('.canvas')) handleSwipe();
+    }, false);
 
     window.sendData = async (id, col, field, qId = null) => {
         const val = document.getElementById(`in-${id}`).value;
@@ -137,17 +177,16 @@
     function setupDragging(el, id, isShared) {
         let isDragging = false;
         
-        // Pointer events voor live slepen
         el.onpointerdown = (e) => { 
+            e.stopPropagation();
             isDragging = true; 
             el.setPointerCapture(e.pointerId);
             el.classList.add('dragging');
+            el.style.zIndex = 1000;
         };
         
         el.onpointermove = (e) => {
             if (!isDragging) return;
-            e.preventDefault();
-            
             const r = el.parentElement.getBoundingClientRect();
             let newLeft = e.clientX - r.left - (el.offsetWidth / 2);
             let newTop = e.clientY - r.top - (el.offsetHeight / 2);
@@ -160,23 +199,17 @@
         };
         
         el.onpointerup = async () => { 
+            if (!isDragging) return;
             isDragging = false; 
+            el.style.zIndex = 10;
             if(isShared) {
-                // Alleen voor hiërarchie: positie opslaan in Firebase
                 await updateDoc(doc(db, "hierarchy_items", id), { 
                     x: parseInt(el.style.left) || 0, 
                     y: parseInt(el.style.top) || 0 
                 });
             }
-            // Voor 'Onze Psalm' (isShared = false) gebeurt er niets met Firebase
             el.classList.remove('dragging');
         };
-        
-        // Zorg dat element standaard zichtbaar is
-        if (!el.style.left || !el.style.top) {
-            el.style.left = "20px";
-            el.style.top = "20px";
-        }
     }
 
     // --- Render App ---
@@ -202,7 +235,6 @@
             if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
             if (s.type === 'dragdrop') html += `<p>Sleep de binnengekomen zinnen tot een eigen psalm:</p><div id="canvas-creation" class="canvas canvas-creation"></div>`;
             if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button>`;
-            // NIEUW: type voor 'vorige_keer' scherm
             if (s.type === 'vorige_keer') html += `<div class="admin-panel">Wat nam je mee van de vorige bijeenkomst?</div><input type="text" id="in-vorige" placeholder="Jouw inzicht..."><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box" style="margin-top:20px;"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
@@ -216,8 +248,8 @@
             const arrows = document.createElement('div');
             arrows.style.marginTop = "5px"; arrows.style.display = "flex"; arrows.style.gap = "8px";
             arrows.innerHTML = `
-                ${index > 0 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>` : '<div style="width:25px"></div>'}
-                ${index < array.length - 1 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>` : '<div style="width:25px"></div>'}
+                ${index > 0 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>` : '<div style="width:35px"></div>'}
+                ${index < array.length - 1 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>` : '<div style="width:35px"></div>'}
             `;
             btnWrap.appendChild(btn); btnWrap.appendChild(arrows);
             adminBar.appendChild(btnWrap);
@@ -230,17 +262,15 @@
     async function initializeHierarchyItems() {
         const hierarchyScreen = screenConfigs.hierarchy;
         if (!hierarchyScreen || !hierarchyScreen.initial) return;
-        
         const snapshot = await getDocs(collection(db, "hierarchy_items"));
         const existingItems = new Set(snapshot.docs.map(doc => doc.data().text));
-        
         for (const item of hierarchyScreen.initial) {
             if (!existingItems.has(item)) {
                 const itemId = item.toLowerCase().replace(/\s+/g, '_');
                 await setDoc(doc(db, "hierarchy_items", itemId), {
                     text: item,
-                    x: Math.random() * 300 + 50,
-                    y: Math.random() * 300 + 50
+                    x: Math.random() * 200 + 20,
+                    y: Math.random() * 300 + 20
                 });
             }
         }
@@ -254,29 +284,29 @@
     }
 
     function initDynamicListeners() {
+        // Live CV Feed
         onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('cv-live-feed');
             if(!feed) return;
             feed.innerHTML = "";
             snap.docs.forEach(doc => {
                 const d = document.createElement('div'); d.className = 'ans-pill';
-                d.style.marginBottom = "10px"; d.style.padding = "15px";
                 d.innerText = doc.data().text; feed.appendChild(d);
             });
         });
 
-        // NIEUW: Live feed voor 'vorige_keer' scherm
+        // Vorige Keer Feed
         onSnapshot(query(collection(db, "vorige_keer"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('vorige-live-feed');
             if(!feed) return;
             feed.innerHTML = "";
             snap.docs.forEach(doc => {
                 const d = document.createElement('div'); d.className = 'ans-pill';
-                d.style.marginBottom = "10px"; d.style.padding = "15px";
                 d.innerText = doc.data().text; feed.appendChild(d);
             });
         });
 
+        // Live Questions
         onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
             const inCont = document.getElementById('input-questions-container');
             const monCont = document.getElementById('monitor-questions-container');
@@ -306,56 +336,42 @@
             });
         });
 
-        // LIVE HIERARCHIE: Elke beweging wordt gedeeld
+        // Gedeelde Hierarchie
         onSnapshot(collection(db, "hierarchy_items"), (snap) => {
             const canvas = document.getElementById('canvas-hierarchy');
             if(!canvas) return;
-            
             snap.docChanges().forEach(change => {
-                const d = change.doc;
-                const data = d.data();
+                const d = change.doc; const data = d.data();
                 let el = document.getElementById(`shared-${d.id}`);
-                
                 if (change.type === 'added' || !el) {
                     if (!el) {
-                        el = document.createElement('div'); 
-                        el.id = `shared-${d.id}`; 
-                        
+                        el = document.createElement('div'); el.id = `shared-${d.id}`; 
                         let extraClass = '';
                         if (data.text === 'Jezus') extraClass = 'item-Jezus';
                         if (data.text === 'God') extraClass = 'item-God';
-                        
-                        el.className = `draggable ${extraClass}`;
-                        el.innerText = data.text;
+                        el.className = `draggable ${extraClass}`; el.innerText = data.text;
                         canvas.appendChild(el);
                         setupDragging(el, d.id, true);
                     }
                 }
-                
-                if (el && data.x !== undefined && data.y !== undefined) {
-                    el.style.left = data.x + "px";
-                    el.style.top = data.y + "px";
+                if (el && data.x !== undefined) {
+                    el.style.left = data.x + "px"; el.style.top = data.y + "px";
                 }
             });
         });
 
-        // ONZE PSALM: Items worden alleen getoond, bewegingen worden NIET opgeslagen
+        // Onze Psalm
         onSnapshot(collection(db, "poem_lines"), (snap) => {
             const canvas = document.getElementById('canvas-creation');
             if(!canvas) return;
-            
             snap.docChanges().forEach(change => {
                 const d = change.doc;
                 if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
                     const el = document.createElement('div');
-                    el.id = `poem-${d.id}`; 
-                    el.className = 'draggable';
-                    el.innerText = d.data().text;
-                    // Startpositie: willekeurig maar zichtbaar
-                    el.style.left = (Math.random() * 350 + 50) + "px";
-                    el.style.top = (Math.random() * 350 + 50) + "px";
+                    el.id = `poem-${d.id}`; el.className = 'draggable'; el.innerText = d.data().text;
+                    el.style.left = (Math.random() * 200 + 20) + "px";
+                    el.style.top = (Math.random() * 300 + 20) + "px";
                     canvas.appendChild(el);
-                    // isShared = false: bewegingen worden niet opgeslagen in Firebase
                     setupDragging(el, d.id, false);
                 }
                 if (change.type === 'removed') {

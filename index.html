@@ -7,6 +7,7 @@
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
         body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overscroll-behavior-y: contain; overflow-x: hidden; }
+        #escape-hatch { position: fixed; top: 5px; left: 5px; z-index: 10001; text-decoration: none; color: rgba(0,0,0,0.1); font-size: 18px; padding: 10px; }
         #admin-trigger { position: absolute; top: 0; left: 0; width: 60px; height: 60px; z-index: 9999; cursor: pointer; }
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
@@ -15,26 +16,26 @@
         .top-reset-btn { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
         body.is-admin .admin-bar { display: flex !important; }
         body.is-admin .top-reset-btn { display: block !important; }
+        body.is-admin #escape-hatch { color: var(--accent); font-weight: bold; }
         .screen { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; min-height: 550px; }
         .active { display: block; animation: fadeIn 0.4s; }
         .scroll-box { background: #fffcf0; padding: 20px; border: 1px solid #ddd; line-height: 1.7; height: 450px; overflow-y: auto; border-radius: 6px; white-space: pre-wrap; }
         .cv-title { font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 8px; display: block; margin-top: 15px; }
-        .screen-btn { background: #444; color: white; border: none; padding: 10px 15px; border-radius: 4px; white-space: nowrap; cursor: pointer; font-size: 14px; }
-        .current-btn { background: var(--accent) !important; font-weight: bold; }
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
         .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10; transform: translate(-50%, -50%); }
-        .login-img { max-width: 100%; height: auto; margin-bottom: 20px; border-radius: 8px; display: block; margin: 0 auto; }
-        .name-badge { background: #eee; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid #ccc; }
         .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; }
         .item-God { border-color: #c0392b; border-width: 3px; background: #fee; }
         .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
+        .q-card { background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); margin-bottom: 20px; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
         .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .arrow-btn { background: #555; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
+        .screen-btn { background: #444; color: white; border: none; padding: 10px 15px; border-radius: 4px; white-space: nowrap; cursor: pointer; font-size: 14px; }
+        .current-btn { background: var(--accent) !important; font-weight: bold; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+<a href="#" id="escape-hatch" onclick="location.reload()">×</a>
 <div id="admin-trigger" onclick="handleSecretClick()"></div>
 <div class="container">
     <div class="header-flex">
@@ -47,7 +48,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, setDoc, collection, addDoc, getDocs, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
@@ -70,6 +71,12 @@
         setTimeout(() => clickCount = 0, 2000);
     };
 
+    const questionsList = [
+        { id: 'q1', text: "Wat betekent het voor jou dat Jezus 'meer eer' waard is dan Mozes?" },
+        { id: 'q2', text: "In vers 6 staat: 'Zijn huis zijn wij'. Hoe merk je dat in deze groep?" },
+        { id: 'q3', text: "Waar zie je vandaag de dag 'verharde harten' (vers 8) in de wereld of bij jezelf?" }
+    ];
+
     let screenConfigs = {
         login: { title: '1. Inloggen', type: 'login' },
         vorige_keer: { title: '2. Vorige keer', type: 'vorige_keer' },
@@ -88,8 +95,6 @@
         blessing: { title: '15. Zegen', type: 'info', content: 'Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij tot aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar. Ga in vrede.' }
     };
 
-    let currentActiveId = 'login';
-
     window.checkLogin = async () => {
         const val = document.getElementById('in-login').value;
         if (val === 'admin123') { isAdmin = true; document.body.classList.add('is-admin'); }
@@ -97,32 +102,23 @@
         document.getElementById('in-login').value = "";
     };
 
+    window.sendData = async (id, col, field, qId = null) => {
+        const el = document.getElementById(id);
+        if (el && el.value) { 
+            await addDoc(collection(db, col), { [field]: el.value, qId: qId, timestamp: Date.now() }); 
+            el.value = ""; 
+        }
+    };
+
     window.updateRemoteScreen = async (id) => { 
         if(!isAdmin) return;
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
 
-    window.moveScreen = (fromIdx, toIdx) => {
-        if(!isAdmin) return;
-        const keys = Object.keys(screenConfigs);
-        if (toIdx < 0 || toIdx >= keys.length) return;
-        const item = keys.splice(fromIdx, 1)[0];
-        keys.splice(toIdx, 0, item);
-        const newOrder = {};
-        keys.forEach(k => { newOrder[k] = screenConfigs[k]; });
-        screenConfigs = newOrder;
-        renderApp();
-    };
-
-    window.sendData = async (id, col, field, qId = null) => {
-        const val = document.getElementById(`in-${id}`).value;
-        if (val) { await addDoc(collection(db, col), { [field]: val, qId: qId, timestamp: Date.now() }); document.getElementById(`in-${id}`).value = ""; }
-    };
-
     window.resetAllData = async () => {
         if(!isAdmin || !confirm("Alles resetten?")) return;
         await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-        for(const c of ['names', 'answers_split', 'poem_lines', 'hierarchy_items', 'user_cvs', 'vorige_keer']) {
+        for(const c of ['names', 'answers', 'poem_lines', 'hierarchy_items', 'user_cvs', 'vorige_keer']) {
             const q = await getDocs(collection(db, c));
             for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
         }
@@ -138,7 +134,7 @@
             el.style.left = (e.clientX - r.left) + "px"; el.style.top = (e.clientY - r.top) + "px";
         };
         el.onpointerup = async () => { 
-            if (!isDragging) return; isDragging = false; el.style.zIndex = 10;
+            if (!isDragging) return; isDragging = false;
             if(isShared) await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left), y: parseInt(el.style.top) });
         };
     }
@@ -154,66 +150,81 @@
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             
-            if (s.type === 'login') html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img"><input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="checkLogin()">OK</button><div id="login-names-feed" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;"></div>`;
-            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat nam je mee?"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box" style="margin-top:20px;"></div>`;
+            if (s.type === 'login') html += `<input type="text" id="in-login" placeholder="Naam..."><button class="action-btn" onclick="checkLogin()">OK</button><div id="login-names-feed"></div>`;
+            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat nam je mee?"><button class="action-btn" onclick="sendData('in-vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box"></div>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'poem_input') html += `<input type="text" id="in-poem" placeholder="Typ hier je zin voor de psalm..."><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
-            if (s.type === 'cv_input') html += `<input type="text" id="in-usercv" placeholder="Ik ben... (bijv. een zoeker, een strijder, een leider, priester, ...)"><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
-            if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
-            if (s.type === 'qa_input') html += `<div id="input-q-cont"></div>`;
-            if (s.type === 'qa_monitor') html += `<div id="monitor-q-cont"></div>`;
+            if (s.type === 'cv_input') html += `<input type="text" id="in-cv" placeholder="Ik ben..."><button class="action-btn" onclick="sendData('in-cv','user_cvs','text')">VOEG TOE</button>`;
+            if (s.type === 'cv_feed') html += `<div id="cv-feed" class="scroll-box"></div>`;
+            if (s.type === 'qa_input') {
+                questionsList.forEach(q => {
+                    html += `<div class="q-card"><strong>${q.text}</strong><br><input type="text" id="ans-${q.id}" placeholder="Antwoord..."><button class="action-btn" onclick="sendData('ans-${q.id}','answers','text','${q.id}')">STUUR</button></div>`;
+                });
+            }
+            if (s.type === 'qa_monitor') html += `<div id="monitor-feed" class="scroll-box"></div>`;
+            if (s.type === 'poem_input') html += `<input type="text" id="in-poem" placeholder="Zin voor psalm..."><button class="action-btn" onclick="sendData('in-poem','poem_lines','text')">STUUR</button>`;
             if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
-            const btnWrap = document.createElement('div'); btnWrap.style.textAlign = "center";
-            btnWrap.innerHTML = `<button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button><br><div style="margin-top:5px;"><button class="arrow-btn" onclick="moveScreen(${idx}, ${idx-1})">◀</button><button class="arrow-btn" onclick="moveScreen(${idx}, ${idx+1})">▶</button></div>`;
-            adminBar.appendChild(btnWrap);
+            const btn = document.createElement('button'); btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
+            btn.onclick = () => updateRemoteScreen(id); adminBar.appendChild(btn);
         });
         initListeners();
     }
 
-    async function initHierarchy() {
-        const snap = await getDocs(collection(db, "hierarchy_items"));
-        if (snap.empty) {
-            for (const item of screenConfigs.hierarchy.initial) { await setDoc(doc(db, "hierarchy_items", item.toLowerCase()), { text: item, x: 400, y: 250 }); }
-        }
-    }
-
     function initListeners() {
         onSnapshot(collection(db, "names"), s => { const f = document.getElementById('login-names-feed'); if(f) f.innerHTML = s.docs.map(d => `<span class="name-badge">${d.data().name}</span>`).join(''); });
+        onSnapshot(collection(db, "user_cvs"), s => { const f = document.getElementById('cv-feed'); if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join(''); });
         onSnapshot(collection(db, "vorige_keer"), s => { const f = document.getElementById('vorige-feed'); if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join(''); });
-        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
-            const canvas = document.getElementById('canvas-hierarchy'); if(!canvas) return;
-            snap.docChanges().forEach(change => {
-                const d = change.doc; const data = d.data(); let el = document.getElementById(`shared-${d.id}`);
-                if (!el) { el = document.createElement('div'); el.id = `shared-${d.id}`; el.className = `draggable ${data.text==='Jezus'?'item-Jezus':''} ${data.text==='God'?'item-God':''}`; el.innerText = data.text; canvas.appendChild(el); setupDragging(el, d.id, true); }
+        onSnapshot(collection(db, "answers"), s => {
+            const f = document.getElementById('monitor-feed'); if(!f) return;
+            const data = s.docs.map(d => d.data());
+            f.innerHTML = questionsList.map(q => `
+                <div class="q-card"><strong>${q.text}</strong>
+                <div style="margin-top:10px;">${data.filter(a => a.qId === q.id).map(a => `<div class="ans-pill">${a.text}</div>`).join('')}</div>
+                </div>`).join('');
+        });
+        onSnapshot(collection(db, "hierarchy_items"), s => {
+            const c = document.getElementById('canvas-hierarchy'); if(!c) return;
+            s.docChanges().forEach(ch => {
+                const d = ch.doc; const data = d.data(); let el = document.getElementById(`h-${d.id}`);
+                if(!el) { el = document.createElement('div'); el.id = `h-${d.id}`; el.className = `draggable ${data.text==='Jezus'?'item-Jezus':''} ${data.text==='God'?'item-God':''}`; el.innerText = data.text; c.appendChild(el); setupDragging(el, d.id, true); }
                 el.style.left = data.x + "px"; el.style.top = data.y + "px";
             });
         });
-        onSnapshot(collection(db, "poem_lines"), (snap) => {
-            const canvas = document.getElementById('canvas-creation'); if(!canvas) return;
-            snap.docChanges().forEach(change => {
-                const d = change.doc;
-                if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
-                    const el = document.createElement('div'); el.id = `poem-${d.id}`; el.className = 'draggable'; el.innerText = d.data().text; el.style.left = "400px"; el.style.top = "250px"; canvas.appendChild(el); setupDragging(el, d.id, false);
+        onSnapshot(collection(db, "poem_lines"), s => {
+            const c = document.getElementById('canvas-creation'); if(!c) return;
+            s.docChanges().forEach(ch => {
+                const d = ch.doc; if(ch.type === 'added' && !document.getElementById(`p-${d.id}`)) {
+                    const el = document.createElement('div'); el.id = `p-${d.id}`; el.className = 'draggable'; el.innerText = d.data().text;
+                    el.style.left = "150px"; el.style.top = (50 + (c.children.length * 45)) + "px";
+                    c.appendChild(el); setupDragging(el, d.id, false);
                 }
             });
         });
-        onSnapshot(collection(db, "user_cvs"), s => { const f = document.getElementById('cv-live-feed'); if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join(''); });
     }
 
     onSnapshot(doc(db, "appState", "current"), (snap) => {
-        currentActiveId = snap.data()?.activeScreen || 'login';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(`screen-${currentActiveId}`)?.classList.add('active');
-        document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
-        const activeBtn = document.getElementById(`btn-${currentActiveId}`);
-        if(activeBtn) { activeBtn.classList.add('current-btn'); activeBtn.scrollIntoView({behavior: "smooth", inline: "center"}); }
+        const data = snap.data();
+        if(data) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen-${data.activeScreen}`)?.classList.add('active');
+            document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('current-btn'));
+            document.getElementById(`btn-${data.activeScreen}`)?.classList.add('current-btn');
+        }
     });
 
-    renderApp(); initHierarchy();
+    renderApp();
+    // Initialize Hierarchy items if empty
+    (async () => {
+        const snap = await getDocs(collection(db, "hierarchy_items"));
+        if (snap.empty) {
+            for (const item of screenConfigs.hierarchy.initial) { 
+                await setDoc(doc(db, "hierarchy_items", item.toLowerCase()), { text: item, x: 200, y: 200 }); 
+            }
+        }
+    })();
 </script>
 </body>
 </html>

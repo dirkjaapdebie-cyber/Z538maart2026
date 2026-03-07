@@ -6,15 +6,7 @@
     <title>Z53 Hebreeën Les 2 - Groepsmonitor</title>
     <style>
         :root { --bg: #fdfcf8; --primary: #2c3e50; --accent: #8e44ad; --text: #34495e; --gold: #f1c40f; }
-        body { 
-            font-family: 'Georgia', serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            padding: 0; 
-            overscroll-behavior-y: contain; /* Voorkom pull-to-refresh tijdens swipen */
-            overflow-x: hidden;
-        }
+        body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; overscroll-behavior-y: contain; overflow-x: hidden; }
         .container { max-width: 800px; margin: 20px auto; padding: 20px; padding-bottom: 180px; }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
         .main-header { color: var(--primary); margin: 0; font-size: 1.5rem; }
@@ -31,34 +23,22 @@
         .current-btn { background: var(--accent) !important; font-weight: bold; }
         
         .canvas { position: relative; height: 500px; border: 2px dashed #ccc; background: #fff; overflow: hidden; touch-action: none; margin-top: 10px; border-radius: 8px; }
-        .draggable { 
-            position: absolute; 
-            padding: 10px 20px; 
-            background: white; 
-            border: 2px solid var(--primary); 
-            border-radius: 30px; 
-            cursor: move; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-            font-weight: bold; 
-            white-space: nowrap; 
-            touch-action: none; 
-            user-select: none; 
-            z-index: 10;
-        }
-        .canvas-creation .draggable { font-size: 0.85rem; padding: 6px 15px; }
-        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; box-shadow: 0 0 10px rgba(241,196,15,0.4); }
-        .item-God { border-color: #c0392b; border-width: 3px; background: #fee; box-shadow: 0 0 10px rgba(192,57,43,0.3); }
+        .draggable { position: absolute; padding: 10px 20px; background: white; border: 2px solid var(--primary); border-radius: 30px; cursor: move; box-shadow: 0 4px 8px rgba(0,0,0,0.1); font-weight: bold; white-space: nowrap; touch-action: none; user-select: none; z-index: 10; transform: translate(-50%, -50%); }
         
-        .monitor-vraag { background: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
-        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
-        .vraag-blok { margin-bottom: 25px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 8px; }
+        .login-img { max-width: 100%; height: auto; margin-bottom: 20px; border-radius: 8px; display: block; margin: 0 auto; }
+        .names-feed { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .name-badge { background: #eee; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid #ccc; }
 
+        .item-Jezus { border-color: var(--gold); border-width: 3px; background: #fffef0; }
+        .item-God { border-color: #c0392b; border-width: 3px; background: #fee; }
+        
+        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
         .admin-panel { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #3498db; }
         input[type="text"] { padding: 12px; border: 1px solid #ccc; width: 60%; border-radius: 4px; font-size: 16px; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: bold; font-size: 16px; }
-        .arrow-btn { background: #555; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 14px; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .arrow-btn { background: #555; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -90,7 +70,7 @@
     const db = getFirestore(app);
 
     let screenConfigs = {
-        login: { title: 'Inloggen', type: 'input' },
+        login: { title: 'Inloggen', type: 'login' },
         vorige_keer: { title: 'Uit vorige keer', type: 'vorige_keer' },
         goals: { title: 'Doelen', type: 'info', content: '<strong>1. Hiërarchie</strong><br><strong>2. ... en ik dan?</strong><br><strong>3. ... en wij dan?</strong>' },
         mozes_cv: { title: '1. Mozes CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Een trouwe dienaar in Gods huis.\n\n• Prins van Egypte geweest.\n• Het volk bevrijd.\n• 40 jaar dienst in de woestijn.` },
@@ -111,7 +91,6 @@
     let touchstartX = 0;
     let touchendX = 0;
 
-    // --- Core Functies ---
     window.updateRemoteScreen = async (id) => { 
         await setDoc(doc(db, "appState", "current"), { activeScreen: id }, { merge: true }); 
     };
@@ -127,16 +106,11 @@
         updateVisuals();
     };
 
-    // Swipe Navigatie
     function handleSwipe() {
         const keys = Object.keys(screenConfigs);
         const currentIndex = keys.indexOf(currentActiveId);
-        if (touchstartX - touchendX > 80) { // Swipe Links -> Volgende
-            if (currentIndex < keys.length - 1) window.updateRemoteScreen(keys[currentIndex + 1]);
-        }
-        if (touchendX - touchstartX > 80) { // Swipe Rechts -> Vorige
-            if (currentIndex > 0) window.updateRemoteScreen(keys[currentIndex - 1]);
-        }
+        if (touchstartX - touchendX > 100 && currentIndex < keys.length - 1) window.updateRemoteScreen(keys[currentIndex + 1]);
+        if (touchendX - touchstartX > 100 && currentIndex > 0) window.updateRemoteScreen(keys[currentIndex - 1]);
     }
 
     document.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, false);
@@ -146,12 +120,13 @@
     }, false);
 
     window.sendData = async (id, col, field, qId = null) => {
-        const val = document.getElementById(`in-${id}`).value;
+        const inputEl = document.getElementById(`in-${id}`);
+        const val = inputEl.value;
         if (val) { 
             const data = { [field]: val, timestamp: Date.now() };
             if (qId) data.qId = qId;
             await addDoc(collection(db, col), data); 
-            document.getElementById(`in-${id}`).value = ""; 
+            inputEl.value = ""; 
         }
     };
 
@@ -176,104 +151,126 @@
 
     function setupDragging(el, id, isShared) {
         let isDragging = false;
-        
-        el.onpointerdown = (e) => { 
-            e.stopPropagation();
-            isDragging = true; 
-            el.setPointerCapture(e.pointerId);
-            el.classList.add('dragging');
-            el.style.zIndex = 1000;
-        };
-        
+        el.onpointerdown = (e) => { e.stopPropagation(); isDragging = true; el.setPointerCapture(e.pointerId); el.style.zIndex = 1000; };
         el.onpointermove = (e) => {
             if (!isDragging) return;
             const r = el.parentElement.getBoundingClientRect();
-            let newLeft = e.clientX - r.left - (el.offsetWidth / 2);
-            let newTop = e.clientY - r.top - (el.offsetHeight / 2);
-            
-            newLeft = Math.max(0, Math.min(r.width - el.offsetWidth, newLeft));
-            newTop = Math.max(0, Math.min(r.height - el.offsetHeight, newTop));
-            
-            el.style.left = newLeft + "px";
-            el.style.top = newTop + "px";
+            let x = e.clientX - r.left; let y = e.clientY - r.top;
+            el.style.left = Math.max(0, Math.min(r.width, x)) + "px";
+            el.style.top = Math.max(0, Math.min(r.height, y)) + "px";
         };
-        
         el.onpointerup = async () => { 
-            if (!isDragging) return;
-            isDragging = false; 
-            el.style.zIndex = 10;
-            if(isShared) {
-                await updateDoc(doc(db, "hierarchy_items", id), { 
-                    x: parseInt(el.style.left) || 0, 
-                    y: parseInt(el.style.top) || 0 
-                });
-            }
-            el.classList.remove('dragging');
+            if (!isDragging) return; isDragging = false; el.style.zIndex = 10;
+            if(isShared) await updateDoc(doc(db, "hierarchy_items", id), { x: parseInt(el.style.left), y: parseInt(el.style.top) });
         };
     }
 
-    // --- Render App ---
     function renderApp() {
         const container = document.getElementById('main-container');
         const adminBar = document.getElementById('admin-bar');
         container.innerHTML = ""; adminBar.innerHTML = "";
         
-        const keys = Object.keys(screenConfigs);
-        keys.forEach((id, index, array) => {
+        Object.keys(screenConfigs).forEach((id, index, array) => {
             const s = screenConfigs[id];
             const div = document.createElement('div');
             div.id = `screen-${id}`; div.className = 'screen';
             let html = `<h2>${s.title}</h2>`;
             
+            if (s.type === 'login') {
+                html += `<img src="Screenshot 2026-03-07 07.35.41.png" class="login-img">`;
+                html += `<input type="text" id="in-login" placeholder="Je naam..."><button class="action-btn" onclick="sendData('login','names','name')">OK</button>`;
+                html += `<div id="login-names-feed" class="names-feed"></div>`;
+            }
+            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat nam je mee?"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-feed" class="scroll-box" style="margin-top:20px;"></div>`;
             if (s.type === 'info') html += `<div>${s.content}</div>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'poem_input') html += `<div class="admin-panel">Typ een zin die je raakt.</div><input type="text" id="in-poem" placeholder="Jouw zin..."><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
-            if (s.type === 'cv_input') html += `<div class="admin-panel">Wie ben jij in Gods huis? Typ een korte CV-omschrijving.</div><input type="text" id="in-usercv" placeholder="Ik ben..."><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
+            if (s.type === 'poem_input') html += `<input type="text" id="in-poem" placeholder="Jouw zin..."><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
+            if (s.type === 'cv_input') html += `<input type="text" id="in-usercv" placeholder="Ik ben..."><button class="action-btn" onclick="sendData('usercv','user_cvs','text')">VOEG TOE</button>`;
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
-            if (s.type === 'qa_input') html += `<div class="admin-panel"><strong>Admin</strong><br><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">VRAAG TOEVOEGEN</button></div><div id="input-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'qa_monitor') html += `<div id="monitor-questions-container" class="scroll-box"></div>`;
-            if (s.type === 'dragdrop') html += `<p>Sleep de binnengekomen zinnen tot een eigen psalm:</p><div id="canvas-creation" class="canvas canvas-creation"></div>`;
-            if (s.type === 'input') html += `<input type="text" id="in-${id}" placeholder="Naam..."><button class="action-btn" onclick="sendData('${id}','names','name')">OK</button>`;
-            if (s.type === 'vorige_keer') html += `<div class="admin-panel">Wat nam je mee van de vorige bijeenkomst?</div><input type="text" id="in-vorige" placeholder="Jouw inzicht..."><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box" style="margin-top:20px;"></div>`;
+            if (s.type === 'qa_input') html += `<div class="admin-panel"><input type="text" id="new-q-input"><button class="action-btn" onclick="addLiveQuestion()">+</button></div><div id="input-q-cont"></div>`;
+            if (s.type === 'qa_monitor') html += `<div id="monitor-q-cont"></div>`;
+            if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
 
             div.innerHTML = html; container.appendChild(div);
-
-            const btnWrap = document.createElement('div');
-            btnWrap.style.display = "flex"; btnWrap.style.flexDirection = "column"; btnWrap.style.alignItems = "center";
-            const btn = document.createElement('button');
-            btn.className = 'screen-btn'; btn.id = `btn-${id}`; btn.innerText = s.title;
-            btn.onclick = () => window.updateRemoteScreen(id);
             
-            const arrows = document.createElement('div');
-            arrows.style.marginTop = "5px"; arrows.style.display = "flex"; arrows.style.gap = "8px";
-            arrows.innerHTML = `
-                ${index > 0 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>` : '<div style="width:35px"></div>'}
-                ${index < array.length - 1 ? `<button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>` : '<div style="width:35px"></div>'}
-            `;
-            btnWrap.appendChild(btn); btnWrap.appendChild(arrows);
+            const btnWrap = document.createElement('div');
+            btnWrap.innerHTML = `<button class="screen-btn" id="btn-${id}" onclick="updateRemoteScreen('${id}')">${s.title}</button>
+                <div style="display:flex;gap:5px;margin-top:5px">
+                    <button class="arrow-btn" onclick="moveScreen(${index}, ${index-1})">◀</button>
+                    <button class="arrow-btn" onclick="moveScreen(${index}, ${index+1})">▶</button>
+                </div>`;
             adminBar.appendChild(btnWrap);
         });
         
-        initializeHierarchyItems();
         initDynamicListeners();
     }
 
-    async function initializeHierarchyItems() {
-        const hierarchyScreen = screenConfigs.hierarchy;
-        if (!hierarchyScreen || !hierarchyScreen.initial) return;
-        const snapshot = await getDocs(collection(db, "hierarchy_items"));
-        const existingItems = new Set(snapshot.docs.map(doc => doc.data().text));
-        for (const item of hierarchyScreen.initial) {
-            if (!existingItems.has(item)) {
-                const itemId = item.toLowerCase().replace(/\s+/g, '_');
-                await setDoc(doc(db, "hierarchy_items", itemId), {
-                    text: item,
-                    x: Math.random() * 200 + 20,
-                    y: Math.random() * 300 + 20
-                });
+    async function initHierarchyItems() {
+        const snap = await getDocs(collection(db, "hierarchy_items"));
+        if (snap.empty) {
+            for (const item of screenConfigs.hierarchy.initial) {
+                await setDoc(doc(db, "hierarchy_items", item.toLowerCase()), { text: item, x: 400, y: 250 });
             }
         }
+    }
+
+    function initDynamicListeners() {
+        onSnapshot(collection(db, "names"), s => {
+            const f = document.getElementById('login-names-feed');
+            if(f) f.innerHTML = s.docs.map(d => `<span class="name-badge">${d.data().name}</span>`).join('');
+        });
+
+        onSnapshot(collection(db, "vorige_keer"), s => {
+            const f = document.getElementById('vorige-feed');
+            if(f) f.innerHTML = s.docs.map(d => `<div class="ans-pill">${d.data().text}</div>`).join('');
+        });
+
+        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
+            const canvas = document.getElementById('canvas-hierarchy');
+            if(!canvas) return;
+            snap.docChanges().forEach(change => {
+                const d = change.doc; const data = d.data();
+                let el = document.getElementById(`shared-${d.id}`);
+                if (!el) {
+                    el = document.createElement('div'); el.id = `shared-${d.id}`;
+                    el.className = `draggable ${data.text==='Jezus'?'item-Jezus':''} ${data.text==='God'?'item-God':''}`;
+                    el.innerText = data.text; canvas.appendChild(el);
+                    setupDragging(el, d.id, true);
+                }
+                el.style.left = data.x + "px"; el.style.top = data.y + "px";
+            });
+        });
+
+        onSnapshot(collection(db, "poem_lines"), (snap) => {
+            const canvas = document.getElementById('canvas-creation');
+            if(!canvas) return;
+            snap.docChanges().forEach(change => {
+                const d = change.doc;
+                if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
+                    const el = document.createElement('div'); el.id = `poem-${d.id}`;
+                    el.className = 'draggable'; el.innerText = d.data().text;
+                    el.style.left = "400px"; el.style.top = "250px";
+                    canvas.appendChild(el); setupDragging(el, d.id, false);
+                }
+            });
+        });
+
+        onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
+            const inCont = document.getElementById('input-q-cont');
+            const monCont = document.getElementById('monitor-q-cont');
+            if(inCont) inCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><p>${d.data().text}</p><input type="text" id="in-${d.id}"><button class="action-btn" onclick="sendData('${d.id}','answers_split','text','${d.id}')">OK</button></div>`).join('');
+            if(monCont) monCont.innerHTML = snap.docs.map(d => `<div class="admin-panel"><h3>${d.data().text}</h3><div id="feed-${d.id}"></div></div>`).join('');
+        });
+
+        onSnapshot(collection(db, "answers_split"), snap => {
+            snap.docs.forEach(d => {
+                const f = document.getElementById(`feed-${d.data().qId}`);
+                if(f && !document.getElementById(`ans-${d.id}`)) {
+                    f.innerHTML += `<div id="ans-${d.id}" class="ans-pill">${d.data().text}</div>`;
+                }
+            });
+        });
     }
 
     function updateVisuals() {
@@ -283,111 +280,13 @@
         document.getElementById(`btn-${currentActiveId}`)?.classList.add('current-btn');
     }
 
-    function initDynamicListeners() {
-        // Live CV Feed
-        onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('cv-live-feed');
-            if(!feed) return;
-            feed.innerHTML = "";
-            snap.docs.forEach(doc => {
-                const d = document.createElement('div'); d.className = 'ans-pill';
-                d.innerText = doc.data().text; feed.appendChild(d);
-            });
-        });
-
-        // Vorige Keer Feed
-        onSnapshot(query(collection(db, "vorige_keer"), orderBy("timestamp", "desc")), (snap) => {
-            const feed = document.getElementById('vorige-live-feed');
-            if(!feed) return;
-            feed.innerHTML = "";
-            snap.docs.forEach(doc => {
-                const d = document.createElement('div'); d.className = 'ans-pill';
-                d.innerText = doc.data().text; feed.appendChild(d);
-            });
-        });
-
-        // Live Questions
-        onSnapshot(query(collection(db, "live_questions"), orderBy("timestamp", "asc")), (snap) => {
-            const inCont = document.getElementById('input-questions-container');
-            const monCont = document.getElementById('monitor-questions-container');
-            if(inCont) inCont.innerHTML = ""; if(monCont) monCont.innerHTML = "";
-            snap.docs.forEach(docSnap => {
-                const q = docSnap.data(); const qId = docSnap.id;
-                if(inCont) {
-                    const d = document.createElement('div'); d.className = 'vraag-blok';
-                    d.innerHTML = `<p><strong>${q.text}</strong></p><input type="text" id="in-${qId}"><button class="action-btn" onclick="sendData('${qId}','answers_split','text','${qId}')">STUUR</button>`;
-                    inCont.appendChild(d);
-                }
-                if(monCont) {
-                    const d = document.createElement('div'); d.className = 'monitor-vraag';
-                    d.innerHTML = `<h3>${q.text}</h3><div id="monitor-feed-${qId}"></div>`;
-                    monCont.appendChild(d);
-                }
-            });
-        });
-
-        onSnapshot(collection(db, "answers_split"), (snap) => {
-            snap.docs.forEach(d => {
-                const feed = document.getElementById(`monitor-feed-${d.data().qId}`);
-                if (feed && !document.getElementById(`m-ans-${d.id}`)) {
-                    const s = document.createElement('span'); s.id = `m-ans-${d.id}`; s.className = 'ans-pill';
-                    s.innerText = d.data().text; feed.appendChild(s);
-                }
-            });
-        });
-
-        // Gedeelde Hierarchie
-        onSnapshot(collection(db, "hierarchy_items"), (snap) => {
-            const canvas = document.getElementById('canvas-hierarchy');
-            if(!canvas) return;
-            snap.docChanges().forEach(change => {
-                const d = change.doc; const data = d.data();
-                let el = document.getElementById(`shared-${d.id}`);
-                if (change.type === 'added' || !el) {
-                    if (!el) {
-                        el = document.createElement('div'); el.id = `shared-${d.id}`; 
-                        let extraClass = '';
-                        if (data.text === 'Jezus') extraClass = 'item-Jezus';
-                        if (data.text === 'God') extraClass = 'item-God';
-                        el.className = `draggable ${extraClass}`; el.innerText = data.text;
-                        canvas.appendChild(el);
-                        setupDragging(el, d.id, true);
-                    }
-                }
-                if (el && data.x !== undefined) {
-                    el.style.left = data.x + "px"; el.style.top = data.y + "px";
-                }
-            });
-        });
-
-        // Onze Psalm
-        onSnapshot(collection(db, "poem_lines"), (snap) => {
-            const canvas = document.getElementById('canvas-creation');
-            if(!canvas) return;
-            snap.docChanges().forEach(change => {
-                const d = change.doc;
-                if (change.type === 'added' && !document.getElementById(`poem-${d.id}`)) {
-                    const el = document.createElement('div');
-                    el.id = `poem-${d.id}`; el.className = 'draggable'; el.innerText = d.data().text;
-                    el.style.left = (Math.random() * 200 + 20) + "px";
-                    el.style.top = (Math.random() * 300 + 20) + "px";
-                    canvas.appendChild(el);
-                    setupDragging(el, d.id, false);
-                }
-                if (change.type === 'removed') {
-                    const el = document.getElementById(`poem-${d.id}`);
-                    if (el) el.remove();
-                }
-            });
-        });
-    }
-
     onSnapshot(doc(db, "appState", "current"), (snap) => {
         currentActiveId = snap.data()?.activeScreen || 'login';
         updateVisuals();
     });
 
     renderApp();
+    initHierarchyItems();
 </script>
 </body>
 </html>

@@ -27,9 +27,12 @@
         .item-Jezus { border-color: var(--gold); border-width: 3px; }
         .item-God { border-color: #c0392b; border-width: 3px; }
 
-        .ans-pill { background: white; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; display: block; margin-top: 5px; font-style: italic; }
-        input[type="text"], textarea { padding: 12px; border: 1px solid #ccc; width: 80%; border-radius: 4px; font-size: 16px; font-family: inherit; }
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .ans-pill { background: white; padding: 12px; border: 1px solid #ddd; border-radius: 6px; display: block; margin-top: 10px; font-style: italic; }
+        .q-block { background: #f9f9f9; padding: 15px; border-left: 4px solid var(--accent); margin-bottom: 25px; border-radius: 0 8px 8px 0; }
+        .q-text { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; display: block; }
+        
+        input[type="text"], textarea { padding: 12px; border: 1px solid #ccc; width: 90%; border-radius: 4px; font-size: 16px; font-family: inherit; margin-bottom: 10px; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .arrow-btn { background: #555; color: white; border: none; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
 
         .music-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -77,12 +80,15 @@
         reading: { title: 'De Tekst', type: 'bible', text: `<strong>Hebreeën 3:1-19 (HSV)</strong><br><br>[1] Daarom, heilige broeders, deelgenoten aan de hemelse roeping, let op de Apostel en Hogepriester van onze belijdenis: Christus Jezus.\n[2] Hij is getrouw aan Hem Die Hem aangesteld heeft, zoals ook Mozes in heel Zijn huis.\n[3] Want Deze is zoveel meer heerlijkheid waardig geacht dan Mozes, naarmate hij die het huis gebouwd heeft, meer eer ontvangt dan het huis zelf.\n[4] Elk huis wordt immers door iemand gebouwd, maar Hij Die dit alles gebouwd heeft, is God.\n[5] En Mozes was wel getrouw in heel Zijn huis als dienaar, om te getuigen van wat later gesproken zou worden,\n[6] maar Christus is getrouw als Zoon over Zijn huis. Zijn huis zijn wij, als wij de vrijmoedigheid en de roem van de hoop tot het einde toe onwrikbaar vasthouden.\n[7] Daarom, zoals de Heilige Geest zegt: Heden, als u Zijn stem hoort,\n[8] verhard dan uw hart niet, zoals bij de verbittering, op de dag van de verzoeking in de woestijn.\n[9] Daar hebben uw vaderen Mij verzocht; zij hebben Mij op de proef gesteld en Mijn werken gezien, veertig jaar lang.\n[10] Daarom ben Ik toornig geworden op dat geslacht en heb gezegd: Altijd dwalen zij met hun hart, en zij hebben Mijn wegen niet gekend.\n[11] Daarom heb Ik in Mijn toorn gezworen: Zij zullen Mijn rust niet binnengaan!\n[12] Zie erop toe, broeders, dat er in niemand van u een boosaardig hart is, vol ongeloof, om daardoor afvallig te worden van de levende God;\n[13] maar vermaan elkaar elke dag, zolang men van een heden kan spreken, opdat niemand van u verhard wordt door de misleiding van de zonde.\n[14] Want wij zijn deelgenoten van Christus geworden, als wij het begin van de vaste grond van het vertrouwen tot het einde toe onwrikbaar vasthouden,\n[15] terwijl er wordt gezegd: Heden, als u Zijn stem hoort, verhard dan uw hart niet, zoals in de verbittering.\n[16] Want sommigen die de stem gehoord hadden, hebben Hem verbitterd, maar niet allen die onder leiding van Mozes uit Egypte waren getrokken.\n[17] Op wie is Hij dan veertig jaar lang toornig geweest? Was het niet op hen die gezondigd hadden, van wie de lichamen in de woestijn gevallen zijn?\n[18] En aan wie heeft Hij gezworen dat zij Zijn rust niet zouden binnengaan, dan aan hen die ongehoorzaam geweest waren?\n[19] Zo zien wij dat zij niet konden binnengaan vanwege hun ongeloof.` },
         lied: { title: 'Lied', type: 'custom', content: `<div class="music-layout"><div class="video-container"><iframe src="https://www.youtube.com/embed/ooUzRgI6e_s" frameborder="0" allowfullscreen></iframe></div><div class="scroll-box"><strong>De woestijn zal bloeien als een roos</strong><br><br>De woestijn zal bloeien als een roos<br>En de steppe zal jubelen en juichen<br>Want het levend water van Gods Geest<br>Maakt dorstig land tot waterbronnen<br><br>De woestijn zal bloeien als een roos<br>En de steppe zal jubelen en juichen<br>Want het levend water van Gods Geest<br>Maakt dorstig land tot waterbronnen<br><br>Sta op Sion en juich<br>Want de Here heeft u verlost<br>Want de lamme zal springen als een hert<br>En de stomme zal jubelen en juichen<br><br>Sta op Sion en juich<br>Want de Here heeft u verlost<br>Want de lamme zal springen als een hert<br>En de stomme zal jubelen en juichen<br><br>Lai lai lai</div></div>` },
         woestijn_cv: { title: '2. Woestijn CV', type: 'bible', text: `<span class="cv-title">Wie ben ik?</span> Ik ben bevrijd, maar nog niet vrij.\n\n• Elke dag manna (genoeg voor vandaag).\n• Leren vertrouwen in de leegte.\n• De slavernij van Egypte moet nog uit mijn systeem.\n• Ik dwaal als ik mijn hart verhard.` },
+        vraag_stellen: { title: 'Vraag Stellen', type: 'custom', content: `<p>Stel een vraag aan de groep:</p><input type="text" id="in-new-question" placeholder="Typ hier je vraag..."><br><button class="action-btn" onclick="window.sendData('new-question','questions','text')">VRAAG VERSTUREN</button>` },
+        vraag_feed: { title: 'Vraag Live-feed', type: 'question_feed' },
+        antwoorden_monitor: { title: 'Antwoorden Monitor', type: 'answer_monitor' },
         zinnen_input: { title: 'Zinnen Verzamelen', type: 'poem_input' },
         cv_invullen: { title: 'Jouw CV Invullen', type: 'custom', content: `<p>Schrijf kort jouw 'CV' op dit moment:</p><textarea id="in-usercv" rows="4" placeholder="Ik ben woestijnganger, binnentreder, leider, profeet, of..."></textarea><br><button class="action-btn" onclick="window.sendData('usercv','user_cvs','text')">VERSTUUR MIJN CV</button>` },
         cv_monitor: { title: 'Live CV Feed', type: 'cv_feed' },
-        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Binnentreders van het beloofde land.\n\n• Ik hoor de stem en verhard mijn hart niet.\n• Ik houd vast aan de hoop tot het einde.\n• Ik treed binnen in de Rust van God.\n• Berichten van verspieders slaan mij niet uit het lood.` },
+        binnentreder_cv: { title: '3. Binnentreder CV', type: 'bible', text: `<span class="cv-title">Wie zijn wij?</span> Binnentreders van het beloofde land.\n\n• Wij horen de stem en verharden ons hart niet.\n• Wij houden vast aan de hoop tot het einde.\n• Wij treden binnen in de Rust van God.\n• Berichten van verspieders slaan ons niet uit het lood.` },
         creation: { title: 'Onze Psalm', type: 'dragdrop' },
-        blessing: { title: 'Zegen', type: 'info', content: 'Vader, wij vragen U ons geloof in U te verdiepen. Dat wij Uw stem verstaan en onze harten zacht blijven. Amen.' }
+        blessing: { title: 'Zegen', type: 'info', content: `<div class="scroll-box">Vader, wij vragen U ons geloof in U te verdiepen. Geef ons de kracht om verleiding te weerstaan, twijfel te overwinnen en trouw aan U te blijven. Geef dat wij aan het eind van ons leven deze woorden mogen horen: ‘Voortreffelijk, je bent een goede en betrouwbare dienaar.’</div>` }
     };
 
     let currentActiveId = 'login';
@@ -96,6 +102,30 @@
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('user-display-name').innerText = myName;
             document.getElementById('welcome-message').style.display = 'block';
+        }
+    };
+
+    window.sendAnswer = async (qId) => {
+        const input = document.getElementById(`ans-${qId}`);
+        if (input && input.value.trim()) {
+            await addDoc(collection(db, 'answers'), {
+                questionId: qId,
+                text: input.value.trim(),
+                user: myName || "Anoniem",
+                timestamp: Date.now()
+            });
+            input.value = "";
+            alert("Antwoord verzonden!");
+        }
+    };
+
+    window.sendData = async (id, col, field) => {
+        const el = document.getElementById(`in-${id}`);
+        if (el && el.value) { 
+            const data = { [field]: el.value, timestamp: Date.now(), user: myName || "Anoniem" };
+            await addDoc(collection(db, col), data); 
+            el.value = ""; 
+            alert("Verzonden!");
         }
     };
 
@@ -119,20 +149,10 @@
         screenConfigs = newOrder; renderApp(); updateVisuals();
     };
 
-    window.sendData = async (id, col, field) => {
-        const el = document.getElementById(`in-${id}`);
-        if (el && el.value) { 
-            const data = { [field]: el.value, timestamp: Date.now(), user: myName || "Anoniem" };
-            await addDoc(collection(db, col), data); 
-            el.value = ""; 
-            alert("Verzonden!");
-        }
-    };
-
     window.resetAllData = async () => {
         if(confirm("Alles resetten?")){
             await setDoc(doc(db, "appState", "current"), { activeScreen: 'login' });
-            for(const c of ['names', 'poem_lines', 'hierarchy_items', 'vorige_keer', 'user_cvs']) {
+            for(const c of ['names', 'poem_lines', 'hierarchy_items', 'vorige_keer', 'user_cvs', 'questions', 'answers']) {
                 const q = await getDocs(collection(db, c));
                 for(const d of q.docs) { await deleteDoc(doc(db, c, d.id)); }
             }
@@ -169,10 +189,12 @@
             let html = `<h2>${s.title}</h2>`;
             if (s.type === 'bible') html += `<div class="scroll-box">${s.text}</div>`;
             if (s.type === 'shared-drag') html += `<div id="canvas-hierarchy" class="canvas"></div>`;
-            if (s.type === 'poem_input') html += `<input type="text" id="in-poem"><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
+            if (s.type === 'poem_input') html += `<input type="text" id="in-poem" placeholder="Voeg een regel toe..."><br><button class="action-btn" onclick="sendData('poem','poem_lines','text')">STUUR</button>`;
             if (s.type === 'cv_feed') html += `<div id="cv-live-feed" class="scroll-box"></div>`;
             if (s.type === 'dragdrop') html += `<div id="canvas-creation" class="canvas"></div>`;
-            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige"><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box"></div>`;
+            if (s.type === 'question_feed') html += `<div id="question-live-feed" class="scroll-box">Laden...</div>`;
+            if (s.type === 'answer_monitor') html += `<div id="answer-monitor-feed" class="scroll-box">Laden...</div>`;
+            if (s.type === 'vorige_keer') html += `<input type="text" id="in-vorige" placeholder="Wat is je bijgebleven?"><br><button class="action-btn" onclick="sendData('vorige','vorige_keer','text')">STUUR</button><div id="vorige-live-feed" class="scroll-box"></div>`;
             if (s.type === 'custom' || s.type === 'info') html += `<div>${s.content}</div>`;
             div.innerHTML = html; container.appendChild(div);
 
@@ -199,6 +221,37 @@
         onSnapshot(query(collection(db, "names"), orderBy("timestamp", "desc")), (snap) => {
             const feed = document.getElementById('login-live-feed');
             if(feed) feed.innerHTML = snap.docs.map(d => `<span class="ans-pill">${d.data().name}</span>`).join('');
+        });
+
+        onSnapshot(query(collection(db, "questions"), orderBy("timestamp", "desc")), (snap) => {
+            const feed = document.getElementById('question-live-feed');
+            if(feed) {
+                feed.innerHTML = snap.docs.map(d => `
+                    <div class="q-block">
+                        <span class="q-text">${d.data().text}</span>
+                        <input type="text" id="ans-${d.id}" placeholder="Jouw antwoord...">
+                        <button class="action-btn" onclick="window.sendAnswer('${d.id}')">ANTWOORD</button>
+                    </div>
+                `).join('');
+            }
+        });
+
+        onSnapshot(query(collection(db, "answers"), orderBy("timestamp", "asc")), async (ansSnap) => {
+            const monitor = document.getElementById('answer-monitor-feed');
+            const qSnap = await getDocs(collection(db, "questions"));
+            if(monitor) {
+                let html = "";
+                qSnap.docs.forEach(qDoc => {
+                    const qData = qDoc.data();
+                    html += `<div style="margin-bottom:30px; border-bottom:2px solid #eee; padding-bottom:10px;">
+                        <strong style="color:var(--accent); font-size:1.2rem;">VRAAG: ${qData.text}</strong>`;
+                    ansSnap.docs.filter(a => a.data().questionId === qDoc.id).forEach(aDoc => {
+                        html += `<div class="ans-pill"><strong>${aDoc.data().user}:</strong> ${aDoc.data().text}</div>`;
+                    });
+                    html += `</div>`;
+                });
+                monitor.innerHTML = html || "Nog geen vragen/antwoorden.";
+            }
         });
 
         onSnapshot(query(collection(db, "user_cvs"), orderBy("timestamp", "desc")), (snap) => {
